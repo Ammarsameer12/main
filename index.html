@@ -2812,41 +2812,41 @@
         const vitalsChart = document.getElementById('vitalsChart');
         const chartTimeRange = document.getElementById('chartTimeRange');
         
-        // Update showView function to handle daily log views
-        function showView(viewName) {
-            patientsView.classList.add('hidden');
-            addPatientView.classList.add('hidden');
-            patientDetailView.classList.add('hidden');
-            editPatientView.classList.add('hidden');
-            operativeNoteView.classList.add('hidden');
-            viewOperativeNotesView.classList.add('hidden');
-            dailyLogView.classList.add('hidden');
-            viewDailyLogsView.classList.add('hidden');
-            
-            // Reset button states
-            showPatientsBtn.classList.remove('btn-primary');
-            showAddPatientBtn.classList.remove('btn-primary');
-            
-            if (viewName === 'patients') {
-                patientsView.classList.remove('hidden');
-                showPatientsBtn.classList.add('btn-primary');
-            } else if (viewName === 'addPatient') {
-                addPatientView.classList.remove('hidden');
-                showAddPatientBtn.classList.add('btn-primary');
-            } else if (viewName === 'patientDetail') {
-                patientDetailView.classList.remove('hidden');
-            } else if (viewName === 'editPatient') {
-                editPatientView.classList.remove('hidden');
-            } else if (viewName === 'operativeNote') {
-                operativeNoteView.classList.remove('hidden');
-            } else if (viewName === 'viewOperativeNotes') {
-                viewOperativeNotesView.classList.remove('hidden');
-            } else if (viewName === 'dailyLog') {
-                dailyLogView.classList.remove('hidden');
-            } else if (viewName === 'viewDailyLogs') {
-                viewDailyLogsView.classList.remove('hidden');
-            }
-        }
+     // Update showView function to handle all views
+function showView(viewName) {
+    patientsView.classList.add('hidden');
+    addPatientView.classList.add('hidden');
+    patientDetailView.classList.add('hidden');
+    editPatientView.classList.add('hidden');
+    operativeNoteView.classList.add('hidden');
+    viewOperativeNotesView.classList.add('hidden');
+    dailyLogView.classList.add('hidden');
+    viewDailyLogsView.classList.add('hidden');
+    
+    // Reset button states
+    showPatientsBtn.classList.remove('btn-primary');
+    showAddPatientBtn.classList.remove('btn-primary');
+    
+    if (viewName === 'patients') {
+        patientsView.classList.remove('hidden');
+        showPatientsBtn.classList.add('btn-primary');
+    } else if (viewName === 'addPatient') {
+        addPatientView.classList.remove('hidden');
+        showAddPatientBtn.classList.add('btn-primary');
+    } else if (viewName === 'patientDetail') {
+        patientDetailView.classList.remove('hidden');
+    } else if (viewName === 'editPatient') {
+        editPatientView.classList.remove('hidden');
+    } else if (viewName === 'operativeNote') {
+        operativeNoteView.classList.remove('hidden');
+    } else if (viewName === 'viewOperativeNotes') {
+        viewOperativeNotesView.classList.remove('hidden');
+    } else if (viewName === 'dailyLog') {
+        dailyLogView.classList.remove('hidden');
+    } else if (viewName === 'viewDailyLogs') {
+        viewDailyLogsView.classList.remove('hidden');
+    }
+}
         
         // Monitoring interval handlers
         document.addEventListener('click', function(e) {
@@ -3112,19 +3112,6 @@
             `;
         }
         
-       // Update "Add Daily Log" button handler - with DOM ready check
-       document.addEventListener('DOMContentLoaded', function() {
-           const addDailyLogButton = document.getElementById('addDailyLogBtn');
-           if (addDailyLogButton) {
-               addDailyLogButton.addEventListener('click', () => {
-                   resetDailyLogForm();
-                   showView('dailyLog');
-               });
-           } else {
-               console.error('Add Daily Log button not found!');
-           }
-       });
-        
         // Reset daily log form
         function resetDailyLogForm() {
             currentDailyLogId = null;
@@ -3163,6 +3150,14 @@
                 }
             }
         }
+
+        // Add Daily Log button handler - using event delegation
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.id === 'addDailyLogBtn') {
+        resetDailyLogForm();
+        showView('dailyLog');
+    }
+});
         
         // Initialize app
         showScreen('loading');
