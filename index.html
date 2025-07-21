@@ -1593,6 +1593,41 @@
     </div>
 </div>
     
+    <!-- View Daily Logs -->
+<div id="viewDailyLogsView" class="hidden">
+    <div class="form-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h2>📊 Daily Logs & Vitals</h2>
+            <div>
+                <button id="toggleChartView" class="btn btn-secondary">📈 Chart View</button>
+                <button id="backFromDailyLogs" class="btn btn-primary">← Back to Patient</button>
+            </div>
+        </div>
+        
+        <!-- Chart View -->
+        <div id="chartView" class="hidden">
+            <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3>📈 Vital Signs Trends</h3>
+                </div>
+                <div id="vitalsChart" style="width: 100%; height: 400px;">
+                    <p style="text-align: center; color: #666; padding: 40px;">Chart visualization coming soon</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Table View -->
+        <div id="tableView">
+            <div id="dailyLogsList">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading daily logs...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
     <script>
         // Firebase Configuration
         const firebaseConfig = {
