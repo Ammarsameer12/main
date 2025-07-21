@@ -1818,6 +1818,14 @@
                             <p>Loading operative notes...</p>
                         </div>
                     </div>
+                                    
+                <div class="detail-section" style="grid-column: 1 / -1;">
+                    <h3>📊 Daily Logs & Vitals</h3>
+                    <div id="dailyLogsContainer">
+                        <button class="btn btn-primary" onclick="showView('viewDailyLogs'); loadDailyLogs('${patient.id}');" style="margin-right: 10px;">📊 View All Logs</button>
+                        <span style="color: #666; font-style: italic;">Click to view vitals timeline and daily progress</span>
+                    </div>
+                </div>
                 </div>
             `;
                     
@@ -2116,10 +2124,6 @@
         });
         
         // Placeholder functions for future features (Part 4)
-        document.getElementById('addDailyLogBtn').addEventListener('click', () => {
-            alert('Add Daily Log feature will be added in Part 5!');
-        });
-        
         document.getElementById('createDischargeBtn').addEventListener('click', () => {
             alert('Discharge Summary feature will be added in Part 6!');
         });
