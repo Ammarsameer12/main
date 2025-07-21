@@ -3095,12 +3095,13 @@
         }
 
         // Add Daily Log button handler - using event delegation
-document.addEventListener('click', function(e) {
-    if (e.target && e.target.id === 'addDailyLogBtn') {
-        resetDailyLogForm();
-        showView('dailyLog');
-    }
-});
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'addDailyLogBtn') {
+                console.log('Daily log button clicked!');
+                // Skip resetDailyLogForm for now
+                showView('dailyLog');
+            }
+        });
         
         // Initialize app
         showScreen('loading');
