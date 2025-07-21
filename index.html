@@ -3113,10 +3113,15 @@
         }
         
         // Update "Add Daily Log" button handler
-        document.getElementById('addDailyLogBtn').addEventListener('click', () => {
-            resetDailyLogForm();
-            showView('dailyLog');
-        });
+        const addDailyLogButton = document.getElementById('addDailyLogBtn');
+        if (addDailyLogButton) {
+            addDailyLogButton.addEventListener('click', () => {
+                resetDailyLogForm();
+                showView('dailyLog');
+            });
+        } else {
+            console.error('Add Daily Log button not found!');
+        }
         
         // Reset daily log form
         function resetDailyLogForm() {
