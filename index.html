@@ -1383,8 +1383,83 @@
                         <h3>🧪 Laboratory Results</h3>
                         <p>${patient.labsSummary || 'No labs documented'}</p>
                     </div>
+                
+                <div class="detail-section" style="grid-column: 1 / -1;">
+                    <h3>🔪 Operative Notes</h3>
+                    <div id="operativeNotesContainer">
+                        <div class="loading" style="text-align: center; padding: 20px;">
+                            <div class="spinner" style="width: 20px; height: 20px;"></div>
+                            <p>Loading operative notes...</p>
+                        </div>
+                    </div>
                 </div>
             `;
+                    
+        // Load operative notes
+        loadOperativeNotes(patient.id);
+        }
+
+        // Load and display operative notes
+        async function loadOperativeNotes(patientId) {
+            try {
+                const container = document.getElementById('operativeNotesContainer');
+                
+                const snapshot = await db.collection('patients').doc(patientId).collection('operativeNotes').orderBy('createdAt', 'desc').get();
+                
+                if (snapshot.empty) {
+                    container.innerHTML = '<p style="color: #666; font-style: italic;">No operative notes recorded yet.</p>';
+                    return;
+                }
+                
+                let notesHtml = '';
+                snapshot.forEach(doc => {
+                    const note = doc.data();
+                    const date = note.createdAt ? note.createdAt.toDate().toLocaleDateString() : 'Unknown date';
+                    const time = note.createdAt ? note.createdAt.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+                    
+                    notesHtml += `
+                        <div class="operative-note-card" style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                                <h4 style="color: #2196F3; margin: 0;">${note.surgeryType || 'Operative Procedure'}</h4>
+                                <span style="font-size: 12px; color: #888;">${date} ${time}</span>
+                            </div>
+                            
+                            <div class="operative-note-header">
+                                <span><strong>Date:</strong> ${note.surgeryDate || 'N/A'}</span>
+                                <span><strong>Surgeon:</strong> ${note.surgeon || 'N/A'}</span>
+                                <span><strong>Anesthesia:</strong> ${note.anesthesiaType || 'N/A'}</span>
+                                <span><strong>Blood Loss:</strong> ${note.bloodLoss || 'N/A'}</span>
+                            </div>
+                            
+                            <div class="operative-section">
+                                <h4>Findings</h4>
+                                <p>${note.findings || 'Not documented'}</p>
+                            </div>
+                            
+                            <div class="operative-section">
+                                <h4>Operative Steps</h4>
+                                <p>${note.operativeSteps || 'Not documented'}</p>
+                            </div>
+                            
+                            <div class="operative-section">
+                                <h4>Complications</h4>
+                                <p>${note.complications || 'None reported'}</p>
+                            </div>
+                            
+                            <div class="operative-note-meta">
+                                <span>Created by: ${note.createdByName || 'Unknown'}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = notesHtml;
+                
+            } catch (error) {
+                console.error('Error loading operative notes:', error);
+                document.getElementById('operativeNotesContainer').innerHTML = 
+                    '<p style="color: #f44336;">Error loading operative notes.</p>';
+            }
         }
         
         // Edit patient
