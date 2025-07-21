@@ -1448,6 +1448,14 @@
                             
                             <div class="operative-note-meta">
                                 <span>Created by: ${note.createdByName || 'Unknown'}</span>
+                                <div class="operative-note-actions">
+                                    <button class="btn btn-sm btn-secondary" onclick="editOperativeNote('${doc.id}', '${patientId}')" style="padding: 4px 8px; font-size: 12px;">
+                                        ✏️ Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteOperativeNote('${doc.id}', '${patientId}')" style="padding: 4px 8px; font-size: 12px;">
+                                        🗑️ Delete
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -1460,6 +1468,90 @@
                 document.getElementById('operativeNotesContainer').innerHTML = 
                     '<p style="color: #f44336;">Error loading operative notes.</p>';
             }
+        }
+
+        // Global variable for editing operative notes
+        let currentOperativeNoteId = null;
+        let editingOperativeNote = false;
+        
+        // Edit operative note
+        async function editOperativeNote(noteId, patientId) {
+            try {
+                currentOperativeNoteId = noteId;
+                editingOperativeNote = true;
+                
+                // Load the operative note data
+                const doc = await db.collection('patients').doc(patientId).collection('operativeNotes').doc(noteId).get();
+                
+                if (doc.exists) {
+                    const note = doc.data();
+                    
+                    // Switch to operative note view
+                    showView('operativeNote');
+                    
+                    // Fill form with existing data
+                    document.getElementById('surgeryType').value = note.surgeryType || '';
+                    document.getElementById('surgeryDate').value = note.surgeryDate || '';
+                    document.getElementById('surgeryTime').value = note.surgeryTime || '';
+                    document.getElementById('surgeon').value = note.surgeon || '';
+                    document.getElementById('assistants').value = note.assistants || '';
+                    document.getElementById('anesthesiaType').value = note.anesthesiaType || '';
+                    document.getElementById('position').value = note.position || '';
+                    document.getElementById('findings').value = note.findings || '';
+                    document.getElementById('operativeSteps').value = note.operativeSteps || '';
+                    document.getElementById('complications').value = note.complications || '';
+                    document.getElementById('bloodLoss').value = note.bloodLoss || '';
+                    
+                    // Change form title and button text
+                    document.querySelector('#operativeNoteView h2').textContent = '✏️ Edit Operative Note';
+                    document.querySelector('#operativeNoteForm button[type="submit"]').textContent = 'Update Operative Note';
+                    
+                } else {
+                    alert('Operative note not found');
+                }
+                
+            } catch (error) {
+                console.error('Error loading operative note for editing:', error);
+                alert('Error loading operative note');
+            }
+        }
+        
+        // Delete operative note
+        async function deleteOperativeNote(noteId, patientId) {
+            if (confirm('Are you sure you want to delete this operative note? This action cannot be undone.')) {
+                try {
+                    await db.collection('patients').doc(patientId).collection('operativeNotes').doc(noteId).delete();
+                    
+                    // Reload operative notes to refresh the display
+                    loadOperativeNotes(patientId);
+                    
+                    alert('Operative note deleted successfully');
+                    
+                } catch (error) {
+                    console.error('Error deleting operative note:', error);
+                    alert('Error deleting operative note');
+                }
+            }
+        }
+        
+        // Reset operative note form to add mode
+        function resetOperativeNoteForm() {
+            currentOperativeNoteId = null;
+            editingOperativeNote = false;
+            
+            // Reset form title and button text
+            document.querySelector('#operativeNoteView h2').textContent = '🔪 Add Operative Note';
+            document.querySelector('#operativeNoteForm button[type="submit"]').textContent = 'Save Operative Note';
+            
+            // Clear form
+            operativeNoteForm.reset();
+            document.getElementById('surgeryDate').valueAsDate = new Date();
+            document.getElementById('surgeon').value = userEmail.textContent.split('@')[0].replace('.', ' ');
+            
+            // Remove active state from template buttons
+            document.querySelectorAll('.template-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
         }
         
         // Edit patient
@@ -2211,7 +2303,20 @@
                     patientId: currentPatientId
                 };
                 
+                if (editingOperativeNote && currentOperativeNoteId) {
+                    // Update existing operative note
+                    await db.collection('patients').doc(currentPatientId).collection('operativeNotes').doc(currentOperativeNoteId).update({
+                          ...operativeNoteData,
+                   updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                   updatedBy: currentUser.uid,
+                   updatedByName: userEmail.textContent
+                   });
+                   showMessage('operativeNoteSuccess', 'Operative note updated successfully!', true);
+            } else {
+                // Add new operative note
                 await db.collection('patients').doc(currentPatientId).collection('operativeNotes').add(operativeNoteData);
+                showMessage('operativeNoteSuccess', 'Operative note saved successfully!', true);
+            }
 
                 // Update patient status to post-op
                 await db.collection('patients').doc(currentPatientId).update({
@@ -2222,7 +2327,6 @@
                 // Update current patient data
                 currentPatientData.status = 'post-op';
                 
-                showMessage('operativeNoteSuccess', 'Operative note saved successfully!', true);
                 operativeNoteForm.reset();
                 
                 setTimeout(() => {
