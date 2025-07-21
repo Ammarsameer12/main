@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urology Patient Follow-Up</title>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #45a049;
+        }
+        
+        .btn-danger {
+            background: #f44336;
+        }
+        
+        .btn-danger:hover {
+            background: #da190b;
+        }
+        
+        .btn-primary {
+            background: #2196F3;
+        }
+        
+        .btn-primary:hover {
+            background: #1976D2;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        
+        .error-message {
+            color: #f44336;
+            margin-top: 10px;
+            padding: 10px;
+            background: #ffebee;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .success-message {
+            color: #4CAF50;
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f5e8;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #667eea;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading">
+        <div class="spinner"></div>
+        <p>Loading application...</p>
+    </div>
+    
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container hidden">
+        <h2 style="text-align: center; margin-bottom: 30px; color: #333;">
+            🏥 Urology Patient System
+        </h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                Login
+            </button>
+            <div id="loginError" class="error-message"></div>
+        </form>
+    </div>
+    
+    <!-- Main Application -->
+    <div id="mainApp" class="container hidden">
+        <div class="header">
+            <h1>🏥 Urology Patient Follow-Up</h1>
+            <div class="user-info">
+                <div>
+                    <span id="userEmail"></span> | 
+                    <span id="userRole"></span>
+                </div>
+                <button id="logoutBtn" class="btn btn-danger">Logout</button>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div id="navigation" style="margin-bottom: 20px;">
+            <button id="showPatientsBtn" class="btn btn-primary">📋 All Patients</button>
+            <button id="showAddPatientBtn" class="btn" style="margin-left: 10px;">➕ Add New Patient</button>
+        </div>
+        
+        <!-- Content Area -->
+        <div id="contentArea">
+            <div id="patientsView">
+                <h2>All Patients</h2>
+                <div id="patientsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCaKJgggVlJYLl6j6klgKUuEc3NmGFQZv4",
+            authDomain: "urology-app-6f2d2.firebaseapp.com",
+            projectId: "urology-app-6f2d2",
+            storageBucket: "urology-app-6f2d2.firebasestorage.app",
+            messagingSenderId: "996503565094",
+            appId: "1:996503565094:web:7aed31cf47abd380ab07e7"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        // Global variables
+        let currentUser = null;
+        let userRole = null;
+        
+        // DOM elements
+        const loadingScreen = document.getElementById('loadingScreen');
+        const loginScreen = document.getElementById('loginScreen');
+        const mainApp = document.getElementById('mainApp');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userEmail = document.getElementById('userEmail');
+        const userRoleSpan = document.getElementById('userRole');
+        
+        // Show/hide screens
+        function showScreen(screenName) {
+            loadingScreen.classList.add('hidden');
+            loginScreen.classList.add('hidden');
+            mainApp.classList.add('hidden');
+            
+            if (screenName === 'loading') {
+                loadingScreen.classList.remove('hidden');
+            } else if (screenName === 'login') {
+                loginScreen.classList.remove('hidden');
+            } else if (screenName === 'main') {
+                mainApp.classList.remove('hidden');
+            }
+        }
+        
+        // Show error message
+        function showError(message) {
+            loginError.textContent = message;
+            loginError.style.display = 'block';
+            setTimeout(() => {
+                loginError.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Authentication state listener
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                
+                // Get user role from Firestore
+                try {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        userRole = userData.role;
+                        userEmail.textContent = userData.email;
+                        userRoleSpan.textContent = userData.role.toUpperCase();
+                        
+                        showScreen('main');
+                        loadPatients(); // Load patients when app starts
+                    } else {
+                        showError('User role not found. Please contact administrator.');
+                        auth.signOut();
+                    }
+                } catch (error) {
+                    console.error('Error getting user data:', error);
+                    showError('Error loading user data.');
+                    auth.signOut();
+                }
+            } else {
+                currentUser = null;
+                userRole = null;
+                showScreen('login');
+            }
+        });
+        
+        // Login form handler
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Invalid email or password.');
+            }
+        });
+        
+        // Logout handler
+        logoutBtn.addEventListener('click', () => {
+            auth.signOut();
+        });
+        
+        // Load patients function (placeholder for now)
+        function loadPatients() {
+            console.log('Loading patients...');
+            // This will be implemented in the next part
+        }
+        
+        // Initialize app
+        showScreen('loading');
+    </script>
+</body>
+</html>
