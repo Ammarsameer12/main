@@ -1404,6 +1404,195 @@
             </div>
     </div>
 
+    <!-- Add Daily Log View -->
+<div id="dailyLogView" class="hidden">
+    <div class="form-container">
+        <h2>📝 Add Daily Log Entry</h2>
+        
+        <!-- Monitoring Interval Selector -->
+        <div style="margin-bottom: 25px; padding: 15px; background: #e8f5e8; border-radius: 8px; border-left: 4px solid #4CAF50;">
+            <h3 style="margin-bottom: 15px; color: #333;">⏰ Monitoring Frequency</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;">
+                <button type="button" class="btn btn-secondary interval-btn" data-interval="1">📍 Hourly</button>
+                <button type="button" class="btn btn-secondary interval-btn" data-interval="2">🔹 2-Hourly</button>
+                <button type="button" class="btn btn-secondary interval-btn" data-interval="4">🔸 4-Hourly</button>
+                <button type="button" class="btn btn-secondary interval-btn" data-interval="6">📋 6-Hourly</button>
+                <button type="button" class="btn btn-secondary interval-btn" data-interval="24">📅 Daily</button>
+            </div>
+            <div id="nextDueTime" style="margin-top: 10px; font-weight: bold; color: #2196F3;"></div>
+        </div>
+        
+        <form id="dailyLogForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="logDate">Date *</label>
+                    <input type="date" id="logDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="logTime">Time *</label>
+                    <input type="time" id="logTime" required>
+                </div>
+                <div class="form-group">
+                    <label for="monitoringInterval">Interval</label>
+                    <select id="monitoringInterval" required>
+                        <option value="">Select Interval</option>
+                        <option value="1">Hourly</option>
+                        <option value="2">2-Hourly</option>
+                        <option value="4">4-Hourly</option>
+                        <option value="6">6-Hourly</option>
+                        <option value="24">Daily</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Vital Signs Section -->
+            <div style="background: #f0f8ff; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 15px; color: #1976D2;">🩺 Vital Signs</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="systolicBP">Systolic BP (mmHg)</label>
+                        <input type="number" id="systolicBP" min="50" max="250" placeholder="120">
+                    </div>
+                    <div class="form-group">
+                        <label for="diastolicBP">Diastolic BP (mmHg)</label>
+                        <input type="number" id="diastolicBP" min="30" max="150" placeholder="80">
+                    </div>
+                    <div class="form-group">
+                        <label for="heartRate">Heart Rate (bpm)</label>
+                        <input type="number" id="heartRate" min="30" max="200" placeholder="72">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="temperature">Temperature (°C)</label>
+                        <input type="number" id="temperature" step="0.1" min="30" max="45" placeholder="36.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="respiratoryRate">Respiratory Rate (/min)</label>
+                        <input type="number" id="respiratoryRate" min="8" max="60" placeholder="16">
+                    </div>
+                    <div class="form-group">
+                        <label for="oxygenSaturation">O2 Saturation (%)</label>
+                        <input type="number" id="oxygenSaturation" min="70" max="100" placeholder="98">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="urineOutput">Urine Output (mL)</label>
+                        <input type="number" id="urineOutput" min="0" max="2000" placeholder="200">
+                    </div>
+                    <div class="form-group">
+                        <label for="painScore">Pain Score (0-10)</label>
+                        <select id="painScore">
+                            <option value="">Select Score</option>
+                            <option value="0">0 - No Pain</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10 - Severe Pain</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="drainOutput">Drain Output (mL)</label>
+                        <input type="number" id="drainOutput" min="0" max="1000" placeholder="50">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Progress Notes Section -->
+            <div style="background: #fff8e1; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 15px; color: #f57c00;">📋 Progress Notes</h3>
+                
+                <div class="form-group">
+                    <label for="progressNote">Clinical Assessment</label>
+                    <textarea id="progressNote" placeholder="Patient's overall condition, mobility, appetite, wound status, etc..." style="height: 100px;"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="medicationsGiven">Medications Given</label>
+                    <textarea id="medicationsGiven" placeholder="List medications administered during this shift..." style="height: 80px;"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nurseOnDuty">Nurse/Doctor on Duty</label>
+                        <input type="text" id="nurseOnDuty" placeholder="Staff member name">
+                    </div>
+                    <div class="form-group">
+                        <label for="shiftType">Shift</label>
+                        <select id="shiftType">
+                            <option value="">Select Shift</option>
+                            <option value="Day Shift">Day Shift (6 AM - 6 PM)</option>
+                            <option value="Night Shift">Night Shift (6 PM - 6 AM)</option>
+                            <option value="Morning">Morning (6 AM - 2 PM)</option>
+                            <option value="Evening">Evening (2 PM - 10 PM)</option>
+                            <option value="Night">Night (10 PM - 6 AM)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: right; margin-top: 30px;">
+                <button type="button" id="cancelDailyLog" class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Daily Log</button>
+            </div>
+            
+            <div id="dailyLogError" class="error-message"></div>
+            <div id="dailyLogSuccess" class="success-message"></div>
+        </form>
+    </div>
+</div>
+
+<!-- View Daily Logs -->
+<div id="viewDailyLogsView" class="hidden">
+    <div class="form-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h2>📊 Daily Logs & Vitals</h2>
+            <div>
+                <button id="toggleChartView" class="btn btn-secondary">📈 Chart View</button>
+                <button id="backFromDailyLogs" class="btn btn-primary">← Back to Patient</button>
+            </div>
+        </div>
+        
+        <!-- Chart View -->
+        <div id="chartView" class="hidden">
+            <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3>📈 Vital Signs Trends</h3>
+                    <div>
+                        <select id="chartTimeRange" style="padding: 8px; border-radius: 5px; border: 2px solid #ddd;">
+                            <option value="24">Last 24 Hours</option>
+                            <option value="48">Last 48 Hours</option>
+                            <option value="72">Last 3 Days</option>
+                            <option value="168">Last 7 Days</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="vitalsChart" style="width: 100%; height: 400px;"></div>
+            </div>
+        </div>
+        
+        <!-- Table View -->
+        <div id="tableView">
+            <div id="dailyLogsList">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading daily logs...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
     <script>
         // Firebase Configuration
         const firebaseConfig = {
