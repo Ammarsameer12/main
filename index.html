@@ -1465,22 +1465,55 @@
                 mainApp.classList.remove('hidden');
             }
         }
-        
-        // Show/hide views within main app
-        function showView(viewName) {
-            patientsView.classList.add('hidden');
-            addPatientView.classList.add('hidden');
-            
-            if (viewName === 'patients') {
-                patientsView.classList.remove('hidden');
-                showPatientsBtn.classList.add('btn-primary');
-                showAddPatientBtn.classList.remove('btn-primary');
-            } else if (viewName === 'addPatient') {
-                addPatientView.classList.remove('hidden');
-                showAddPatientBtn.classList.add('btn-primary');
-                showPatientsBtn.classList.remove('btn-primary');
-            }
-        }
+
+        // Update showView function to handle all views
+          function showView(viewName) {
+           // Hide all views
+           const views = [
+               'patientsView', 'addPatientView', 'patientDetailView', 'editPatientView',
+               'operativeNoteView', 'viewOperativeNotesView', 'dailyLogView', 'viewDailyLogsView'
+           ];
+           
+           views.forEach(viewId => {
+               const element = document.getElementById(viewId);
+               if (element) element.classList.add('hidden');
+           });
+    
+           // Reset button states
+           const showPatientsBtn = document.getElementById('showPatientsBtn');
+           const showAddPatientBtn = document.getElementById('showAddPatientBtn');
+           if (showPatientsBtn) showPatientsBtn.classList.remove('btn-primary');
+           if (showAddPatientBtn) showAddPatientBtn.classList.remove('btn-primary');
+    
+           // Show requested view
+           if (viewName === 'patients') {
+               const patientsView = document.getElementById('patientsView');
+               if (patientsView) patientsView.classList.remove('hidden');
+               if (showPatientsBtn) showPatientsBtn.classList.add('btn-primary');
+           } else if (viewName === 'addPatient') {
+               const addPatientView = document.getElementById('addPatientView');
+               if (addPatientView) addPatientView.classList.remove('hidden');
+               if (showAddPatientBtn) showAddPatientBtn.classList.add('btn-primary');
+           } else if (viewName === 'patientDetail') {
+               const patientDetailView = document.getElementById('patientDetailView');
+               if (patientDetailView) patientDetailView.classList.remove('hidden');
+           } else if (viewName === 'editPatient') {
+               const editPatientView = document.getElementById('editPatientView');
+               if (editPatientView) editPatientView.classList.remove('hidden');
+           } else if (viewName === 'operativeNote') {
+               const operativeNoteView = document.getElementById('operativeNoteView');
+               if (operativeNoteView) operativeNoteView.classList.remove('hidden');
+           } else if (viewName === 'viewOperativeNotes') {
+               const viewOperativeNotesView = document.getElementById('viewOperativeNotesView');
+               if (viewOperativeNotesView) viewOperativeNotesView.classList.remove('hidden');
+           } else if (viewName === 'dailyLog') {
+               const dailyLogView = document.getElementById('dailyLogView');
+               if (dailyLogView) dailyLogView.classList.remove('hidden');
+           } else if (viewName === 'viewDailyLogs') {
+               const viewDailyLogsView = document.getElementById('viewDailyLogsView');
+               if (viewDailyLogsView) viewDailyLogsView.classList.remove('hidden');
+           }
+       }
         
         // Show error/success messages
         function showMessage(elementId, message, isSuccess = false) {
@@ -1701,30 +1734,6 @@
         const editPatientForm = document.getElementById('editPatientForm');
         const cancelEditPatient = document.getElementById('cancelEditPatient');
         const deletePatientBtn = document.getElementById('deletePatientBtn');
-        
-        // Update showView function to handle new views
-        function showView(viewName) {
-            patientsView.classList.add('hidden');
-            addPatientView.classList.add('hidden');
-            patientDetailView.classList.add('hidden');
-            editPatientView.classList.add('hidden');
-            
-            // Reset button states
-            showPatientsBtn.classList.remove('btn-primary');
-            showAddPatientBtn.classList.remove('btn-primary');
-            
-            if (viewName === 'patients') {
-                patientsView.classList.remove('hidden');
-                showPatientsBtn.classList.add('btn-primary');
-            } else if (viewName === 'addPatient') {
-                addPatientView.classList.remove('hidden');
-                showAddPatientBtn.classList.add('btn-primary');
-            } else if (viewName === 'patientDetail') {
-                patientDetailView.classList.remove('hidden');
-            } else if (viewName === 'editPatient') {
-                editPatientView.classList.remove('hidden');
-            }
-        }
         
         // View patient details
         async function viewPatient(patientId) {
@@ -2649,36 +2658,6 @@
         const operativeNotesList = document.getElementById('operativeNotesList');
         const backFromOperativeNotes = document.getElementById('backFromOperativeNotes');
         
-        // Update showView function to handle operative note views
-        function showView(viewName) {
-            patientsView.classList.add('hidden');
-            addPatientView.classList.add('hidden');
-            patientDetailView.classList.add('hidden');
-            editPatientView.classList.add('hidden');
-            operativeNoteView.classList.add('hidden');
-            viewOperativeNotesView.classList.add('hidden');
-            
-            // Reset button states
-            showPatientsBtn.classList.remove('btn-primary');
-            showAddPatientBtn.classList.remove('btn-primary');
-            
-            if (viewName === 'patients') {
-                patientsView.classList.remove('hidden');
-                showPatientsBtn.classList.add('btn-primary');
-            } else if (viewName === 'addPatient') {
-                addPatientView.classList.remove('hidden');
-                showAddPatientBtn.classList.add('btn-primary');
-            } else if (viewName === 'patientDetail') {
-                patientDetailView.classList.remove('hidden');
-            } else if (viewName === 'editPatient') {
-                editPatientView.classList.remove('hidden');
-            } else if (viewName === 'operativeNote') {
-                operativeNoteView.classList.remove('hidden');
-            } else if (viewName === 'viewOperativeNotes') {
-                viewOperativeNotesView.classList.remove('hidden');
-            }
-        }
-        
         // Template button handlers
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('template-btn')) {
@@ -2811,43 +2790,7 @@
         const tableView = document.getElementById('tableView');
         const vitalsChart = document.getElementById('vitalsChart');
         const chartTimeRange = document.getElementById('chartTimeRange');
-        
-     // Update showView function to handle all views
-function showView(viewName) {
-    patientsView.classList.add('hidden');
-    addPatientView.classList.add('hidden');
-    patientDetailView.classList.add('hidden');
-    editPatientView.classList.add('hidden');
-    operativeNoteView.classList.add('hidden');
-    viewOperativeNotesView.classList.add('hidden');
-    dailyLogView.classList.add('hidden');
-    viewDailyLogsView.classList.add('hidden');
-    
-    // Reset button states
-    showPatientsBtn.classList.remove('btn-primary');
-    showAddPatientBtn.classList.remove('btn-primary');
-    
-    if (viewName === 'patients') {
-        patientsView.classList.remove('hidden');
-        showPatientsBtn.classList.add('btn-primary');
-    } else if (viewName === 'addPatient') {
-        addPatientView.classList.remove('hidden');
-        showAddPatientBtn.classList.add('btn-primary');
-    } else if (viewName === 'patientDetail') {
-        patientDetailView.classList.remove('hidden');
-    } else if (viewName === 'editPatient') {
-        editPatientView.classList.remove('hidden');
-    } else if (viewName === 'operativeNote') {
-        operativeNoteView.classList.remove('hidden');
-    } else if (viewName === 'viewOperativeNotes') {
-        viewOperativeNotesView.classList.remove('hidden');
-    } else if (viewName === 'dailyLog') {
-        dailyLogView.classList.remove('hidden');
-    } else if (viewName === 'viewDailyLogs') {
-        viewDailyLogsView.classList.remove('hidden');
-    }
-}
-        
+
         // Monitoring interval handlers
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('interval-btn')) {
