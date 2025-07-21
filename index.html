@@ -1523,10 +1523,6 @@
         });
         
         // Placeholder functions for future features (Part 4)
-        document.getElementById('addOperativeNoteBtn').addEventListener('click', () => {
-            alert('Add Operative Note feature will be added in Part 4!');
-        });
-        
         document.getElementById('addDailyLogBtn').addEventListener('click', () => {
             alert('Add Daily Log feature will be added in Part 5!');
         });
@@ -1785,6 +1781,15 @@
                 };
                 
                 await db.collection('patients').doc(currentPatientId).collection('operativeNotes').add(operativeNoteData);
+
+                // Update patient status to post-op
+                await db.collection('patients').doc(currentPatientId).update({
+                       status: 'post-op',
+                       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Update current patient data
+                currentPatientData.status = 'post-op';
                 
                 showMessage('operativeNoteSuccess', 'Operative note saved successfully!', true);
                 operativeNoteForm.reset();
