@@ -3112,16 +3112,18 @@
             `;
         }
         
-        // Update "Add Daily Log" button handler
-        const addDailyLogButton = document.getElementById('addDailyLogBtn');
-        if (addDailyLogButton) {
-            addDailyLogButton.addEventListener('click', () => {
-                resetDailyLogForm();
-                showView('dailyLog');
-            });
-        } else {
-            console.error('Add Daily Log button not found!');
-        }
+       // Update "Add Daily Log" button handler - with DOM ready check
+       document.addEventListener('DOMContentLoaded', function() {
+           const addDailyLogButton = document.getElementById('addDailyLogBtn');
+           if (addDailyLogButton) {
+               addDailyLogButton.addEventListener('click', () => {
+                   resetDailyLogForm();
+                   showView('dailyLog');
+               });
+           } else {
+               console.error('Add Daily Log button not found!');
+           }
+       });
         
         // Reset daily log form
         function resetDailyLogForm() {
