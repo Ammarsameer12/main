@@ -375,6 +375,171 @@
                 flex-wrap: wrap;
             }
         }
+        .template-btn {
+            padding: 8px 12px;
+            font-size: 13px;
+            border-radius: 5px;
+            border: 2px solid #ddd;
+            background: white;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .template-btn:hover {
+            border-color: #2196F3;
+            background: #e3f2fd;
+            color: #1976D2;
+            transform: translateY(-1px);
+        }
+        
+        .template-btn.active {
+            background: #2196F3;
+            color: white;
+            border-color: #2196F3;
+        }
+        
+        .operative-note-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 5px solid #4CAF50;
+        }
+        
+        .operative-note-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .operative-note-header {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .operative-note-header span {
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .operative-note-header strong {
+            color: #333;
+            display: inline-block;
+            min-width: 80px;
+        }
+        
+        .operative-section {
+            margin-bottom: 20px;
+        }
+        
+        .operative-section h4 {
+            color: #2196F3;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #e3f2fd;
+            padding-bottom: 5px;
+        }
+        
+        .operative-section p {
+            color: #666;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+        
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+        
+        .template-preview {
+            background: #f0f8ff;
+            border: 1px solid #e3f2fd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .template-preview.show {
+            display: block;
+        }
+        
+        .template-preview h4 {
+            color: #1976D2;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        
+        .template-preview p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        
+        .no-operative-notes {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border: 2px dashed #ddd;
+        }
+        
+        .operative-note-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 13px;
+            color: #888;
+        }
+        
+        .operative-note-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .template-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 6px;
+            }
+            
+            .template-btn {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+            
+            .operative-note-header {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .operative-note-meta {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .operative-note-actions {
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -674,6 +839,143 @@
                 </div>
             </div>
         </div>
+        <!-- Add Operative Note View -->
+            <div id="operativeNoteView" class="hidden">
+                <div class="form-container">
+                    <h2>🔪 Add Operative Note</h2>
+                    
+                    <!-- Surgery Templates -->
+                    <div style="margin-bottom: 25px; padding: 15px; background: #f0f8ff; border-radius: 8px; border-left: 4px solid #2196F3;">
+                        <h3 style="margin-bottom: 15px; color: #333;">📋 Surgery Templates (Click to Auto-Fill)</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                            <button type="button" class="btn btn-secondary template-btn" data-template="urs_laser">🔹 URS + Laser</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="flexible_urs">🔹 Flexible URS</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="turp">🔹 TURP</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="orchiopexy">🔹 Orchiopexy</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="inguinal_hernia">🔹 Inguinal Hernia</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="pediatric_hernia">🔹 Pediatric Hernia</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="hydrocelectomy">🔹 Hydrocelectomy</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="varicocelectomy">🔹 Varicocelectomy</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="urethrotomy">🔹 Urethrotomy</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="circumcision">🔹 Circumcision</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="pcnl">🔹 PCNL</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="turbt">🔹 TURBT</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="radical_nephrectomy">🔹 Radical Nephrectomy</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="partial_nephrectomy">🔹 Partial Nephrectomy</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="radical_prostatectomy">🔹 Radical Prostatectomy</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="ureteric_reimplant">🔹 Ureteric Reimplant</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="pyeloplasty">🔹 Pyeloplasty</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="cystolitholapaxy">🔹 Cystolitholapaxy</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="radical_orchiectomy">🔹 Radical Orchiectomy</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="simple_orchiectomy">🔹 Simple Orchiectomy</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="scrotal_exploration">🔹 Scrotal Exploration</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="suprapubic_cystostomy">🔹 Suprapubic Cystostomy</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="penile_prosthesis">🔹 Penile Prosthesis</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="bladder_neck_incision">🔹 Bladder Neck Incision</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="urethroplasty">🔹 Urethroplasty</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="meatotomy">🔹 Meatotomy</button>
+                            <button type="button" class="btn btn-secondary template-btn" data-template="hypospadias">🔹 Hypospadias Repair</button>
+                            <button type="button" class="btn template-btn" data-template="other" style="background: #ff9800; color: white;">✏️ Other Surgery</button>
+                        </div>
+                    </div>
+                    
+                    <form id="operativeNoteForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="surgeryType">Surgery Type *</label>
+                                <input type="text" id="surgeryType" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="surgeryDate">Surgery Date *</label>
+                                <input type="date" id="surgeryDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="surgeryTime">Surgery Time</label>
+                                <input type="time" id="surgeryTime">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="surgeon">Surgeon *</label>
+                                <input type="text" id="surgeon" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="assistants">Assistant(s)</label>
+                                <input type="text" id="assistants">
+                            </div>
+                            <div class="form-group">
+                                <label for="anesthesiaType">Anesthesia Type</label>
+                                <select id="anesthesiaType">
+                                    <option value="">Select Type</option>
+                                    <option value="General anesthesia">General</option>
+                                    <option value="Spinal anesthesia">Spinal</option>
+                                    <option value="Local anesthesia">Local</option>
+                                    <option value="Local + sedation">Local + Sedation</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="position">Position</label>
+                            <select id="position">
+                                <option value="">Select Position</option>
+                                <option value="Lithotomy position">Lithotomy</option>
+                                <option value="Supine position">Supine</option>
+                                <option value="Prone position">Prone</option>
+                                <option value="Lateral decubitus position">Lateral Decubitus</option>
+                                <option value="Flank position">Flank</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="findings">Findings</label>
+                            <textarea id="findings" placeholder="Operative findings and observations..." style="height: 120px;"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="operativeSteps">Operative Steps</label>
+                            <textarea id="operativeSteps" placeholder="Detailed operative procedure steps..." style="height: 200px;"></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="complications">Complications</label>
+                                <textarea id="complications" placeholder="Any complications encountered..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="bloodLoss">Estimated Blood Loss</label>
+                                <input type="text" id="bloodLoss" placeholder="e.g., <50 mL, 100-200 mL">
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: right; margin-top: 30px;">
+                            <button type="button" id="cancelOperativeNote" class="btn btn-secondary">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Operative Note</button>
+                        </div>
+                        
+                        <div id="operativeNoteError" class="error-message"></div>
+                        <div id="operativeNoteSuccess" class="success-message"></div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- View Operative Notes -->
+            <div id="viewOperativeNotesView" class="hidden">
+                <div class="form-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h2>🔪 Operative Notes</h2>
+                        <button id="backFromOperativeNotes" class="btn btn-primary">← Back to Patient</button>
+                    </div>
+                    
+                    <div id="operativeNotesList">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Loading operative notes...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </div>
 
     <script>
@@ -1233,6 +1535,292 @@
             alert('Discharge Summary feature will be added in Part 6!');
         });
         
+        // Surgery Templates Database
+        const surgeryTemplates = {
+            urs_laser: {
+                name: "Ureteric Stone Extraction with Thulium Laser Lithotripsy",
+                surgeryType: "Right/Left ureteroscopic stone extraction with Thulium laser lithotripsy and DJ stent placement",
+                anesthesiaType: "General anesthesia",
+                position: "Lithotomy position",
+                findings: "A single/multiple stone(s) were identified in the mid/distal ureter. The ureter was mildly edematous. No evidence of perforation or extravasation was noted.",
+                operativeSteps: `1. After induction of general anesthesia, the patient was placed in lithotomy position and prepped and draped in sterile fashion.
+2. A safety guidewire was introduced into the ureter under cystoscopic guidance.
+3. A semi-rigid ureteroscope was advanced to visualize the ureteric stone.
+4. Thulium laser lithotripsy was performed to dust and fragment the stone.
+5. Fragments were retrieved with a basket as needed.
+6. A retrograde pyelogram was performed to assess the upper tract and confirm integrity.
+7. A 5/6 Fr DJ stent was inserted over the guidewire with the distal curl in the bladder and proximal coil in the renal pelvis.
+8. Hemostasis was confirmed, and instruments were withdrawn.`,
+                complications: "None encountered intraoperatively",
+                bloodLoss: "<50 mL"
+            },
+            flexible_urs: {
+                name: "Flexible Ureteroscopy (URS) for Renal Stones",
+                surgeryType: "Unilateral/Bilateral flexible ureteroscopy with laser lithotripsy and DJ stent placement",
+                anesthesiaType: "General anesthesia",
+                position: "Lithotomy position",
+                findings: "Multiple/single stone(s) noted within the renal pelvis and calyces, most commonly lower pole. Mucosa was intact with mild edema. No extravasation or ureteral injury observed.",
+                operativeSteps: `1. Under general anesthesia, the patient was placed in the lithotomy position and prepped and draped in sterile fashion.
+2. A safety guidewire was inserted into the ureter under cystoscopic guidance.
+3. A ureteral access sheath was introduced where feasible.
+4. A flexible ureteroscope was advanced to the renal pelvis, and all calyces were systematically inspected.
+5. Stones were visualized and fragmented using Thulium laser (dusting and/or fragmentation technique).
+6. Fragments were actively retrieved using a nitinol basket where appropriate.
+7. Complete inspection of all calyces was performed to exclude residual fragments.
+8. A 5/6 Fr DJ stent was inserted in the treated side(s) under fluoroscopic or endoscopic guidance.
+9. Hemostasis was verified, and all instruments were removed.`,
+                complications: "None encountered intraoperatively",
+                bloodLoss: "<50 mL"
+            },
+            turp: {
+                name: "Transurethral Resection of the Prostate (TURP)",
+                surgeryType: "Transurethral resection of the prostate (TURP)",
+                anesthesiaType: "Spinal anesthesia",
+                position: "Lithotomy position",
+                findings: "Enlarged prostate gland with prominent lateral and median lobes protruding into the bladder. Mild trabeculation of bladder noted. No bladder stones or tumors observed. Ureteric orifices identified bilaterally and preserved.",
+                operativeSteps: `1. Under spinal anesthesia, the patient was placed in the lithotomy position, prepped, and draped in sterile fashion.
+2. Initial cystoscopy was performed to assess the bladder and visualize the prostatic enlargement and ureteric orifices.
+3. A monopolar/bipolar resectoscope was introduced.
+4. Resection began at the median lobe, followed by the lateral lobes, proceeding in a systematic fashion down to the surgical capsule.
+5. Bladder neck was resected and smoothed.
+6. Complete hemostasis was achieved using coagulation current.
+7. Prostatic chips were evacuated using an Ellik evacuator.
+8. A 22/24 Fr three-way Foley catheter was inserted and continuous bladder irrigation was started.`,
+                complications: "None encountered intraoperatively",
+                bloodLoss: "Approximately 200 mL"
+            },
+            orchiopexy: {
+                name: "Orchiopexy for Undescended Testis",
+                surgeryType: "Right/Left inguinal exploration and orchiopexy",
+                anesthesiaType: "General anesthesia",
+                position: "Supine position",
+                findings: "Testis found in the inguinal canal/at the internal ring. Spermatic cord of adequate length with no significant tension after mobilization. Hernial sac present/absent.",
+                operativeSteps: `1. Under general anesthesia, the patient was placed in the supine position and prepped and draped in sterile fashion.
+2. A standard inguinal incision was made over the inguinal canal.
+3. The external oblique aponeurosis was opened, and the cord structures were isolated.
+4. The undescended testis was identified and mobilized with high dissection of the cord structures.
+5. A patent processus vaginalis was identified and ligated at the level of the internal ring (if present).
+6. The testis was brought down to the scrotum through a subdartos pouch via a separate scrotal incision.
+7. The testis was fixed in position using absorbable sutures.
+8. Hemostasis was ensured, and the inguinal and scrotal wounds were closed in layers.`,
+                complications: "None encountered intraoperatively",
+                bloodLoss: "Minimal (<20 mL)"
+            },
+            circumcision: {
+                name: "Surgical Circumcision",
+                surgeryType: "Circumcision using sleeve technique",
+                anesthesiaType: "Local anesthesia with/without sedation",
+                position: "Supine position",
+                findings: "Phimosis/paraphimosis/redundant foreskin. No signs of infection or inflammation. Glans penis appeared healthy and intact.",
+                operativeSteps: `1. The patient was placed in the supine position and prepped and draped in sterile fashion.
+2. Local anesthetic was infiltrated at the base of the penis (penile block) with or without dorsal nerve block.
+3. The preputial adhesions were released and the foreskin fully retracted.
+4. Markings were made for the sleeve excision at the junction of inner and outer prepuce.
+5. The foreskin was incised circumferentially and excised carefully, preserving the glans and frenulum.
+6. Hemostasis was achieved with electrocautery or ligatures.
+7. The edges of the skin were approximated with interrupted or running absorbable sutures (e.g., 4-0 Vicryl Rapide).
+8. Sterile dressing was applied.`,
+                complications: "None encountered intraoperatively",
+                bloodLoss: "Minimal (<10 mL)"
+            },
+            pcnl: {
+                name: "Percutaneous Nephrolithotomy (PCNL)",
+                surgeryType: "Percutaneous nephrolithotomy – Right/Left kidney",
+                anesthesiaType: "General anesthesia",
+                position: "Initial lithotomy, then prone position",
+                findings: "Large renal calculus occupying the renal pelvis with/without extension into calyces. Moderate hydronephrosis. No collecting system perforation or bleeding encountered during the procedure.",
+                operativeSteps: `1. Under general anesthesia, the patient was initially positioned in lithotomy position and prepped and draped in sterile fashion.
+2. A cystoscopy was performed and a 5–6 Fr open-ended ureteric catheter was advanced into the renal pelvis under fluoroscopic guidance.
+3. The catheter was secured and connected to contrast for subsequent pelvicalyceal system opacification.
+4. The patient was then repositioned into prone position and re-prepped and draped.
+5. Percutaneous access was obtained into a posterior lower/middle calyx under fluoroscopic (or ultrasound) guidance.
+6. The tract was dilated using serial fascial dilators or a balloon dilator, and a 30 Fr Amplatz sheath was placed.
+7. A rigid nephroscope was introduced through the sheath.
+8. Stones were visualized and fragmented using ultrasonic/pneumatic lithotripter or laser.
+9. Fragments were extracted using forceps or suction, and a flexible nephroscope was used to inspect all calyces for residual stones.
+10. A nephrostomy tube was inserted. DJ stent was placed if indicated.
+11. Hemostasis was confirmed and dressing applied.`,
+                complications: "None encountered intraoperatively",
+                bloodLoss: "Approximately 100–300 mL"
+            },
+            other: {
+                name: "Other Surgery (Manual Entry)",
+                surgeryType: "",
+                anesthesiaType: "",
+                position: "",
+                findings: "",
+                operativeSteps: "",
+                complications: "",
+                bloodLoss: ""
+            }
+        };
+        
+        // Add more templates for the remaining surgeries
+        surgeryTemplates.inguinal_hernia = {
+            name: "Inguinal Hernia Repair (Open Hernioplasty)",
+            surgeryType: "Right/Left inguinal hernia repair with mesh (Lichtenstein hernioplasty)",
+            anesthesiaType: "Spinal anesthesia",
+            position: "Supine position",
+            findings: "Indirect/direct inguinal hernia sac identified. No bowel compromise. Hernia contents reducible. Spermatic cord and surrounding structures preserved.",
+            operativeSteps: `1. Under spinal anesthesia, the patient was placed in the supine position and prepped and draped in sterile fashion.
+2. An oblique inguinal incision was made, and the external oblique aponeurosis was incised.
+3. The hernia sac was identified and dissected from the cord structures.
+4. The sac was opened, contents inspected and reduced into the peritoneal cavity.
+5. The sac was transfixed and excised.
+6. A polypropylene mesh was fashioned and placed over the posterior wall of the inguinal canal, covering the deep ring.
+7. The mesh was fixed to the pubic tubercle medially, to the inguinal ligament inferiorly, and to the conjoint tendon superiorly.
+8. The external oblique aponeurosis was closed over the cord, followed by skin closure.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "<50 mL"
+        };
+        
+        surgeryTemplates.pediatric_hernia = {
+            name: "Pediatric Inguinal Hernia Repair (Herniotomy)",
+            surgeryType: "Right/Left inguinal herniotomy",
+            anesthesiaType: "General anesthesia",
+            position: "Supine position",
+            findings: "Indirect hernia sac extending through the deep inguinal ring. Hernia contents reducible. No ischemic changes observed. Testis and cord structures were normal.",
+            operativeSteps: `1. Under general anesthesia, the patient was positioned supine and prepped and draped in a sterile fashion.
+2. A transverse skin crease incision was made over the inguinal region.
+3. The external oblique aponeurosis was incised, and the inguinal canal was opened.
+4. The hernia sac was identified lateral to the cord structures and carefully dissected free.
+5. The sac was opened, and its contents were reduced into the peritoneal cavity.
+6. The sac was transfixed and ligated high at the level of the internal ring using absorbable suture.
+7. Excess sac distal to the ligature was excised.
+8. The inguinal canal was closed, and the wound was closed in layers with absorbable sutures.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "Minimal (<10 mL)"
+        };
+        
+        // DOM elements for operative notes
+        const operativeNoteView = document.getElementById('operativeNoteView');
+        const viewOperativeNotesView = document.getElementById('viewOperativeNotesView');
+        const operativeNoteForm = document.getElementById('operativeNoteForm');
+        const cancelOperativeNote = document.getElementById('cancelOperativeNote');
+        const operativeNotesList = document.getElementById('operativeNotesList');
+        const backFromOperativeNotes = document.getElementById('backFromOperativeNotes');
+        
+        // Update showView function to handle operative note views
+        function showView(viewName) {
+            patientsView.classList.add('hidden');
+            addPatientView.classList.add('hidden');
+            patientDetailView.classList.add('hidden');
+            editPatientView.classList.add('hidden');
+            operativeNoteView.classList.add('hidden');
+            viewOperativeNotesView.classList.add('hidden');
+            
+            // Reset button states
+            showPatientsBtn.classList.remove('btn-primary');
+            showAddPatientBtn.classList.remove('btn-primary');
+            
+            if (viewName === 'patients') {
+                patientsView.classList.remove('hidden');
+                showPatientsBtn.classList.add('btn-primary');
+            } else if (viewName === 'addPatient') {
+                addPatientView.classList.remove('hidden');
+                showAddPatientBtn.classList.add('btn-primary');
+            } else if (viewName === 'patientDetail') {
+                patientDetailView.classList.remove('hidden');
+            } else if (viewName === 'editPatient') {
+                editPatientView.classList.remove('hidden');
+            } else if (viewName === 'operativeNote') {
+                operativeNoteView.classList.remove('hidden');
+            } else if (viewName === 'viewOperativeNotes') {
+                viewOperativeNotesView.classList.remove('hidden');
+            }
+        }
+        
+        // Template button handlers
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('template-btn')) {
+                const templateKey = e.target.getAttribute('data-template');
+                const template = surgeryTemplates[templateKey];
+                
+                if (template) {
+                    // Remove active class from all template buttons
+                    document.querySelectorAll('.template-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button
+                    e.target.classList.add('active');
+                    
+                    // Fill form with template data
+                    document.getElementById('surgeryType').value = template.surgeryType;
+                    document.getElementById('anesthesiaType').value = template.anesthesiaType;
+                    document.getElementById('position').value = template.position;
+                    document.getElementById('findings').value = template.findings;
+                    document.getElementById('operativeSteps').value = template.operativeSteps;
+                    document.getElementById('complications').value = template.complications;
+                    document.getElementById('bloodLoss').value = template.bloodLoss;
+                    
+                    // Set today's date and current user as surgeon
+                    document.getElementById('surgeryDate').valueAsDate = new Date();
+                    document.getElementById('surgeon').value = userEmail.textContent.split('@')[0].replace('.', ' ');
+                }
+            }
+        });
+        
+        // Operative note form handler
+        operativeNoteForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const operativeNoteData = {
+                    surgeryType: document.getElementById('surgeryType').value,
+                    surgeryDate: document.getElementById('surgeryDate').value,
+                    surgeryTime: document.getElementById('surgeryTime').value,
+                    surgeon: document.getElementById('surgeon').value,
+                    assistants: document.getElementById('assistants').value,
+                    anesthesiaType: document.getElementById('anesthesiaType').value,
+                    position: document.getElementById('position').value,
+                    findings: document.getElementById('findings').value,
+                    operativeSteps: document.getElementById('operativeSteps').value,
+                    complications: document.getElementById('complications').value,
+                    bloodLoss: document.getElementById('bloodLoss').value,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdBy: currentUser.uid,
+                    createdByName: userEmail.textContent,
+                    patientId: currentPatientId
+                };
+                
+                await db.collection('patients').doc(currentPatientId).collection('operativeNotes').add(operativeNoteData);
+                
+                showMessage('operativeNoteSuccess', 'Operative note saved successfully!', true);
+                operativeNoteForm.reset();
+                
+                setTimeout(() => {
+                    showView('patientDetail');
+                    displayPatientDetail(currentPatientData);
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Error saving operative note:', error);
+                showMessage('operativeNoteError', 'Error saving operative note. Please try again.');
+            }
+        });
+        
+        // Navigation handlers
+        cancelOperativeNote.addEventListener('click', () => {
+            showView('patientDetail');
+        });
+        
+        backFromOperativeNotes.addEventListener('click', () => {
+            showView('patientDetail');
+        });
+        
+        // Update the "Add Operative Note" button handler
+        document.getElementById('addOperativeNoteBtn').addEventListener('click', () => {
+            showView('operativeNote');
+            operativeNoteForm.reset();
+            document.getElementById('surgeryDate').valueAsDate = new Date();
+            document.getElementById('surgeon').value = userEmail.textContent.split('@')[0].replace('.', ' ');
+            
+            // Remove active state from all template buttons
+            document.querySelectorAll('.template-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+        });
         // Initialize app
         showScreen('loading');
     </script>
