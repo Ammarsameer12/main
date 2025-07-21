@@ -1762,6 +1762,362 @@
             complications: "None encountered intraoperatively",
             bloodLoss: "Minimal (<10 mL)"
         };
+
+        surgeryTemplates.hydrocelectomy = {
+            name: "Hydrocelectomy",
+            surgeryType: "Right/Left hydrocelectomy (Jaboulay procedure)",
+            anesthesiaType: "Spinal anesthesia",
+            position: "Supine position",
+            findings: "Large/simple hydrocele involving the tunica vaginalis. Clear/straw-colored fluid encountered. No thickening or suspicious pathology of the tunica or testis. Spermatic cord structures normal.",
+            operativeSteps: `1. After induction of spinal anesthesia, the patient was positioned supine and prepped and draped in sterile fashion.
+2. A transverse scrotal incision was made over the hydrocele.
+3. Dissection was carried down to the tunica vaginalis.
+4. The hydrocele sac was opened, and fluid was drained.
+5. The sac was inspected and everted (Jaboulay technique), and redundant tunica was excised if needed.
+6. Hemostasis was secured.
+7. The testis was replaced into the scrotum, and the dartos and skin layers were closed using absorbable sutures.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "Minimal (<20 mL)"
+        };
+        
+        surgeryTemplates.varicocelectomy = {
+            name: "Microscopic Varicocelectomy",
+            surgeryType: "Subinguinal microscopic varicocelectomy – Right/Left side",
+            anesthesiaType: "General anesthesia",
+            position: "Supine position",
+            findings: "Dilated and tortuous pampiniform plexus veins identified. Testicular artery and lymphatics preserved. No evidence of testicular atrophy or abnormal pathology.",
+            operativeSteps: `1. Under general anesthesia, the patient was placed in the supine position, prepped, and draped in sterile fashion.
+2. A 2–3 cm subinguinal incision was made just below the external inguinal ring.
+3. The spermatic cord was identified and isolated on a vascular sling.
+4. Under operative microscope magnification (×10–25), the cord structures were carefully dissected.
+5. The testicular artery was identified using micro-Doppler and preserved.
+6. Dilated veins of the pampiniform plexus were isolated, doubly ligated, and divided.
+7. Lymphatic channels were preserved to minimize the risk of postoperative hydrocele.
+8. Hemostasis was achieved. The cord was returned to its anatomical position.
+9. The incision was closed in layers using absorbable sutures.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "Minimal (<10–20 mL)"
+        };
+        
+        surgeryTemplates.urethrotomy = {
+            name: "Optical Internal Urethrotomy",
+            surgeryType: "Optical internal urethrotomy for anterior urethral stricture",
+            anesthesiaType: "Spinal anesthesia",
+            position: "Lithotomy position",
+            findings: "A short segment stricture was identified in the bulbar urethra. The urethral mucosa appeared fibrotic at the site of narrowing. No false passages or additional strictures were identified distally.",
+            operativeSteps: `1. Under spinal anesthesia, the patient was placed in lithotomy position and prepped and draped in sterile fashion.
+2. A cystourethroscope was gently advanced until resistance was encountered at the level of the stricture.
+3. The stricture was confirmed endoscopically and a cold-knife urethrotomy was performed at the 12 o'clock position.
+4. The incision was extended until the urethral lumen was adequately patent and the bladder was entered.
+5. The bladder was inspected and found to be normal.
+6. A 16/18 Fr Foley catheter was passed easily into the bladder without resistance.
+7. The catheter was secured and left in situ.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "Minimal (<30 mL)"
+        };
+        
+        surgeryTemplates.turbt = {
+            name: "Transurethral Resection of Bladder Tumor (TURBT)",
+            surgeryType: "Transurethral resection of bladder tumor (TURBT)",
+            anesthesiaType: "Spinal anesthesia",
+            position: "Lithotomy position",
+            findings: "Solitary/multiple papillary sessile tumor(s) located on the bladder wall. Tumor appeared superficial/deep. No gross extravesical extension. Ureteric orifices identified and preserved.",
+            operativeSteps: `1. Under spinal anesthesia, the patient was placed in lithotomy position, prepped, and draped in sterile fashion.
+2. Diagnostic cystoscopy was performed to localize and characterize the bladder lesion(s).
+3. A resectoscope was introduced, and the tumor was resected systematically down to the detrusor muscle.
+4. Base of the tumor was resected deeply to include detrusor for histopathologic staging.
+5. Bleeding points were coagulated using monopolar/bipolar current.
+6. Resected tissue was evacuated using an Ellik evacuator and sent for histopathology.
+7. The bladder was thoroughly irrigated, inspected for completeness of resection, and ureteric orifices were visualized.
+8. A 22 Fr three-way Foley catheter was inserted, and continuous bladder irrigation was started.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "50–150 mL"
+        };
+        
+        surgeryTemplates.radical_nephrectomy = {
+            name: "Radical Nephrectomy",
+            surgeryType: "Right/Left open/laparoscopic/robotic radical nephrectomy",
+            anesthesiaType: "General anesthesia",
+            position: "Flank or lateral decubitus position",
+            findings: "Renal mass involving upper/mid/lower pole without evidence of gross local invasion beyond Gerota's fascia. Renal vein and artery visualized. No significant lymphadenopathy or adrenal involvement.",
+            operativeSteps: `1. Under general anesthesia, the patient was positioned in lateral decubitus position, prepped, and draped in sterile fashion.
+2. A flank incision was made and the colon was reflected medially to expose the kidney.
+3. Gerota's fascia was incised and the kidney was mobilized circumferentially.
+4. Renal artery and vein were individually dissected, ligated, and divided.
+5. The ureter was ligated and divided distally.
+6. The entire kidney along with surrounding perinephric fat and Gerota's fascia was removed en bloc.
+7. The adrenal gland was preserved or removed based on intraoperative findings.
+8. Hemostasis was secured. A drain was placed if indicated.
+9. The incision was closed in layers.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "150–400 mL"
+        };
+        
+        surgeryTemplates.partial_nephrectomy = {
+            name: "Partial Nephrectomy",
+            surgeryType: "Right/Left open/laparoscopic/robotic partial nephrectomy",
+            anesthesiaType: "General anesthesia",
+            position: "Lateral decubitus or flank position",
+            findings: "Renal mass measuring [__] cm located on the upper/mid/lower pole. The tumor was well-circumscribed and confined to the renal parenchyma without gross evidence of renal vein or perinephric extension.",
+            operativeSteps: `1. Under general anesthesia, the patient was placed in lateral decubitus position and prepped and draped in sterile fashion.
+2. A flank incision was made and the colon was reflected medially to expose the kidney.
+3. The renal artery was identified and clamped to achieve temporary renal ischemia.
+4. The tumor was excised with a rim of normal parenchyma using cold scissors or electrocautery.
+5. Renorrhaphy was performed in two layers: inner layer to control collecting system and small vessels, outer cortical layer to approximate renal parenchyma.
+6. The clamp was released and hemostasis was confirmed.
+7. The specimen was sent for histopathology.
+8. A drain was placed in the renal bed if indicated.
+9. The incision was closed in layers.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "100–300 mL"
+        };
+        
+        surgeryTemplates.radical_prostatectomy = {
+            name: "Radical Prostatectomy",
+            surgeryType: "Open/Laparoscopic/Robotic-assisted radical prostatectomy with bilateral pelvic lymph node dissection",
+            anesthesiaType: "General anesthesia",
+            position: "Supine/Low lithotomy with Trendelenburg position",
+            findings: "Prostate of normal/enlarged size. No gross extracapsular extension. Seminal vesicles intact. No gross pelvic lymphadenopathy observed.",
+            operativeSteps: `1. Under general anesthesia, the patient was positioned and prepped and draped in sterile fashion.
+2. A lower midline incision was made or ports were inserted for robotic/laparoscopic access.
+3. The bladder was mobilized and the endopelvic fascia was incised bilaterally.
+4. The dorsal venous complex was ligated and divided.
+5. Bladder neck was dissected and transected, preserving ureteric orifices.
+6. The prostate was dissected posteriorly off the rectum.
+7. Seminal vesicles and vas deferens were mobilized and divided.
+8. The neurovascular bundles were preserved or resected based on oncologic criteria.
+9. The apex of the prostate and urethra were divided with careful identification of urethral margins.
+10. Pelvic lymph node dissection was performed bilaterally if indicated.
+11. A watertight urethrovesical anastomosis was constructed using absorbable sutures.
+12. A pelvic drain was placed. A 16 Fr Foley catheter was inserted and secured.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "250–500 mL"
+        };
+
+        surgeryTemplates.ureteric_reimplant = {
+            name: "Ureteric Reimplantation",
+            surgeryType: "Right/Left ureteric reimplantation (extravesical/Lich-Gregoir or intravesical/Cohen technique)",
+            anesthesiaType: "General anesthesia",
+            position: "Supine position",
+            findings: "Distal ureteric narrowing/refluxing ureter with/without associated hydronephrosis. Bladder capacity adequate. No gross bladder wall abnormalities.",
+            operativeSteps: `1. Under general anesthesia, the patient was positioned supine, prepped, and draped in sterile fashion.
+2. A Pfannenstiel or lower midline incision was made to access the bladder.
+3. The bladder was exposed extraperitoneally.
+4. The affected ureter was mobilized down to its distal segment, and the diseased portion was excised.
+5. A detrusor tunnel was created on the bladder wall and the ureter was implanted into the bladder mucosa.
+6. The detrusor muscle was re-approximated over the ureter to create an antireflux tunnel.
+7. A double-J stent was placed in most cases.
+8. The bladder was closed in two layers.
+9. A pelvic drain and Foley catheter were inserted and secured.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "50–150 mL"
+        };
+        
+        surgeryTemplates.pyeloplasty = {
+            name: "Pyeloplasty",
+            surgeryType: "Right/Left open/laparoscopic/robotic Anderson-Hynes dismembered pyeloplasty",
+            anesthesiaType: "General anesthesia",
+            position: "Flank or lateral decubitus position",
+            findings: "Ureteropelvic junction obstruction with a dilated renal pelvis and narrow/angulated UPJ. No crossing vessel / Crossing vessel present and preserved.",
+            operativeSteps: `1. Under general anesthesia, the patient was placed in lateral decubitus position and prepped and draped in sterile fashion.
+2. A flank incision or ports were placed for laparoscopic/robotic approach.
+3. The colon was reflected to expose the kidney and UPJ.
+4. The renal pelvis and proximal ureter were dissected and mobilized.
+5. The obstructed UPJ segment was excised.
+6. The ureter was spatulated laterally and a tension-free anastomosis was fashioned with the renal pelvis (Anderson-Hynes technique).
+7. A double-J stent was inserted antegrade into the ureter and bladder.
+8. The anastomosis was completed using interrupted or continuous absorbable sutures.
+9. Hemostasis was achieved. A drain was placed adjacent to the anastomosis.
+10. The incision/port sites were closed in layers.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "50–150 mL"
+        };
+        
+        surgeryTemplates.cystolitholapaxy = {
+            name: "Cystolitholapaxy",
+            surgeryType: "Transurethral cystolitholapaxy for vesical stone(s)",
+            anesthesiaType: "Spinal anesthesia",
+            position: "Lithotomy position",
+            findings: "One/multiple bladder stone(s) visualized, measuring approximately [__] cm. Bladder mucosa intact. Ureteric orifices visualized and preserved. No associated bladder tumor or foreign body seen.",
+            operativeSteps: `1. The patient was positioned in lithotomy under spinal anesthesia, prepped, and draped in sterile fashion.
+2. A cystoscope was introduced into the bladder, and stone(s) were identified and assessed for size, number, and mobility.
+3. A lithotripsy device (pneumatic/ultrasonic/laser) was introduced via a working sheath.
+4. The stone(s) were fragmented under direct vision.
+5. Stone fragments were irrigated and removed with a stone evacuator (e.g., Ellik evacuator).
+6. Complete clearance of the bladder was confirmed cystoscopically.
+7. Ureteric orifices were inspected.
+8. A 20/22 Fr Foley catheter was inserted, and irrigation was initiated if needed.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "Minimal (<50 mL)"
+        };
+        
+        surgeryTemplates.radical_orchiectomy = {
+            name: "Radical Inguinal Orchiectomy",
+            surgeryType: "Right/Left radical inguinal orchiectomy",
+            anesthesiaType: "General anesthesia",
+            position: "Supine position",
+            findings: "Testis appeared enlarged/firm with no evidence of scrotal wall involvement. Spermatic cord structures were thickened/normal. No gross invasion of surrounding tissue.",
+            operativeSteps: `1. The patient was positioned supine under general anesthesia and prepped and draped in sterile fashion.
+2. A groin incision was made along the inguinal canal.
+3. The external oblique aponeurosis was opened to access the inguinal canal.
+4. The spermatic cord was isolated at the internal ring, clamped, divided, and ligated using high ligation technique.
+5. The testis, epididymis, and spermatic cord were delivered en bloc.
+6. Hemostasis was achieved.
+7. The inguinal canal and skin were closed in layers.
+8. The specimen was sent for histopathology.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "<50 mL"
+        };
+        
+        surgeryTemplates.simple_orchiectomy = {
+            name: "Simple Orchiectomy",
+            surgeryType: "Right/Left simple orchiectomy",
+            anesthesiaType: "General anesthesia",
+            position: "Supine position",
+            findings: "Testis was atrophic/painful/nonfunctional. Spermatic cord appeared normal. No associated masses or abnormal findings.",
+            operativeSteps: `1. The patient was placed supine under anesthesia, prepped, and draped in sterile fashion.
+2. A transverse scrotal incision was made over the affected testis.
+3. The testis and epididymis were delivered through the incision.
+4. The spermatic cord was clamped and ligated at the level of the external ring.
+5. The testis and attached cord were excised.
+6. Hemostasis was confirmed, and the scrotal wound was closed in layers using absorbable sutures.
+7. Dressing was applied.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "Minimal (<20–30 mL)"
+        };
+        
+        surgeryTemplates.scrotal_exploration = {
+            name: "Scrotal Exploration",
+            surgeryType: "Right/Left scrotal exploration ± detorsion, orchiopexy, or orchiectomy",
+            anesthesiaType: "General anesthesia",
+            position: "Supine position",
+            findings: "Testis was found to be twisted by [__] degrees / no torsion noted. Testis appeared viable / congested / ischemic. Tunica vaginalis contained clear fluid / hemorrhagic fluid. Spermatic cord was twisted / intact.",
+            operativeSteps: `1. Under general anesthesia, the patient was placed in supine position, prepped, and draped in sterile fashion.
+2. A transverse midline or hemiscrotal incision was made over the affected side.
+3. The tunica vaginalis was opened, and the testis was delivered into the wound.
+4. The testis and spermatic cord were inspected.
+5. If torsion was found: the cord was untwisted, and warm sponges applied for 10–15 minutes to assess viability.
+6. If viable: orchiopexy was performed using non-absorbable sutures.
+7. If non-viable: orchiectomy was performed and the cord ligated.
+8. Contralateral orchiopexy was performed through a separate incision if indicated.
+9. Hemostasis was achieved.
+10. The dartos and skin were closed in layers using absorbable sutures.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "Minimal (<30 mL)"
+        };
+        
+        surgeryTemplates.suprapubic_cystostomy = {
+            name: "Suprapubic Cystostomy",
+            surgeryType: "Suprapubic cystostomy for urinary diversion",
+            anesthesiaType: "Local anesthesia ± sedation",
+            position: "Supine position",
+            findings: "Distended bladder identified with adequate capacity. No evidence of bladder tumor, clot retention, or bladder wall abnormality on preoperative evaluation.",
+            operativeSteps: `1. Under local anesthesia, the patient was positioned supine, prepped, and draped in sterile fashion.
+2. The bladder was filled via a urethral catheter or guided by ultrasound.
+3. A 2–3 cm transverse infraumbilical incision was made above the pubic symphysis.
+4. Dissection was carried through subcutaneous tissues and rectus sheath to the bladder dome.
+5. The bladder was punctured using a trocar/cystostomy set under direct palpation or ultrasound guidance.
+6. Urine was aspirated to confirm entry, and a Foley catheter (14–16 Fr) was introduced through the tract into the bladder.
+7. The catheter balloon was inflated and traction applied to secure the catheter.
+8. The skin was closed around the tube and secured with sutures or adhesive dressing.
+9. Urine drained freely, and catheter patency was confirmed.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "Minimal (<10 mL)"
+        };
+        
+        surgeryTemplates.penile_prosthesis = {
+            name: "Penile Prosthesis Implantation",
+            surgeryType: "Insertion of inflatable/malleable penile prosthesis",
+            anesthesiaType: "General anesthesia",
+            position: "Supine position",
+            findings: "Corpora cavernosa were of adequate length and dilatable. No fibrosis or significant corporal scarring. Urethra intact. No signs of infection or abnormal anatomy.",
+            operativeSteps: `1. Under anesthesia, the patient was positioned supine and prepped and draped in sterile fashion with a wide perineal/genital field.
+2. A penile/scrotal or infrapubic incision was made depending on surgeon's approach.
+3. Corporotomies were made bilaterally over the corpora cavernosa.
+4. Corporal bodies were dilated proximally and distally with Hegar dilators.
+5. Measurement was taken, and appropriate-sized prosthesis cylinders were inserted bilaterally.
+6. If inflatable type: Pump was placed in the scrotum, Reservoir placed in the retropubic space, Tubing was connected and tested for function and leaks.
+7. Corporotomies were closed with absorbable sutures.
+8. Wound was irrigated with antibiotic solution, and incision closed in layers.
+9. A compressive dressing and Foley catheter were applied.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "50–100 mL"
+        };
+        
+        surgeryTemplates.bladder_neck_incision = {
+            name: "Bladder Neck Incision (BNI)",
+            surgeryType: "Transurethral bladder neck incision for bladder outlet obstruction",
+            anesthesiaType: "Spinal anesthesia",
+            position: "Lithotomy position",
+            findings: "Narrow bladder neck with high bladder neck elevation and no significant prostatic enlargement. Ureteric orifices were clearly identified and distant from the incision site.",
+            operativeSteps: `1. Under anesthesia, the patient was positioned in lithotomy and prepped and draped in sterile fashion.
+2. A cystoscopic evaluation was performed, confirming a tight bladder neck with no obstructing median or lateral prostate lobes.
+3. A resectoscope with cold knife or Collins knife was introduced.
+4. A deep incision was made at the 5 o'clock and 7 o'clock positions through the bladder neck muscle fibers until perivesical fat was seen.
+5. Hemostasis was achieved with coagulation as needed.
+6. The bladder was inspected to ensure no injury to the trigone or ureteric orifices.
+7. A 16–18 Fr Foley catheter was inserted and bladder irrigation was initiated if necessary.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "Minimal (<30 mL)"
+        };
+        
+        surgeryTemplates.urethroplasty = {
+            name: "Urethroplasty",
+            surgeryType: "Excision and primary anastomosis urethroplasty / Buccal mucosal graft urethroplasty for anterior urethral stricture",
+            anesthesiaType: "General anesthesia",
+            position: "Lithotomy position",
+            findings: "Segmental bulbar urethral stricture measuring [__] cm. Healthy urethral mucosa proximal and distal to the stricture. Corpus spongiosum intact.",
+            operativeSteps: `1. The patient was placed in the lithotomy position and prepped and draped in sterile fashion.
+2. A midline perineal incision was made and the bulbar urethra was dissected and fully mobilized.
+3. The strictured segment was identified and excised.
+4. If length <2 cm: The healthy ends of the urethra were spatulated and a tension-free end-to-end anastomosis was performed with interrupted absorbable sutures.
+5. If length >2–3 cm: A buccal mucosal graft was harvested and quilted onto the corpora, and urethrotomy edges were sutured to the graft.
+6. A 16 Fr silicone catheter was passed across the repair.
+7. Hemostasis was achieved and a drain placed in the perineal wound.
+8. The wound was closed in layers.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "50–150 mL"
+        };
+        
+        surgeryTemplates.meatotomy = {
+            name: "Meatotomy / Meatoplasty",
+            surgeryType: "Meatotomy / Meatoplasty for meatal stenosis",
+            anesthesiaType: "Local anesthesia with/without sedation",
+            position: "Supine position",
+            findings: "Tight stenosis of the external urethral meatus with pinpoint orifice. No other urethral abnormalities noted on retrograde calibration or cystoscopy.",
+            operativeSteps: `1. The patient was placed in the supine position and prepped and draped in sterile fashion.
+2. Local anesthesia was infiltrated around the glans and urethral meatus.
+3. A ventral incision was made at the 6 o'clock position through the stenosed segment using a fine-tipped blade.
+4. The incision was extended until a wide and adequate meatus was achieved.
+5. For meatotomy: the incision was left open or sutured laterally if needed.
+6. For meatoplasty: Triangular skin flaps were created and advanced to widen the neomeatus with interrupted absorbable sutures.
+7. A catheter (8–12 Fr) was left in situ for 24–72 hours.
+8. Hemostasis was ensured and dressing applied.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "Minimal (<10 mL)"
+        };
+        
+        surgeryTemplates.hypospadias = {
+            name: "Hypospadias Repair (TIP Urethroplasty)",
+            surgeryType: "Hypospadias repair with tubularized incised plate (TIP) urethroplasty ± chordee correction ± circumcision",
+            anesthesiaType: "General anesthesia with caudal block",
+            position: "Supine position",
+            findings: "[Distal/midshaft/proximal] hypospadias with ventral meatal opening. Urethral plate adequate for tubularization. Mild/moderate chordee [present/absent]. Penile torsion [present/absent].",
+            operativeSteps: `1. Under general anesthesia, the patient was positioned supine and prepped and draped in sterile fashion.
+2. Stay sutures were placed on the glans for traction.
+3. A circumferential incision was made proximal to the coronal sulcus, and penile skin was degloved down to the base.
+4. Artificial erection test was performed to assess chordee.
+5. If present, chordee was corrected by dorsal plication or urethral plate mobilization.
+6. The urethral plate was incised longitudinally in the midline.
+7. A neourethra was tubularized over an 8–10 Fr stent using interrupted or continuous absorbable sutures.
+8. A second vascularized layer (dartos flap) was rotated from dorsal/preputial skin and placed over the neourethra.
+9. Glans wings were mobilized and closed in the midline over the neourethra.
+10. Penile skin was re-approximated, and circumcision completed if indicated.
+11. A urethral stent or catheter was left in situ and secured.
+12. Compressive dressing was applied.`,
+            complications: "None encountered intraoperatively",
+            bloodLoss: "Minimal (<10–20 mL)"
+        };
         
         // DOM elements for operative notes
         const operativeNoteView = document.getElementById('operativeNoteView');
