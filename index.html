@@ -540,244 +540,7 @@
                 justify-content: center;
             }
         }
-        .interval-btn {
-            padding: 8px 12px;
-            font-size: 13px;
-            border-radius: 5px;
-            border: 2px solid #ddd;
-            background: white;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-        
-        .interval-btn:hover {
-            border-color: #4CAF50;
-            background: #e8f5e8;
-            color: #2e7d32;
-            transform: translateY(-1px);
-        }
-        
-        .interval-btn.active {
-            background: #4CAF50;
-            color: white;
-            border-color: #4CAF50;
-        }
-        
-        .daily-log-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            border-left: 5px solid #4CAF50;
-        }
-        
-        .daily-log-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        
-        .daily-log-time {
-            font-size: 18px;
-            font-weight: bold;
-            color: #2196F3;
-        }
-        
-        .interval-badge {
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        
-        .interval-hourly {
-            background: #ffebee;
-            color: #c62828;
-        }
-        
-        .interval-2hourly {
-            background: #fff3e0;
-            color: #ef6c00;
-        }
-        
-        .interval-4hourly {
-            background: #e8f5e8;
-            color: #2e7d32;
-        }
-        
-        .interval-6hourly {
-            background: #e3f2fd;
-            color: #1565c0;
-        }
-        
-        .interval-daily {
-            background: #f3e5f5;
-            color: #7b1fa2;
-        }
-        
-        .vitals-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .vital-item {
-            text-align: center;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-        }
-        
-        .vital-label {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-        
-        .vital-value {
-            font-size: 20px;
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .vital-normal {
-            color: #4CAF50;
-        }
-        
-        .vital-warning {
-            color: #ff9800;
-        }
-        
-        .vital-critical {
-            color: #f44336;
-        }
-        
-        .progress-section {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-        
-        .progress-section h4 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
-        
-        .progress-section p {
-            color: #666;
-            line-height: 1.5;
-            margin-bottom: 8px;
-        }
-        
-        .staff-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
-            font-size: 13px;
-            color: #888;
-        }
-        
-        .chart-container {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .chart-toggle {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .chart-toggle button {
-            padding: 8px 16px;
-            border: 2px solid #ddd;
-            background: white;
-            color: #666;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .chart-toggle button.active {
-            background: #2196F3;
-            color: white;
-            border-color: #2196F3;
-        }
-        
-        .no-daily-logs {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-            background: #f9f9f9;
-            border-radius: 10px;
-            border: 2px dashed #ddd;
-        }
-        
-        .overdue-alert {
-            background: #ffebee;
-            border-left: 4px solid #f44336;
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-        
-        .due-soon-alert {
-            background: #fff8e1;
-            border-left: 4px solid #ff9800;
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-        
-        .on-time-status {
-            background: #e8f5e8;
-            border-left: 4px solid #4CAF50;
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-        
-        @media (max-width: 768px) {
-            .vitals-grid {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-                gap: 10px;
-            }
-            
-            .daily-log-header {
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
-            }
-            
-            .staff-info {
-                flex-direction: column;
-                gap: 5px;
-                text-align: center;
-            }
-            
-            .chart-toggle {
-                flex-direction: column;
-            }
-        }
+
     </style>
 </head>
 <body>
@@ -967,7 +730,6 @@
                     <!-- Patient Actions -->
                     <div style="margin-top: 30px; text-align: center;">
                         <button id="addOperativeNoteBtn" class="btn btn-primary">🔪 Add Operative Note</button>
-                        <button id="addDailyLogBtn" class="btn" style="margin-left: 10px;">📝 Add Daily Log</button>
                         <button id="createDischargeBtn" class="btn" style="margin-left: 10px;">🏠 Discharge Summary</button>
                         <button id="deletePatientBtn" class="btn btn-danger" style="margin-left: 20px;">🗑️ Delete Patient</button>
                     </div>
@@ -1214,49 +976,8 @@
                     </div>
                 </div>
             
-            <!-- Progress Notes Section -->
-            <div style="background: #fff8e1; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <h3 style="margin-bottom: 15px; color: #f57c00;">📋 Progress Notes</h3>
-                
-                <div class="form-group">
-                    <label for="progressNote">Clinical Assessment</label>
-                    <textarea id="progressNote" placeholder="Patient's overall condition, mobility, appetite, wound status, etc..." style="height: 100px;"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="medicationsGiven">Medications Given</label>
-                    <textarea id="medicationsGiven" placeholder="List medications administered during this shift..." style="height: 80px;"></textarea>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="nurseOnDuty">Nurse/Doctor on Duty</label>
-                        <input type="text" id="nurseOnDuty" placeholder="Staff member name">
-                    </div>
-                    <div class="form-group">
-                        <label for="shiftType">Shift</label>
-                        <select id="shiftType">
-                            <option value="">Select Shift</option>
-                            <option value="Day Shift">Day Shift (6 AM - 6 PM)</option>
-                            <option value="Night Shift">Night Shift (6 PM - 6 AM)</option>
-                            <option value="Morning">Morning (6 AM - 2 PM)</option>
-                            <option value="Evening">Evening (2 PM - 10 PM)</option>
-                            <option value="Night">Night (10 PM - 6 AM)</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="text-align: right; margin-top: 30px;">
-                <button type="button" id="cancelDailyLog" class="btn btn-secondary">Cancel</button>
-                <button type="submit" class="btn btn-primary">Save Daily Log</button>
-            </div>
-            
-            <div id="dailyLogError" class="error-message"></div>
-            <div id="dailyLogSuccess" class="success-message"></div>
-        </form>
+        </div>
     </div>
-</div>
 
     <script>
         // Firebase Configuration
@@ -1676,13 +1397,7 @@
                         </div>
                     </div>
                                     
-                <div class="detail-section" style="grid-column: 1 / -1;">
-                    <h3>📊 Daily Logs & Vitals</h3>
-                    <div id="dailyLogsContainer">
-                        <button class="btn btn-primary" onclick="showView('viewDailyLogs'); loadDailyLogs('${patient.id}');" style="margin-right: 10px;">📊 View All Logs</button>
-                        <span style="color: #666; font-style: italic;">Click to view vitals timeline and daily progress</span>
-                    </div>
-                </div>
+
                 </div>
             `;
                     
