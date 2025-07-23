@@ -1006,6 +1006,7 @@
                         <button id="addOperativeNoteBtn" class="btn btn-primary">🔪 Add Operative Note</button>
                         <button id="viewDailyLogsBtn" class="btn btn-primary" style="margin-left: 10px;">📊 Daily Logs</button>
                         <button id="createDischargeBtn" class="btn btn-success" style="margin-left: 10px; background: #28a745;">🏠 Create Discharge Summary</button>
+                        <button onclick="testPrint()" class="btn btn-secondary" style="margin-left: 10px;">🔧 Test Print</button>
                         <button id="deletePatientBtn" class="btn btn-danger" style="margin-left: 20px;">🗑️ Delete Patient</button>
                     </div>
                 </div>
@@ -3890,37 +3891,74 @@ Return to ED if experiencing:
             generateAndPrintDischargeSummary();
         });
         
-        // Generate and print discharge summary
-        async function generateAndPrintDischargeSummary() {
-            try {
-                let dischargeSummary = currentDischargeSummary;
-                
-                // If no current summary, try to load from database
-                if (!dischargeSummary) {
-                    const snapshot = await db.collection('patients').doc(currentPatientId).collection('dischargeSummary').orderBy('createdAt', 'desc').limit(1).get();
-                    
-                    if (!snapshot.empty) {
-                        dischargeSummary = snapshot.docs[0].data();
-                    } else {
-                        alert('No discharge summary found for this patient.');
-                        return;
-                    }
-                }
-                
-                // Generate print content
-                const printContent = generateDischargeSummaryHTML(dischargeSummary);
-                
-                // Insert content into print area
-                document.getElementById('printContent').innerHTML = printContent;
-                
-                // Print
-                window.print();
-                
-            } catch (error) {
-                console.error('Error printing discharge summary:', error);
-                alert('Error generating discharge summary for printing.');
+// Generate and print discharge summary (REPLACE THE EXISTING FUNCTION)
+async function generateAndPrintDischargeSummary() {
+    try {
+        let dischargeSummary = currentDischargeSummary;
+        
+        // If no current summary, try to load from database
+        if (!dischargeSummary) {
+            const snapshot = await db.collection('patients').doc(currentPatientId).collection('dischargeSummary').orderBy('createdAt', 'desc').limit(1).get();
+            
+            if (!snapshot.empty) {
+                dischargeSummary = snapshot.docs[0].data();
+                currentDischargeSummary = dischargeSummary; // Store it for future use
+            } else {
+                alert('No discharge summary found for this patient.');
+                return;
             }
         }
+        
+        // Ensure we have patient data
+        if (!currentPatientData) {
+            alert('Patient data not available for printing.');
+            return;
+        }
+        
+        // Generate print content
+        const printContent = generateDischargeSummaryHTML(dischargeSummary);
+        
+        // Insert content into print area
+        const printArea = document.getElementById('printContent');
+        if (!printArea) {
+            console.error('Print content area not found');
+            alert('Print area not found. Please refresh the page and try again.');
+            return;
+        }
+        
+        printArea.innerHTML = printContent;
+        
+        // Small delay to ensure content is rendered
+        setTimeout(() => {
+            window.print();
+        }, 100);
+        
+    } catch (error) {
+        console.error('Error printing discharge summary:', error);
+        alert('Error generating discharge summary for printing: ' + error.message);
+    }
+}
+
+        // Test function to debug printing (ADD THIS TEMPORARILY)
+function testPrint() {
+    console.log('Test Print Function Called');
+    console.log('currentPatientData:', currentPatientData);
+    console.log('currentDischargeSummary:', currentDischargeSummary);
+    console.log('currentPatientId:', currentPatientId);
+    
+    const printArea = document.getElementById('printContent');
+    console.log('Print area found:', !!printArea);
+    
+    if (printArea) {
+        printArea.innerHTML = '<h1>TEST PRINT CONTENT</h1><p>This is a test to see if printing works.</p>';
+        setTimeout(() => {
+            window.print();
+        }, 100);
+    } else {
+        alert('Print area not found!');
+    }
+}
+        
         
         // Generate HTML for discharge summary printing
         function generateDischargeSummaryHTML(summary) {
