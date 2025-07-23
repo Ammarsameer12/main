@@ -669,6 +669,152 @@
                 justify-content: center;
             }
         }
+        /* Print Styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            .print-area, .print-area * {
+                visibility: visible;
+            }
+            
+            .print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+                padding: 20px;
+                font-family: 'Times New Roman', serif;
+                font-size: 12pt;
+                line-height: 1.4;
+                color: black;
+            }
+            
+            .print-header {
+                text-align: center;
+                border-bottom: 2px solid #000;
+                padding-bottom: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .print-header h1 {
+                font-size: 18pt;
+                margin: 0 0 5px 0;
+                color: #000;
+            }
+            
+            .print-header h2 {
+                font-size: 16pt;
+                margin: 0;
+                color: #000;
+            }
+            
+            .print-section {
+                margin-bottom: 15px;
+                page-break-inside: avoid;
+            }
+            
+            .print-section h3 {
+                font-size: 14pt;
+                font-weight: bold;
+                color: #000;
+                margin: 0 0 8px 0;
+                border-bottom: 1px solid #000;
+                padding-bottom: 2px;
+            }
+            
+            .print-section p, .print-section div {
+                margin: 0 0 8px 0;
+                color: #000;
+            }
+            
+            .print-info-grid {
+                display: table;
+                width: 100%;
+                margin-bottom: 15px;
+            }
+            
+            .print-info-row {
+                display: table-row;
+            }
+            
+            .print-info-cell {
+                display: table-cell;
+                padding: 3px 10px 3px 0;
+                vertical-align: top;
+                width: 50%;
+            }
+            
+            .print-label {
+                font-weight: bold;
+                display: inline-block;
+                min-width: 120px;
+            }
+            
+            .print-signature-area {
+                margin-top: 40px;
+                border-top: 1px solid #000;
+                padding-top: 20px;
+            }
+            
+            .print-signature-line {
+                border-bottom: 1px solid #000;
+                margin: 30px 0 5px 0;
+                width: 300px;
+                height: 20px;
+            }
+        }
+        
+        /* Discharge Summary Specific Styles */
+        .discharge-summary-preview {
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            background: #f8fff9;
+            display: none;
+        }
+        
+        .discharge-summary-preview.show {
+            display: block;
+        }
+        
+        .discharge-summary-preview h3 {
+            color: #28a745;
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #28a745;
+            padding-bottom: 10px;
+        }
+        
+        .discharge-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .discharge-info-item {
+            padding: 10px;
+            background: #fff;
+            border-radius: 5px;
+            border-left: 3px solid #28a745;
+        }
+        
+        .discharge-info-label {
+            font-weight: bold;
+            color: #28a745;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .discharge-info-value {
+            color: #333;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
@@ -859,7 +1005,7 @@
                     <div style="margin-top: 30px; text-align: center;">
                         <button id="addOperativeNoteBtn" class="btn btn-primary">🔪 Add Operative Note</button>
                         <button id="viewDailyLogsBtn" class="btn btn-primary" style="margin-left: 10px;">📊 Daily Logs</button>
-                        <button id="createDischargeBtn" class="btn" style="margin-left: 10px;">🏠 Discharge Summary</button>
+                        <button id="createDischargeBtn" class="btn btn-success" style="margin-left: 10px; background: #28a745;">🏠 Create Discharge Summary</button>
                         <button id="deletePatientBtn" class="btn btn-danger" style="margin-left: 20px;">🗑️ Delete Patient</button>
                     </div>
                 </div>
@@ -1412,9 +1558,9 @@
           function showView(viewName) {
            // Hide all views
            const views = [
-               'patientsView', 'addPatientView', 'patientDetailView', 'editPatientView',
-               'operativeNoteView', 'viewOperativeNotesView', 'dailyLogsView', 'addDailyLogView',
-               'dischargeSummaryView'
+    'patientsView', 'addPatientView', 'patientDetailView', 'editPatientView',
+    'operativeNoteView', 'viewOperativeNotesView', 'dailyLogsView', 'addDailyLogView',
+    'dischargeSummaryView'
            ];
            
            views.forEach(viewId => {
@@ -2726,8 +2872,9 @@
         showView = function(viewName) {
             // Hide all views including daily logs
             const views = [
-                'patientsView', 'addPatientView', 'patientDetailView', 'editPatientView',
-                'operativeNoteView', 'viewOperativeNotesView', 'dailyLogsView', 'addDailyLogView'
+    'patientsView', 'addPatientView', 'patientDetailView', 'editPatientView',
+    'operativeNoteView', 'viewOperativeNotesView', 'dailyLogsView', 'addDailyLogView',
+    'dischargeSummaryView'
             ];
             
             views.forEach(viewId => {
@@ -2768,9 +2915,9 @@
             } else if (viewName === 'addDailyLog') {
                 const addDailyLogView = document.getElementById('addDailyLogView');
                 if (addDailyLogView) addDailyLogView.classList.remove('hidden');
-            } else if (viewName === 'dischargeSummary') {
-                const dischargeSummaryView = document.getElementById('dischargeSummaryView');
-                if (dischargeSummaryView) dischargeSummaryView.classList.remove('hidden');
+} else if (viewName === 'dischargeSummary') {
+    const dischargeSummaryView = document.getElementById('dischargeSummaryView');
+    if (dischargeSummaryView) dischargeSummaryView.classList.remove('hidden');
             }
         };
         
@@ -3515,6 +3662,293 @@
         
         // Initialize app
         showScreen('loading');
+        // Discharge Summary functionality
+        let currentDischargeSummary = null;
+        
+        // DOM elements for discharge summary
+        const dischargeSummaryView = document.getElementById('dischargeSummaryView');
+        const dischargeSummaryForm = document.getElementById('dischargeSummaryForm');
+        const createDischargeBtn = document.getElementById('createDischargeBtn');
+        const backFromDischarge = document.getElementById('backFromDischarge');
+        const cancelDischarge = document.getElementById('cancelDischarge');
+        const printDischargeBtn = document.getElementById('printDischargeBtn');
+        
+        // Create discharge summary button handler
+        createDischargeBtn.addEventListener('click', () => {
+            showView('dischargeSummary');
+            prepareDischargeSummaryForm();
+        });
+        
+        // Navigation handlers
+        backFromDischarge.addEventListener('click', () => showView('patientDetail'));
+        cancelDischarge.addEventListener('click', () => showView('patientDetail'));
+        
+        // Prepare discharge summary form
+        function prepareDischargeSummaryForm() {
+            // Reset form
+            dischargeSummaryForm.reset();
+            
+            // Set today's date and current time
+            document.getElementById('dischargeDate').valueAsDate = new Date();
+            document.getElementById('dischargeTime').value = new Date().toTimeString().slice(0,5);
+            
+            // Set discharging physician to current user
+            document.getElementById('dischargingPhysician').value = userEmail.textContent.split('@')[0].replace('.', ' ');
+            
+            // Calculate length of stay
+            if (currentPatientData && currentPatientData.admissionDate) {
+                const admissionDate = new Date(currentPatientData.admissionDate);
+                const today = new Date();
+                const daysDiff = Math.ceil((today - admissionDate) / (1000 * 60 * 60 * 24));
+                document.getElementById('lengthOfStay').value = daysDiff > 0 ? daysDiff : 1;
+            }
+            
+            // Pre-fill some fields if operative notes exist
+            prefillFromOperativeNotes();
+        }
+        
+        // Pre-fill discharge summary from existing data
+        async function prefillFromOperativeNotes() {
+            try {
+                // Get the most recent operative note
+                const opNotesSnapshot = await db.collection('patients').doc(currentPatientId).collection('operativeNotes').orderBy('createdAt', 'desc').limit(1).get();
+                
+                if (!opNotesSnapshot.empty) {
+                    const latestOpNote = opNotesSnapshot.docs[0].data();
+                    
+                    // Pre-fill procedures performed
+                    if (latestOpNote.surgeryType) {
+                        document.getElementById('proceduresPerformed').value = latestOpNote.surgeryType;
+                    }
+                    
+                    // Create a basic hospital course summary
+                    const hospitalCourse = `Patient was admitted for ${latestOpNote.surgeryType || 'surgical procedure'}. Surgery was performed successfully without complications. Patient tolerated the procedure well and had an uneventful post-operative course.`;
+                    document.getElementById('hospitalCourse').value = hospitalCourse;
+                    
+                    // Set discharge diagnosis based on presenting complaint
+                    if (currentPatientData.presentingComplaint) {
+                        document.getElementById('dischargeDiagnosis').value = `Post-operative status following ${latestOpNote.surgeryType || 'surgical procedure'}`;
+                    }
+                }
+                
+                // Pre-fill basic follow-up instructions
+                const followUpInstructions = `Follow up in urology clinic in 2-4 weeks.
+Return to ED if experiencing:
+- Fever >101.5°F
+- Severe pain not controlled by medications
+- Signs of infection (redness, swelling, drainage)
+- Difficulty urinating or blood in urine
+- Any concerning symptoms`;
+                
+                document.getElementById('followUpInstructions').value = followUpInstructions;
+                
+                // Basic discharge instructions
+                const dischargeInstructions = `- Take medications as prescribed
+- Drink plenty of fluids (8-10 glasses of water daily)
+- Avoid heavy lifting >10 lbs for 2 weeks
+- May shower but avoid baths for 1 week
+- Return to normal activities gradually as tolerated
+- Follow up as scheduled`;
+                
+                document.getElementById('dischargeInstructions').value = dischargeInstructions;
+                
+            } catch (error) {
+                console.error('Error prefilling discharge summary:', error);
+            }
+        }
+        // Discharge summary form handler
+        dischargeSummaryForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const dischargeSummaryData = {
+                    dischargeDate: document.getElementById('dischargeDate').value,
+                    dischargeTime: document.getElementById('dischargeTime').value,
+                    lengthOfStay: parseInt(document.getElementById('lengthOfStay').value) || 0,
+                    dischargeCondition: document.getElementById('dischargeCondition').value,
+                    hospitalCourse: document.getElementById('hospitalCourse').value,
+                    dischargeDiagnosis: document.getElementById('dischargeDiagnosis').value,
+                    proceduresPerformed: document.getElementById('proceduresPerformed').value,
+                    dischargeMedications: document.getElementById('dischargeMedications').value,
+                    followUpInstructions: document.getElementById('followUpInstructions').value,
+                    dischargeInstructions: document.getElementById('dischargeInstructions').value,
+                    dischargingPhysician: document.getElementById('dischargingPhysician').value,
+                    dischargeDestination: document.getElementById('dischargeDestination').value,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdBy: currentUser.uid,
+                    createdByName: userEmail.textContent,
+                    patientId: currentPatientId
+                };
+                
+                // Save discharge summary
+                await db.collection('patients').doc(currentPatientId).collection('dischargeSummary').add(dischargeSummaryData);
+                
+                // Update patient status to discharged
+                await db.collection('patients').doc(currentPatientId).update({
+                    status: 'discharged',
+                    dischargeDate: dischargeSummaryData.dischargeDate,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Update current patient data
+                currentPatientData.status = 'discharged';
+                currentPatientData.dischargeDate = dischargeSummaryData.dischargeDate;
+                currentDischargeSummary = dischargeSummaryData;
+                
+                showMessage('dischargeSuccess', 'Patient discharged successfully!', true);
+                
+                // Show print button
+                printDischargeBtn.style.display = 'inline-block';
+                
+                setTimeout(() => {
+                    showView('patientDetail');
+                    displayPatientDetail(currentPatientData);
+                    loadPatients(); // Refresh the list
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Error creating discharge summary:', error);
+                showMessage('dischargeError', 'Error creating discharge summary. Please try again.');
+            }
+        });
+        
+        // Print discharge summary
+        printDischargeBtn.addEventListener('click', () => {
+            generateAndPrintDischargeSummary();
+        });
+        
+        // Generate and print discharge summary
+        async function generateAndPrintDischargeSummary() {
+            try {
+                let dischargeSummary = currentDischargeSummary;
+                
+                // If no current summary, try to load from database
+                if (!dischargeSummary) {
+                    const snapshot = await db.collection('patients').doc(currentPatientId).collection('dischargeSummary').orderBy('createdAt', 'desc').limit(1).get();
+                    
+                    if (!snapshot.empty) {
+                        dischargeSummary = snapshot.docs[0].data();
+                    } else {
+                        alert('No discharge summary found for this patient.');
+                        return;
+                    }
+                }
+                
+                // Generate print content
+                const printContent = generateDischargeSummaryHTML(dischargeSummary);
+                
+                // Insert content into print area
+                document.getElementById('printContent').innerHTML = printContent;
+                
+                // Print
+                window.print();
+                
+            } catch (error) {
+                console.error('Error printing discharge summary:', error);
+                alert('Error generating discharge summary for printing.');
+            }
+        }
+        
+        // Generate HTML for discharge summary printing
+        function generateDischargeSummaryHTML(summary) {
+            const formatDate = (dateStr) => {
+                if (!dateStr) return 'N/A';
+                return new Date(dateStr).toLocaleDateString();
+            };
+            
+            return `
+                <div class="print-header">
+                    <h1>HOSPITAL DISCHARGE SUMMARY</h1>
+                    <h2>Department of Urology</h2>
+                </div>
+                
+                <div class="print-info-grid">
+                    <div class="print-info-row">
+                        <div class="print-info-cell">
+                            <span class="print-label">Patient Name:</span> ${currentPatientData.name || 'N/A'}
+                        </div>
+                        <div class="print-info-cell">
+                            <span class="print-label">MRN:</span> ${currentPatientData.mrn || 'N/A'}
+                        </div>
+                    </div>
+                    <div class="print-info-row">
+                        <div class="print-info-cell">
+                            <span class="print-label">Age:</span> ${currentPatientData.age || 'N/A'}
+                        </div>
+                        <div class="print-info-cell">
+                            <span class="print-label">Gender:</span> ${currentPatientData.gender || 'N/A'}
+                        </div>
+                    </div>
+                    <div class="print-info-row">
+                        <div class="print-info-cell">
+                            <span class="print-label">Admission Date:</span> ${formatDate(currentPatientData.admissionDate)}
+                        </div>
+                        <div class="print-info-cell">
+                            <span class="print-label">Discharge Date:</span> ${formatDate(summary.dischargeDate)}
+                        </div>
+                    </div>
+                    <div class="print-info-row">
+                        <div class="print-info-cell">
+                            <span class="print-label">Length of Stay:</span> ${summary.lengthOfStay || 'N/A'} days
+                        </div>
+                        <div class="print-info-cell">
+                            <span class="print-label">Room Number:</span> ${currentPatientData.roomNumber || 'N/A'}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="print-section">
+                    <h3>PRESENTING COMPLAINT</h3>
+                    <p>${currentPatientData.presentingComplaint || 'Not documented'}</p>
+                </div>
+                
+                <div class="print-section">
+                    <h3>HOSPITAL COURSE</h3>
+                    <p>${summary.hospitalCourse || 'Not documented'}</p>
+                </div>
+                
+                <div class="print-section">
+                    <h3>PROCEDURES PERFORMED</h3>
+                    <p>${summary.proceduresPerformed || 'None documented'}</p>
+                </div>
+                
+                <div class="print-section">
+                    <h3>DISCHARGE DIAGNOSIS</h3>
+                    <p>${summary.dischargeDiagnosis || 'Not documented'}</p>
+                </div>
+                
+                <div class="print-section">
+                    <h3>CONDITION AT DISCHARGE</h3>
+                    <p>${summary.dischargeCondition || 'Not documented'}</p>
+                </div>
+                
+                <div class="print-section">
+                    <h3>DISCHARGE MEDICATIONS</h3>
+                    <p>${summary.dischargeMedications || 'None prescribed'}</p>
+                </div>
+                
+                <div class="print-section">
+                    <h3>FOLLOW-UP INSTRUCTIONS</h3>
+                    <p style="white-space: pre-wrap;">${summary.followUpInstructions || 'Not specified'}</p>
+                </div>
+                
+                <div class="print-section">
+                    <h3>PATIENT EDUCATION & DISCHARGE INSTRUCTIONS</h3>
+                    <p style="white-space: pre-wrap;">${summary.dischargeInstructions || 'Not specified'}</p>
+                </div>
+                
+                <div class="print-section">
+                    <h3>DISCHARGE DESTINATION</h3>
+                    <p>${summary.dischargeDestination || 'Not specified'}</p>
+                </div>
+                
+                <div class="print-signature-area">
+                    <p><strong>Discharging Physician:</strong> ${summary.dischargingPhysician || 'Not specified'}</p>
+                    <div class="print-signature-line"></div>
+                    <p style="margin-top: 5px;"><strong>Signature & Date</strong></p>
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>
