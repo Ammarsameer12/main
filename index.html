@@ -3402,6 +3402,195 @@
         addDailyLogBtn.addEventListener('click', showAddDailyLogForm);
         backFromDailyLogs.addEventListener('click', () => showView('patientDetail'));
         cancelDailyLog.addEventListener('click', () => showView('dailyLogs'));
+        
+        // Simple Discharge Summary functionality
+        const simpleDischargeView = document.getElementById('simpleDischargeView');
+        const simpleSummaryPreview = document.getElementById('simpleSummaryPreview');
+        const simpleDischargeForm = document.getElementById('simpleDischargeForm');
+        const backFromSimpleDischarge = document.getElementById('backFromSimpleDischarge');
+        const cancelSimpleDischarge = document.getElementById('cancelSimpleDischarge');
+        const printSimpleSummary = document.getElementById('printSimpleSummary');
+        const backFromPreview = document.getElementById('backFromPreview');
+        
+        // Update showView to handle simple discharge
+        const originalShowView3 = showView;
+        showView = function(viewName) {
+            // Hide all views
+            const views = [
+                'patientsView', 'addPatientView', 'patientDetailView', 'editPatientView',
+                'operativeNoteView', 'viewOperativeNotesView', 'dailyLogsView', 'addDailyLogView',
+                'simpleDischargeView', 'simpleSummaryPreview'
+            ];
+            
+            views.forEach(viewId => {
+                const element = document.getElementById(viewId);
+                if (element) element.classList.add('hidden');
+            });
+    
+            // Reset navigation buttons
+            const showPatientsBtn = document.getElementById('showPatientsBtn');
+            const showAddPatientBtn = document.getElementById('showAddPatientBtn');
+            if (showPatientsBtn) showPatientsBtn.classList.remove('btn-primary');
+            if (showAddPatientBtn) showAddPatientBtn.classList.remove('btn-primary');
+    
+            // Show requested view
+            if (viewName === 'patients') {
+                const patientsView = document.getElementById('patientsView');
+                if (patientsView) patientsView.classList.remove('hidden');
+                if (showPatientsBtn) showPatientsBtn.classList.add('btn-primary');
+            } else if (viewName === 'addPatient') {
+                const addPatientView = document.getElementById('addPatientView');
+                if (addPatientView) addPatientView.classList.remove('hidden');
+                if (showAddPatientBtn) showAddPatientBtn.classList.add('btn-primary');
+            } else if (viewName === 'patientDetail') {
+                const patientDetailView = document.getElementById('patientDetailView');
+                if (patientDetailView) patientDetailView.classList.remove('hidden');
+            } else if (viewName === 'editPatient') {
+                const editPatientView = document.getElementById('editPatientView');
+                if (editPatientView) editPatientView.classList.remove('hidden');
+            } else if (viewName === 'operativeNote') {
+                const operativeNoteView = document.getElementById('operativeNoteView');
+                if (operativeNoteView) operativeNoteView.classList.remove('hidden');
+            } else if (viewName === 'viewOperativeNotes') {
+                const viewOperativeNotesView = document.getElementById('viewOperativeNotesView');
+                if (viewOperativeNotesView) viewOperativeNotesView.classList.remove('hidden');
+            } else if (viewName === 'dailyLogs') {
+                const dailyLogsView = document.getElementById('dailyLogsView');
+                if (dailyLogsView) dailyLogsView.classList.remove('hidden');
+            } else if (viewName === 'addDailyLog') {
+                const addDailyLogView = document.getElementById('addDailyLogView');
+                if (addDailyLogView) addDailyLogView.classList.remove('hidden');
+            } else if (viewName === 'simpleDischarge') {
+                const simpleDischargeView = document.getElementById('simpleDischargeView');
+                if (simpleDischargeView) simpleDischargeView.classList.remove('hidden');
+            } else if (viewName === 'simpleSummaryPreview') {
+                const simpleSummaryPreview = document.getElementById('simpleSummaryPreview');
+                if (simpleSummaryPreview) simpleSummaryPreview.classList.remove('hidden');
+            }
+        };
+        
+        // Show simple discharge form
+        function showSimpleDischargeForm() {
+            showView('simpleDischarge');
+            
+            // Auto-populate patient info
+            if (currentPatientData) {
+                document.getElementById('simplePatientName').value = currentPatientData.name || '';
+                document.getElementById('simplePatientMRN').value = currentPatientData.mrn || '';
+                document.getElementById('simpleAdmissionDate').value = currentPatientData.admissionDate || '';
+                document.getElementById('simpleDischargeDate').valueAsDate = new Date();
+                document.getElementById('simpleAttendingDoc').value = userEmail.textContent.split('@')[0].replace('.', ' ') || '';
+            }
+        }
+        
+        // Generate simple summary
+        function generateSimpleSummary(formData) {
+            const summaryHtml = `
+                <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 15px;">
+                    <h1 style="margin: 0; font-size: 24px; font-weight: bold;">DISCHARGE SUMMARY</h1>
+                    <h2 style="margin: 5px 0 0 0; font-size: 18px; font-weight: normal;">Department of Urology</h2>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                    <div>
+                        <p><strong>Patient Name:</strong> ${formData.patientName}</p>
+                        <p><strong>MRN:</strong> ${formData.patientMRN}</p>
+                    </div>
+                    <div>
+                        <p><strong>Admission Date:</strong> ${new Date(formData.admissionDate).toLocaleDateString()}</p>
+                        <p><strong>Discharge Date:</strong> ${new Date(formData.dischargeDate).toLocaleDateString()}</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h3 style="font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 3px; margin-bottom: 8px; font-size: 14px;">Final Diagnosis</h3>
+                    <p style="font-size: 13px; line-height: 1.5;">${formData.finalDiagnosis.replace(/\n/g, '<br>')}</p>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h3 style="font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 3px; margin-bottom: 8px; font-size: 14px;">Hospital Course</h3>
+                    <p style="font-size: 13px; line-height: 1.5;">${formData.hospitalCourse.replace(/\n/g, '<br>')}</p>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h3 style="font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 3px; margin-bottom: 8px; font-size: 14px;">Discharge Medications</h3>
+                    <p style="font-size: 13px; line-height: 1.5;">${formData.dischargeMeds.replace(/\n/g, '<br>')}</p>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h3 style="font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 3px; margin-bottom: 8px; font-size: 14px;">Follow-up Instructions</h3>
+                    <p style="font-size: 13px; line-height: 1.5;">${formData.followUp.replace(/\n/g, '<br>')}</p>
+                </div>
+                
+                <div style="margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 50px;">
+                    <div>
+                        <div style="border-bottom: 1px solid #333; height: 30px; margin-bottom: 5px;"></div>
+                        <p style="font-size: 12px; text-align: center;">Attending Physician: ${formData.attendingDoc}</p>
+                    </div>
+                    <div>
+                        <div style="border-bottom: 1px solid #333; height: 30px; margin-bottom: 5px;"></div>
+                        <p style="font-size: 12px; text-align: center;">Date: ${new Date().toLocaleDateString()}</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('simpleSummaryContent').innerHTML = summaryHtml;
+            showView('simpleSummaryPreview');
+        }
+
+        // Simple discharge event handlers
+        document.getElementById('createDischargeBtn').addEventListener('click', showSimpleDischargeForm);
+        backFromSimpleDischarge.addEventListener('click', () => showView('patientDetail'));
+        cancelSimpleDischarge.addEventListener('click', () => showView('patientDetail'));
+        backFromPreview.addEventListener('click', () => showView('patientDetail'));
+        printSimpleSummary.addEventListener('click', () => window.print());
+        
+        // Simple discharge form handler
+        simpleDischargeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const formData = {
+                    patientName: document.getElementById('simplePatientName').value,
+                    patientMRN: document.getElementById('simplePatientMRN').value,
+                    admissionDate: document.getElementById('simpleAdmissionDate').value,
+                    dischargeDate: document.getElementById('simpleDischargeDate').value,
+                    finalDiagnosis: document.getElementById('simpleFinalDiagnosis').value,
+                    hospitalCourse: document.getElementById('simpleHospitalCourse').value,
+                    dischargeMeds: document.getElementById('simpleDischargeMeds').value,
+                    followUp: document.getElementById('simpleFollowUp').value,
+                    attendingDoc: document.getElementById('simpleAttendingDoc').value,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdBy: currentUser.uid,
+                    createdByName: userEmail.textContent,
+                    patientId: currentPatientId
+                };
+                
+                // Save to Firebase
+                await db.collection('patients').doc(currentPatientId).collection('dischargeSummaries').add(formData);
+                
+                // Update patient status
+                await db.collection('patients').doc(currentPatientId).update({
+                    status: 'discharged',
+                    dischargeDate: formData.dischargeDate,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Update current patient data
+                currentPatientData.status = 'discharged';
+                
+                showMessage('simpleDischargeSuccess', 'Discharge summary saved successfully!', true);
+                
+                // Generate and show summary
+                setTimeout(() => {
+                    generateSimpleSummary(formData);
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Error saving discharge summary:', error);
+                showMessage('simpleDischargeError', 'Error saving discharge summary. Please try again.');
+            }
+        });
 
         // Initialize app
         showScreen('loading');
