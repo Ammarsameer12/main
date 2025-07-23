@@ -1909,14 +1909,87 @@
                             <div class="spinner" style="width: 20px; height: 20px;"></div>
                             <p>Loading operative notes...</p>
                         </div>
-                    </div>
+                    </div>            
+                </div>
 
-                                    
+                <div class="detail-section" style="grid-column: 1 / -1;">
+                    <h3>🏠 Discharge Summary</h3>
+                    <div id="dischargeSummaryContainer">
+                        <div class="loading" style="text-align: center; padding: 20px;">
+                            <div class="spinner" style="width: 20px; height: 20px;"></div>
+                            <p>Loading discharge summary...</p>
+                        </div>
+                    </div>
                 </div>
             `;
                     
         // Load operative notes
         loadOperativeNotes(patient.id);
+        loadDischargeSummary(patient.id);
+        }
+
+                // Load and display discharge summary
+        async function loadDischargeSummary(patientId) {
+            try {
+                const container = document.getElementById('dischargeSummaryContainer');
+                
+                const snapshot = await db.collection('patients').doc(patientId).collection('dischargeSummary').orderBy('createdAt', 'desc').limit(1).get();
+                
+                if (snapshot.empty) {
+                    container.innerHTML = '<p style="color: #666; font-style: italic;">No discharge summary created yet.</p>';
+                    return;
+                }
+                
+                const dischargeSummary = snapshot.docs[0].data();
+                const date = dischargeSummary.createdAt ? dischargeSummary.createdAt.toDate().toLocaleDateString() : 'Unknown date';
+                
+                container.innerHTML = `
+                    <div class="discharge-summary-preview show">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h4 style="color: #28a745; margin: 0;">Discharge Summary - ${date}</h4>
+                            <button class="btn btn-sm btn-primary" onclick="generateAndPrintDischargeSummary()" style="padding: 4px 8px; font-size: 12px;">
+                                🖨️ Print Summary
+                            </button>
+                        </div>
+                        
+                        <div class="discharge-info-grid">
+                            <div class="discharge-info-item">
+                                <div class="discharge-info-label">Discharge Date</div>
+                                <div class="discharge-info-value">${dischargeSummary.dischargeDate || 'N/A'}</div>
+                            </div>
+                            <div class="discharge-info-item">
+                                <div class="discharge-info-label">Condition</div>
+                                <div class="discharge-info-value">${dischargeSummary.dischargeCondition || 'N/A'}</div>
+                            </div>
+                            <div class="discharge-info-item">
+                                <div class="discharge-info-label">Length of Stay</div>
+                                <div class="discharge-info-value">${dischargeSummary.lengthOfStay || 'N/A'} days</div>
+                            </div>
+                            <div class="discharge-info-item">
+                                <div class="discharge-info-label">Destination</div>
+                                <div class="discharge-info-value">${dischargeSummary.dischargeDestination || 'N/A'}</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 15px;">
+                            <strong>Hospital Course:</strong><br>
+                            <p style="margin-top: 5px; color: #666;">${(dischargeSummary.hospitalCourse || 'Not documented').substring(0, 200)}${(dischargeSummary.hospitalCourse || '').length > 200 ? '...' : ''}</p>
+                        </div>
+                        
+                        <div style="margin-top: 10px; font-size: 12px; color: #888;">
+                            Created by: ${dischargeSummary.createdByName || 'Unknown'}
+                        </div>
+                    </div>
+                `;
+                
+                // Store current discharge summary for printing
+                currentDischargeSummary = dischargeSummary;
+                
+            } catch (error) {
+                console.error('Error loading discharge summary:', error);
+                document.getElementById('dischargeSummaryContainer').innerHTML = 
+                    '<p style="color: #f44336;">Error loading discharge summary.</p>';
+            }
         }
 
         // Load and display operative notes
