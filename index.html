@@ -718,6 +718,320 @@
             color: #333;
             line-height: 1.4;
         }
+
+        /* Treatment Summary Styles */
+        .treatment-summary-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+        }
+        
+        .summary-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .summary-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+        
+        .summary-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .summary-patient-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+        }
+        
+        .patient-info-summary-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .patient-info-summary-card h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.5rem;
+        }
+        
+        .summary-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .summary-info-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .summary-info-item:hover {
+            transform: translateY(-2px);
+        }
+        
+        .summary-info-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            width: 40px;
+            text-align: center;
+        }
+        
+        .summary-info-content .summary-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .summary-info-content .summary-value {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+        
+        .timeline-section {
+            margin-bottom: 30px;
+        }
+        
+        .summary-section-title {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .summary-icon {
+            margin-right: 15px;
+            font-size: 2rem;
+        }
+        
+        .treatment-timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .treatment-timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+        
+        .timeline-item-summary {
+            position: relative;
+            margin-bottom: 25px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-left: 4px solid #667eea;
+            transition: transform 0.3s ease;
+        }
+        
+        .timeline-item-summary:hover {
+            transform: translateX(5px);
+        }
+        
+        .timeline-item-summary::before {
+            content: '';
+            position: absolute;
+            left: -37px;
+            top: 25px;
+            width: 12px;
+            height: 12px;
+            background: #667eea;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #667eea;
+        }
+        
+        .timeline-date-summary {
+            font-size: 0.9rem;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .timeline-title-summary {
+            font-size: 1.2rem;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .timeline-content-summary {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .vitals-summary-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .vitals-summary-card h2 {
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .vitals-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .vital-item-summary {
+            text-align: center;
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+        
+        .vital-item-summary:hover {
+            transform: scale(1.05);
+        }
+        
+        .vital-label-summary {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+        
+        .vital-value-summary {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .medications-summary-card {
+            background: #e3f2fd;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid #2196F3;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .medications-summary-card h2 {
+            margin-bottom: 20px;
+            color: #1976D2;
+            font-size: 1.5rem;
+        }
+        
+        .medication-item-summary {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .medication-item-summary:hover {
+            transform: translateX(5px);
+        }
+        
+        .print-actions-summary {
+            text-align: center;
+            margin: 40px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .print-actions-summary .btn {
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .print-actions-summary .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        @media print {
+            .print-actions-summary {
+                display: none;
+            }
+            
+            .treatment-summary-container {
+                font-size: 12pt;
+                max-width: none;
+                margin: 0;
+                padding: 10px;
+            }
+            
+            .summary-header {
+                background: #333 !important;
+                -webkit-print-color-adjust: exact;
+            }
+            
+            .timeline-item-summary,
+            .summary-info-item,
+            .medication-item-summary {
+                break-inside: avoid;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .summary-info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .vitals-summary-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+            
+            .summary-header h1 {
+                font-size: 2rem;
+            }
+            
+            .treatment-timeline {
+                padding-left: 20px;
+            }
+        }
+        
     </style>
 </head>
 <body>
@@ -909,6 +1223,7 @@
                         <button id="addOperativeNoteBtn" class="btn btn-primary">🔪 Add Operative Note</button>
                         <button id="viewDailyLogsBtn" class="btn btn-primary" style="margin-left: 10px;">📊 Daily Logs</button>
                         <button id="createDischargeBtn" class="btn btn-success" style="margin-left: 10px; background: #28a745;">🏠 Create Discharge Summary</button>
+                        <button id="viewTreatmentSummaryBtn" class="btn btn-primary" style="margin-left: 10px;">📋 View Treatment Summary</button>
                         <button id="deletePatientBtn" class="btn btn-danger" style="margin-left: 20px;">🗑️ Delete Patient</button>
                     </div>
                 </div>
@@ -1273,6 +1588,53 @@
         </form>
     </div>
 </div>
+
+                <!-- Treatment Summary View -->
+        <div id="treatmentSummaryView" class="hidden">
+            <div class="treatment-summary-container">
+                <!-- Header -->
+                <div class="summary-header">
+                    <h1>🏥 Treatment Summary</h1>
+                    <div class="summary-subtitle">Complete Medical Record & Care Timeline</div>
+                    <div class="summary-patient-name" id="summaryPatientName">Patient Name</div>
+                </div>
+                
+                <!-- Patient Information Card -->
+                <div class="patient-info-summary-card">
+                    <h2>👤 Patient Information</h2>
+                    <div class="summary-info-grid" id="summaryPatientInfo">
+                        <!-- Patient info will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Treatment Timeline -->
+                <div class="timeline-section">
+                    <h2 class="summary-section-title">
+                        <span class="summary-icon">⏰</span>
+                        Treatment Timeline
+                    </h2>
+                    <div class="treatment-timeline" id="treatmentTimeline">
+                        <!-- Timeline will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Latest Vitals -->
+                <div class="vitals-summary-card" id="vitalsSummaryCard">
+                    <!-- Vitals will be loaded here -->
+                </div>
+                
+                <!-- Medications & Instructions -->
+                <div class="medications-summary-card" id="medicationsSummaryCard">
+                    <!-- Medications will be loaded here -->
+                </div>
+                
+                <!-- Print Actions -->
+                <div class="print-actions-summary">
+                    <button class="btn btn-primary" onclick="window.print()">🖨️ Print Summary</button>
+                    <button class="btn btn-secondary" id="backFromTreatmentSummary">← Back to Patient</button>
+                </div>
+            </div>
+        </div>
 
 <!-- Add Daily Log Form -->
 <div id="addDailyLogView" class="hidden">
