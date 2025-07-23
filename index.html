@@ -3406,5 +3406,95 @@
         // Initialize app
         showScreen('loading');
     </script>
+
+    <!-- Simple Discharge Summary -->
+<div id="simpleDischargeView" class="hidden">
+    <div class="form-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h2>🏠 Discharge Summary</h2>
+            <button id="backFromSimpleDischarge" class="btn btn-secondary">← Back to Patient</button>
+        </div>
+        
+        <form id="simpleDischargeForm">
+            <!-- Basic Info (Auto-filled) -->
+            <div style="background: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="color: #1976D2; margin-bottom: 15px;">👤 Patient Information</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Patient Name</label>
+                        <input type="text" id="simplePatientName" readonly style="background: #f5f5f5;">
+                    </div>
+                    <div class="form-group">
+                        <label>MRN</label>
+                        <input type="text" id="simplePatientMRN" readonly style="background: #f5f5f5;">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Admission Date</label>
+                        <input type="text" id="simpleAdmissionDate" readonly style="background: #f5f5f5;">
+                    </div>
+                    <div class="form-group">
+                        <label>Discharge Date</label>
+                        <input type="date" id="simpleDischargeDate" required>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Essential Fields Only -->
+            <div class="form-group">
+                <label for="simpleFinalDiagnosis">Final Diagnosis *</label>
+                <textarea id="simpleFinalDiagnosis" required placeholder="Final diagnosis at discharge..." style="height: 80px;"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="simpleHospitalCourse">Hospital Course *</label>
+                <textarea id="simpleHospitalCourse" required placeholder="Brief summary of patient's hospital stay..." style="height: 100px;"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="simpleDischargeMeds">Discharge Medications *</label>
+                <textarea id="simpleDischargeMeds" required placeholder="Medications patient should take at home..." style="height: 80px;"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="simpleFollowUp">Follow-up Instructions *</label>
+                <textarea id="simpleFollowUp" required placeholder="Follow-up appointments and instructions..." style="height: 80px;"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="simpleAttendingDoc">Attending Physician</label>
+                <input type="text" id="simpleAttendingDoc" placeholder="Dr. Name">
+            </div>
+            
+            <div style="text-align: right; margin-top: 30px;">
+                <button type="button" id="cancelSimpleDischarge" class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-primary">💾 Save & Generate Summary</button>
+            </div>
+            
+            <div id="simpleDischargeError" class="error-message"></div>
+            <div id="simpleDischargeSuccess" class="success-message"></div>
+        </form>
+    </div>
+</div>
+
+<!-- Simple Summary Preview -->
+<div id="simpleSummaryPreview" class="hidden">
+    <div class="form-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h2>📄 Discharge Summary</h2>
+            <div>
+                <button id="printSimpleSummary" class="btn btn-primary">🖨️ Print</button>
+                <button id="backFromPreview" class="btn btn-secondary">← Back</button>
+            </div>
+        </div>
+        
+        <div id="simpleSummaryContent" style="background: white; padding: 30px; border: 1px solid #ddd; font-family: Arial, sans-serif; line-height: 1.6;">
+            <!-- Generated summary will appear here -->
+        </div>
+    </div>
+</div>
+    
 </body>
 </html>
