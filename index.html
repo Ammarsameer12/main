@@ -1761,6 +1761,294 @@
             appId: "1:996503565094:web:7aed31cf47abd380ab07e7"
         };
 
+        // Treatment Summary functionality
+const viewTreatmentSummaryBtn = document.getElementById('viewTreatmentSummaryBtn');
+const backFromTreatmentSummary = document.getElementById('backFromTreatmentSummary');
+
+// View treatment summary button handler
+viewTreatmentSummaryBtn.addEventListener('click', () => {
+    showView('treatmentSummary');
+    loadTreatmentSummary(currentPatientId);
+});
+
+// Back button handler
+backFromTreatmentSummary.addEventListener('click', () => {
+    showView('patientDetail');
+});
+
+// Load and display treatment summary
+async function loadTreatmentSummary(patientId) {
+    try {
+        if (!currentPatientData) {
+            alert('Patient data not available');
+            return;
+        }
+        
+        // Set patient name in header
+        document.getElementById('summaryPatientName').textContent = currentPatientData.name || 'Unknown Patient';
+        
+        // Load patient info
+        loadPatientInfoSummary(currentPatientData);
+        
+        // Load treatment timeline
+        await loadTreatmentTimeline(patientId);
+        
+        // Load latest vitals
+        await loadLatestVitals(patientId);
+        
+        // Load medications and instructions
+        loadMedicationsAndInstructions(currentPatientData);
+        
+    } catch (error) {
+        console.error('Error loading treatment summary:', error);
+        alert('Error loading treatment summary');
+    }
+}
+
+// Load patient information summary
+function loadPatientInfoSummary(patient) {
+    const container = document.getElementById('summaryPatientInfo');
+    
+    const formatDate = (dateStr) => {
+        if (!dateStr) return 'N/A';
+        try {
+            return new Date(dateStr).toLocaleDateString();
+        } catch {
+            return dateStr;
+        }
+    };
+    
+    container.innerHTML = `
+        <div class="summary-info-item">
+            <div class="summary-info-icon">👤</div>
+            <div class="summary-info-content">
+                <div class="summary-label">Patient Name</div>
+                <div class="summary-value">${patient.name || 'N/A'}</div>
+            </div>
+        </div>
+        <div class="summary-info-item">
+            <div class="summary-info-icon">🆔</div>
+            <div class="summary-info-content">
+                <div class="summary-label">MRN</div>
+                <div class="summary-value">${patient.mrn || 'N/A'}</div>
+            </div>
+        </div>
+        <div class="summary-info-item">
+            <div class="summary-info-icon">🎂</div>
+            <div class="summary-info-content">
+                <div class="summary-label">Age</div>
+                <div class="summary-value">${patient.age || 'N/A'} years</div>
+            </div>
+        </div>
+        <div class="summary-info-item">
+            <div class="summary-info-icon">🚻</div>
+            <div class="summary-info-content">
+                <div class="summary-label">Gender</div>
+                <div class="summary-value">${patient.gender || 'N/A'}</div>
+            </div>
+        </div>
+        <div class="summary-info-item">
+            <div class="summary-info-icon">🏥</div>
+            <div class="summary-info-content">
+                <div class="summary-label">Room</div>
+                <div class="summary-value">${patient.roomNumber || 'N/A'}</div>
+            </div>
+        </div>
+        <div class="summary-info-item">
+            <div class="summary-info-icon">📅</div>
+            <div class="summary-info-content">
+                <div class="summary-label">Admission</div>
+                <div class="summary-value">${formatDate(patient.admissionDate)}</div>
+            </div>
+        </div>
+        <div class="summary-info-item">
+            <div class="summary-info-icon">📋</div>
+            <div class="summary-info-content">
+                <div class="summary-label">Status</div>
+                <div class="summary-value">${patient.status || 'N/A'}</div>
+            </div>
+        </div>
+        <div class="summary-info-item">
+            <div class="summary-info-icon">📞</div>
+            <div class="summary-info-content">
+                <div class="summary-label">Phone</div>
+                <div class="summary-value">${patient.phone || 'N/A'}</div>
+            </div>
+        </div>
+    `;
+}
+
+// Load treatment timeline
+async function loadTreatmentTimeline(patientId) {
+    const container = document.getElementById('treatmentTimeline');
+    container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading timeline...</p></div>';
+    
+    try {
+        const timeline = [];
+        
+        // Add admission
+        if (currentPatientData.admissionDate) {
+            timeline.push({
+                date: currentPatientData.admissionDate,
+                title: '🏥 Admission & Initial Assessment',
+                content: currentPatientData.presentingComplaint || 'Patient admitted for urological care.',
+                type: 'admission'
+            });
+        }
+        
+        // Get operative notes
+        const opNotesSnapshot = await db.collection('patients').doc(patientId).collection('operativeNotes').orderBy('createdAt', 'asc').get();
+        
+        opNotesSnapshot.forEach(doc => {
+            const note = doc.data();
+            timeline.push({
+                date: note.surgeryDate || note.createdAt?.toDate().toDateString(),
+                title: `🔪 ${note.surgeryType || 'Surgical Procedure'}`,
+                content: `Procedure completed successfully. ${note.complications === 'None encountered intraoperatively' ? 'No complications.' : note.complications || ''}`,
+                type: 'surgery'
+            });
+        });
+        
+        // Get discharge summary
+        const dischargeSnapshot = await db.collection('patients').doc(patientId).collection('dischargeSummary').orderBy('createdAt', 'desc').limit(1).get();
+        
+        if (!dischargeSnapshot.empty) {
+            const discharge = dischargeSnapshot.docs[0].data();
+            timeline.push({
+                date: discharge.dischargeDate,
+                title: '🏠 Discharge Planning',
+                content: `Patient discharged in ${discharge.dischargeCondition || 'stable'} condition. ${discharge.dischargeDestination || 'Home'} discharge.`,
+                type: 'discharge'
+            });
+        }
+        
+        // Sort timeline by date
+        timeline.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        // Display timeline
+        if (timeline.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: #666;">No timeline events found.</p>';
+            return;
+        }
+        
+        const timelineHtml = timeline.map((event, index) => {
+            const formatDate = (dateStr) => {
+                if (!dateStr) return 'Unknown date';
+                try {
+                    const date = new Date(dateStr);
+                    return date.toLocaleDateString() + ` - Day ${index + 1}`;
+                } catch {
+                    return dateStr;
+                }
+            };
+            
+            return `
+                <div class="timeline-item-summary">
+                    <div class="timeline-date-summary">${formatDate(event.date)}</div>
+                    <div class="timeline-title-summary">${event.title}</div>
+                    <div class="timeline-content-summary">${event.content}</div>
+                </div>
+            `;
+        }).join('');
+        
+        container.innerHTML = timelineHtml;
+        
+    } catch (error) {
+        console.error('Error loading timeline:', error);
+        container.innerHTML = '<p style="color: #f44336;">Error loading timeline.</p>';
+    }
+}
+
+// Load latest vitals
+async function loadLatestVitals(patientId) {
+    const container = document.getElementById('vitalsSummaryCard');
+    
+    try {
+        // Get the most recent daily log
+        const logsSnapshot = await db.collection('patients').doc(patientId).collection('dailyLogs').orderBy('createdAt', 'desc').limit(1).get();
+        
+        if (logsSnapshot.empty) {
+            container.innerHTML = `
+                <div class="vitals-summary-card">
+                    <h2>🩺 Latest Vital Signs</h2>
+                    <p style="opacity: 0.9;">No vital signs recorded yet.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        const latestLog = logsSnapshot.docs[0].data();
+        const logDate = latestLog.logDate || (latestLog.createdAt ? latestLog.createdAt.toDate().toLocaleDateString() : 'Unknown date');
+        
+        container.innerHTML = `
+            <h2>🩺 Latest Vital Signs</h2>
+            <p style="opacity: 0.9; margin-bottom: 0;">${logDate} ${latestLog.logTime ? '- ' + latestLog.logTime : ''}</p>
+            <div class="vitals-summary-grid">
+                <div class="vital-item-summary">
+                    <div class="vital-label-summary">Blood Pressure</div>
+                    <div class="vital-value-summary">${latestLog.systolicBP || '-'}/${latestLog.diastolicBP || '-'}</div>
+                </div>
+                <div class="vital-item-summary">
+                    <div class="vital-label-summary">Heart Rate</div>
+                    <div class="vital-value-summary">${latestLog.heartRate || '-'} bpm</div>
+                </div>
+                <div class="vital-item-summary">
+                    <div class="vital-label-summary">Temperature</div>
+                    <div class="vital-value-summary">${latestLog.temperature || '-'}°C</div>
+                </div>
+                <div class="vital-item-summary">
+                    <div class="vital-label-summary">Pain Score</div>
+                    <div class="vital-value-summary">${latestLog.painScore || '-'}/10</div>
+                </div>
+                <div class="vital-item-summary">
+                    <div class="vital-label-summary">O2 Saturation</div>
+                    <div class="vital-value-summary">${latestLog.oxygenSaturation || '-'}%</div>
+                </div>
+                <div class="vital-item-summary">
+                    <div class="vital-label-summary">Urine Output</div>
+                    <div class="vital-value-summary">${latestLog.urineOutput || '-'} mL</div>
+                </div>
+            </div>
+        `;
+        
+    } catch (error) {
+        console.error('Error loading vitals:', error);
+        container.innerHTML = `
+            <div class="vitals-summary-card">
+                <h2>🩺 Latest Vital Signs</h2>
+                <p style="color: #f44336;">Error loading vital signs.</p>
+            </div>
+        `;
+    }
+}
+
+// Load medications and instructions
+function loadMedicationsAndInstructions(patient) {
+    const container = document.getElementById('medicationsSummaryCard');
+    
+    const medications = patient.medications || 'No medications documented';
+    const allergies = patient.allergies || 'No known allergies';
+    
+    container.innerHTML = `
+        <h2>💊 Current Medications & Allergies</h2>
+        <div class="medication-item-summary">
+            <strong>💊 Current Medications:</strong><br>
+            ${medications}
+        </div>
+        <div class="medication-item-summary">
+            <strong>⚠️ Allergies:</strong><br>
+            ${allergies}
+        </div>
+        <div class="medication-item-summary">
+            <strong>💧 General Instructions:</strong><br>
+            • Drink plenty of fluids (8-10 glasses of water daily)<br>
+            • Take medications as prescribed<br>
+            • Follow up as scheduled<br>
+            • Contact healthcare provider if concerns arise
+        </div>
+    `;
+}
+
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
@@ -1818,7 +2106,7 @@
            const views = [
     'patientsView', 'addPatientView', 'patientDetailView', 'editPatientView',
     'operativeNoteView', 'viewOperativeNotesView', 'dailyLogsView', 'addDailyLogView',
-    'dischargeSummaryView'
+    'dischargeSummaryView', 'treatmentSummaryView'
            ];
            
            views.forEach(viewId => {
@@ -1854,6 +2142,9 @@
                const viewOperativeNotesView = document.getElementById('viewOperativeNotesView');
                if (viewOperativeNotesView) viewOperativeNotesView.classList.remove('hidden');
            }
+              } else if (viewName === 'treatmentSummary') {
+    const treatmentSummaryView = document.getElementById('treatmentSummaryView');
+    if (treatmentSummaryView) treatmentSummaryView.classList.remove('hidden');
        }
         
         // Show error/success messages
