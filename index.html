@@ -1126,6 +1126,112 @@
     </div>
 </div>
 
+        <!-- Discharge Summary View -->
+<div id="dischargeSummaryView" class="hidden">
+    <div class="form-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h2>🏠 Discharge Summary</h2>
+            <div>
+                <button id="printDischargeBtn" class="btn btn-primary">🖨️ Print Summary</button>
+                <button id="backFromDischarge" class="btn btn-secondary">← Back to Patient</button>
+            </div>
+        </div>
+        
+        <form id="dischargeSummaryForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="dischargeDate">Discharge Date *</label>
+                    <input type="date" id="dischargeDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="dischargeTime">Discharge Time</label>
+                    <input type="time" id="dischargeTime">
+                </div>
+                <div class="form-group">
+                    <label for="lengthOfStay">Length of Stay (days)</label>
+                    <input type="number" id="lengthOfStay" min="0" readonly>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="dischargeCondition">Condition at Discharge *</label>
+                <select id="dischargeCondition" required>
+                    <option value="">Select Condition</option>
+                    <option value="Stable">Stable</option>
+                    <option value="Improved">Improved</option>
+                    <option value="Good">Good</option>
+                    <option value="Fair">Fair</option>
+                    <option value="Critical">Critical</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="hospitalCourse">Hospital Course Summary *</label>
+                <textarea id="hospitalCourse" required placeholder="Brief summary of the patient's hospital stay, treatments received, and progress..." style="height: 120px;"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="dischargeDiagnosis">Discharge Diagnosis *</label>
+                <textarea id="dischargeDiagnosis" required placeholder="Primary and secondary diagnoses at discharge..." style="height: 80px;"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="proceduresPerformed">Procedures Performed</label>
+                <textarea id="proceduresPerformed" placeholder="List of procedures/surgeries performed during admission..." style="height: 80px;"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="dischargeMedications">Discharge Medications</label>
+                <textarea id="dischargeMedications" placeholder="List medications to continue at home with dosages and instructions..." style="height: 100px;"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="followUpInstructions">Follow-up Instructions *</label>
+                <textarea id="followUpInstructions" required placeholder="When to return for follow-up, signs to watch for, activity restrictions..." style="height: 100px;"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="dischargeInstructions">Patient Education & Discharge Instructions</label>
+                <textarea id="dischargeInstructions" placeholder="Specific instructions for patient care at home, diet, activity, wound care..." style="height: 100px;"></textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="dischargingPhysician">Discharging Physician *</label>
+                    <input type="text" id="dischargingPhysician" required>
+                </div>
+                <div class="form-group">
+                    <label for="dischargeDestination">Discharge Destination</label>
+                    <select id="dischargeDestination">
+                        <option value="">Select Destination</option>
+                        <option value="Home">Home</option>
+                        <option value="Home with Home Health">Home with Home Health</option>
+                        <option value="Skilled Nursing Facility">Skilled Nursing Facility</option>
+                        <option value="Rehabilitation Facility">Rehabilitation Facility</option>
+                        <option value="Transfer to Another Hospital">Transfer to Another Hospital</option>
+                        <option value="Against Medical Advice">Against Medical Advice</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="text-align: right; margin-top: 30px;">
+                <button type="button" id="cancelDischarge" class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save & Discharge Patient</button>
+            </div>
+            
+            <div id="dischargeError" class="error-message"></div>
+            <div id="dischargeSuccess" class="success-message"></div>
+        </form>
+    </div>
+</div>
+
+<!-- Print Area (Hidden) -->
+<div id="printArea" class="print-area" style="display: none;">
+    <div id="printContent">
+        <!-- Discharge summary content will be inserted here for printing -->
+    </div>
+</div>
+
 <!-- Add Daily Log Form -->
 <div id="addDailyLogView" class="hidden">
     <div class="form-container">
