@@ -669,103 +669,6 @@
                 justify-content: center;
             }
         }
-        /* Print Styles */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            
-            .print-area, .print-area * {
-                visibility: visible;
-            }
-            
-            .print-area {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                background: white;
-                padding: 20px;
-                font-family: 'Times New Roman', serif;
-                font-size: 12pt;
-                line-height: 1.4;
-                color: black;
-            }
-            
-            .print-header {
-                text-align: center;
-                border-bottom: 2px solid #000;
-                padding-bottom: 15px;
-                margin-bottom: 20px;
-            }
-            
-            .print-header h1 {
-                font-size: 18pt;
-                margin: 0 0 5px 0;
-                color: #000;
-            }
-            
-            .print-header h2 {
-                font-size: 16pt;
-                margin: 0;
-                color: #000;
-            }
-            
-            .print-section {
-                margin-bottom: 15px;
-                page-break-inside: avoid;
-            }
-            
-            .print-section h3 {
-                font-size: 14pt;
-                font-weight: bold;
-                color: #000;
-                margin: 0 0 8px 0;
-                border-bottom: 1px solid #000;
-                padding-bottom: 2px;
-            }
-            
-            .print-section p, .print-section div {
-                margin: 0 0 8px 0;
-                color: #000;
-            }
-            
-            .print-info-grid {
-                display: table;
-                width: 100%;
-                margin-bottom: 15px;
-            }
-            
-            .print-info-row {
-                display: table-row;
-            }
-            
-            .print-info-cell {
-                display: table-cell;
-                padding: 3px 10px 3px 0;
-                vertical-align: top;
-                width: 50%;
-            }
-            
-            .print-label {
-                font-weight: bold;
-                display: inline-block;
-                min-width: 120px;
-            }
-            
-            .print-signature-area {
-                margin-top: 40px;
-                border-top: 1px solid #000;
-                padding-top: 20px;
-            }
-            
-            .print-signature-line {
-                border-bottom: 1px solid #000;
-                margin: 30px 0 5px 0;
-                width: 300px;
-                height: 20px;
-            }
-        }
         
         /* Discharge Summary Specific Styles */
         .discharge-summary-preview {
@@ -1006,7 +909,6 @@
                         <button id="addOperativeNoteBtn" class="btn btn-primary">🔪 Add Operative Note</button>
                         <button id="viewDailyLogsBtn" class="btn btn-primary" style="margin-left: 10px;">📊 Daily Logs</button>
                         <button id="createDischargeBtn" class="btn btn-success" style="margin-left: 10px; background: #28a745;">🏠 Create Discharge Summary</button>
-                        <button onclick="testPrint()" class="btn btn-secondary" style="margin-left: 10px;">🔧 Test Print</button>
                         <button id="deletePatientBtn" class="btn btn-danger" style="margin-left: 20px;">🗑️ Delete Patient</button>
                     </div>
                 </div>
@@ -1369,13 +1271,6 @@
             <div id="dischargeError" class="error-message"></div>
             <div id="dischargeSuccess" class="success-message"></div>
         </form>
-    </div>
-</div>
-
-<!-- Print Area (Hidden) -->
-<div id="printArea" class="print-area" style="display: none;">
-    <div id="printContent">
-        <!-- Discharge summary content will be inserted here for printing -->
     </div>
 </div>
 
@@ -3745,7 +3640,6 @@
         const createDischargeBtn = document.getElementById('createDischargeBtn');
         const backFromDischarge = document.getElementById('backFromDischarge');
         const cancelDischarge = document.getElementById('cancelDischarge');
-        const printDischargeBtn = document.getElementById('printDischargeBtn');
         
         // Create discharge summary button handler
         createDischargeBtn.addEventListener('click', () => {
@@ -3885,181 +3779,7 @@ Return to ED if experiencing:
                 showMessage('dischargeError', 'Error creating discharge summary. Please try again.');
             }
         });
-        
-        // Print discharge summary
-        printDischargeBtn.addEventListener('click', () => {
-            generateAndPrintDischargeSummary();
-        });
-        
-// Generate and print discharge summary (REPLACE THE EXISTING FUNCTION)
-async function generateAndPrintDischargeSummary() {
-    try {
-        let dischargeSummary = currentDischargeSummary;
-        
-        // If no current summary, try to load from database
-        if (!dischargeSummary) {
-            const snapshot = await db.collection('patients').doc(currentPatientId).collection('dischargeSummary').orderBy('createdAt', 'desc').limit(1).get();
-            
-            if (!snapshot.empty) {
-                dischargeSummary = snapshot.docs[0].data();
-                currentDischargeSummary = dischargeSummary; // Store it for future use
-            } else {
-                alert('No discharge summary found for this patient.');
-                return;
-            }
-        }
-        
-        // Ensure we have patient data
-        if (!currentPatientData) {
-            alert('Patient data not available for printing.');
-            return;
-        }
-        
-        // Generate print content
-        const printContent = generateDischargeSummaryHTML(dischargeSummary);
-        
-        // Insert content into print area
-        const printArea = document.getElementById('printContent');
-        if (!printArea) {
-            console.error('Print content area not found');
-            alert('Print area not found. Please refresh the page and try again.');
-            return;
-        }
-        
-        printArea.innerHTML = printContent;
-        
-        // Small delay to ensure content is rendered
-        setTimeout(() => {
-            window.print();
-        }, 100);
-        
-    } catch (error) {
-        console.error('Error printing discharge summary:', error);
-        alert('Error generating discharge summary for printing: ' + error.message);
-    }
-}
 
-        // Test function to debug printing (ADD THIS TEMPORARILY)
-function testPrint() {
-    console.log('Test Print Function Called');
-    console.log('currentPatientData:', currentPatientData);
-    console.log('currentDischargeSummary:', currentDischargeSummary);
-    console.log('currentPatientId:', currentPatientId);
-    
-    const printArea = document.getElementById('printContent');
-    console.log('Print area found:', !!printArea);
-    
-    if (printArea) {
-        printArea.innerHTML = '<h1>TEST PRINT CONTENT</h1><p>This is a test to see if printing works.</p>';
-        setTimeout(() => {
-            window.print();
-        }, 100);
-    } else {
-        alert('Print area not found!');
-    }
-}
-        
-        
-        // Generate HTML for discharge summary printing
-        function generateDischargeSummaryHTML(summary) {
-            const formatDate = (dateStr) => {
-                if (!dateStr) return 'N/A';
-                return new Date(dateStr).toLocaleDateString();
-            };
-            
-            return `
-                <div class="print-header">
-                    <h1>HOSPITAL DISCHARGE SUMMARY</h1>
-                    <h2>Department of Urology</h2>
-                </div>
-                
-                <div class="print-info-grid">
-                    <div class="print-info-row">
-                        <div class="print-info-cell">
-                            <span class="print-label">Patient Name:</span> ${currentPatientData.name || 'N/A'}
-                        </div>
-                        <div class="print-info-cell">
-                            <span class="print-label">MRN:</span> ${currentPatientData.mrn || 'N/A'}
-                        </div>
-                    </div>
-                    <div class="print-info-row">
-                        <div class="print-info-cell">
-                            <span class="print-label">Age:</span> ${currentPatientData.age || 'N/A'}
-                        </div>
-                        <div class="print-info-cell">
-                            <span class="print-label">Gender:</span> ${currentPatientData.gender || 'N/A'}
-                        </div>
-                    </div>
-                    <div class="print-info-row">
-                        <div class="print-info-cell">
-                            <span class="print-label">Admission Date:</span> ${formatDate(currentPatientData.admissionDate)}
-                        </div>
-                        <div class="print-info-cell">
-                            <span class="print-label">Discharge Date:</span> ${formatDate(summary.dischargeDate)}
-                        </div>
-                    </div>
-                    <div class="print-info-row">
-                        <div class="print-info-cell">
-                            <span class="print-label">Length of Stay:</span> ${summary.lengthOfStay || 'N/A'} days
-                        </div>
-                        <div class="print-info-cell">
-                            <span class="print-label">Room Number:</span> ${currentPatientData.roomNumber || 'N/A'}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="print-section">
-                    <h3>PRESENTING COMPLAINT</h3>
-                    <p>${currentPatientData.presentingComplaint || 'Not documented'}</p>
-                </div>
-                
-                <div class="print-section">
-                    <h3>HOSPITAL COURSE</h3>
-                    <p>${summary.hospitalCourse || 'Not documented'}</p>
-                </div>
-                
-                <div class="print-section">
-                    <h3>PROCEDURES PERFORMED</h3>
-                    <p>${summary.proceduresPerformed || 'None documented'}</p>
-                </div>
-                
-                <div class="print-section">
-                    <h3>DISCHARGE DIAGNOSIS</h3>
-                    <p>${summary.dischargeDiagnosis || 'Not documented'}</p>
-                </div>
-                
-                <div class="print-section">
-                    <h3>CONDITION AT DISCHARGE</h3>
-                    <p>${summary.dischargeCondition || 'Not documented'}</p>
-                </div>
-                
-                <div class="print-section">
-                    <h3>DISCHARGE MEDICATIONS</h3>
-                    <p>${summary.dischargeMedications || 'None prescribed'}</p>
-                </div>
-                
-                <div class="print-section">
-                    <h3>FOLLOW-UP INSTRUCTIONS</h3>
-                    <p style="white-space: pre-wrap;">${summary.followUpInstructions || 'Not specified'}</p>
-                </div>
-                
-                <div class="print-section">
-                    <h3>PATIENT EDUCATION & DISCHARGE INSTRUCTIONS</h3>
-                    <p style="white-space: pre-wrap;">${summary.dischargeInstructions || 'Not specified'}</p>
-                </div>
-                
-                <div class="print-section">
-                    <h3>DISCHARGE DESTINATION</h3>
-                    <p>${summary.dischargeDestination || 'Not specified'}</p>
-                </div>
-                
-                <div class="print-signature-area">
-                    <p><strong>Discharging Physician:</strong> ${summary.dischargingPhysician || 'Not specified'}</p>
-                    <div class="print-signature-line"></div>
-                    <p style="margin-top: 5px;"><strong>Signature & Date</strong></p>
-                </div>
-            `;
-        }
     </script>
 </body>
 </html>
