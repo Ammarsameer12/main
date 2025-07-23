@@ -947,8 +947,337 @@
             }
         });
 
-        // Allow Enter key to login
-        document.addEventListener('keypress', function(event) {
+                 // Surgery Templates Database
+         const surgeryTemplates = {
+             urs_laser: {
+                 name: "URS + Laser Lithotripsy",
+                 surgeryType: "Ureteroscopic stone extraction with laser lithotripsy",
+                 anesthesiaType: "General anesthesia",
+                 findings: "Stone identified in ureter. Ureter mildly edematous. No perforation noted.",
+                 operativeSteps: "1. Patient positioned in lithotomy\n2. Cystoscopy performed\n3. Guidewire placed\n4. Ureteroscope advanced\n5. Stone fragmented with laser\n6. Fragments retrieved\n7. DJ stent placed",
+                 complications: "None encountered",
+                 bloodLoss: "<50 mL"
+             },
+             flexible_urs: {
+                 name: "Flexible Ureteroscopy",
+                 surgeryType: "Flexible ureteroscopy with laser lithotripsy",
+                 anesthesiaType: "General anesthesia",
+                 findings: "Renal stones noted in calyces. Mucosa intact.",
+                 operativeSteps: "1. Patient positioned in lithotomy\n2. Guidewire placed\n3. Access sheath inserted\n4. Flexible scope advanced\n5. Stones fragmented with laser\n6. DJ stent placed",
+                 complications: "None encountered",
+                 bloodLoss: "<50 mL"
+             },
+             turp: {
+                 name: "TURP",
+                 surgeryType: "Transurethral resection of prostate",
+                 anesthesiaType: "Spinal anesthesia",
+                 findings: "Enlarged prostate with prominent lobes. Bladder trabeculation noted.",
+                 operativeSteps: "1. Patient positioned in lithotomy\n2. Cystoscopy performed\n3. Resection of prostate tissue\n4. Hemostasis achieved\n5. Catheter inserted",
+                 complications: "None encountered",
+                 bloodLoss: "200 mL"
+             },
+             orchiopexy: {
+                 name: "Orchiopexy",
+                 surgeryType: "Orchiopexy for undescended testis",
+                 anesthesiaType: "General anesthesia",
+                 findings: "Testis found in inguinal canal. Adequate cord length.",
+                 operativeSteps: "1. Inguinal incision made\n2. Testis mobilized\n3. Hernia sac ligated\n4. Testis brought to scrotum\n5. Fixed in position",
+                 complications: "None encountered",
+                 bloodLoss: "<20 mL"
+             },
+             circumcision: {
+                 name: "Circumcision",
+                 surgeryType: "Circumcision using sleeve technique",
+                 anesthesiaType: "Local anesthesia",
+                 findings: "Phimosis present. Glans healthy.",
+                 operativeSteps: "1. Local anesthetic administered\n2. Foreskin marked and excised\n3. Hemostasis achieved\n4. Skin edges approximated",
+                 complications: "None encountered",
+                 bloodLoss: "<10 mL"
+             },
+             pcnl: {
+                 name: "PCNL",
+                 surgeryType: "Percutaneous nephrolithotomy",
+                 anesthesiaType: "General anesthesia",
+                 findings: "Large renal calculus in pelvis. Moderate hydronephrosis.",
+                 operativeSteps: "1. Patient positioned prone\n2. Percutaneous access obtained\n3. Tract dilated\n4. Stone fragmented and extracted\n5. Nephrostomy tube placed",
+                 complications: "None encountered",
+                 bloodLoss: "200 mL"
+             },
+             turbt: {
+                 name: "TURBT",
+                 surgeryType: "Transurethral resection of bladder tumor",
+                 anesthesiaType: "Spinal anesthesia",
+                 findings: "Bladder tumor noted on posterior wall. Ureteric orifices preserved.",
+                 operativeSteps: "1. Cystoscopy performed\n2. Tumor resected systematically\n3. Base resected for staging\n4. Hemostasis achieved\n5. Catheter inserted",
+                 complications: "None encountered",
+                 bloodLoss: "100 mL"
+             },
+             other: {
+                 name: "Other Surgery",
+                 surgeryType: "",
+                 anesthesiaType: "",
+                 findings: "",
+                 operativeSteps: "",
+                 complications: "",
+                 bloodLoss: ""
+             }
+         };
+
+         let currentEditingNoteId = null;
+
+         // Operative Notes Functions
+         function showOperativeNotes() {
+             if (!currentPatientId) {
+                 showAlert('Please select a patient first.', 'error');
+                 return;
+             }
+             
+             document.getElementById('followUpForm').classList.remove('active');
+             document.getElementById('addOperativeNoteView').classList.remove('active');
+             document.getElementById('operativeNotesView').classList.add('active');
+             loadOperativeNotes();
+         }
+
+         function showAddOperativeNote() {
+             if (!currentPatientId) {
+                 showAlert('Please select a patient first.', 'error');
+                 return;
+             }
+             
+             document.getElementById('followUpForm').classList.remove('active');
+             document.getElementById('operativeNotesView').classList.remove('active');
+             document.getElementById('addOperativeNoteView').classList.add('active');
+             
+             // Reset form
+             clearOperativeNoteForm();
+             document.getElementById('operativeNoteTitle').textContent = '🔪 Add Operative Note';
+             document.getElementById('surgeryDate').value = new Date().toISOString().split('T')[0];
+             document.getElementById('surgeon').value = auth.currentUser.email.split('@')[0];
+             currentEditingNoteId = null;
+         }
+
+         function backToPatientView() {
+             document.getElementById('operativeNotesView').classList.remove('active');
+             document.getElementById('addOperativeNoteView').classList.remove('active');
+             document.getElementById('followUpForm').classList.add('active');
+         }
+
+         function loadOperativeNotes() {
+             const container = document.getElementById('operativeNotesList');
+             container.innerHTML = 'Loading operative notes...';
+             
+             db.collection('patients').doc(currentPatientId).collection('operativeNotes')
+                 .orderBy('createdAt', 'desc')
+                 .onSnapshot((snapshot) => {
+                     if (snapshot.empty) {
+                         container.innerHTML = `
+                             <div class="no-operative-notes">
+                                 <h4>🔪 No Operative Notes Yet</h4>
+                                 <p>No operative notes have been recorded for this patient.</p>
+                                 <button onclick="showAddOperativeNote()" class="btn btn-primary">➕ Add First Note</button>
+                             </div>
+                         `;
+                         return;
+                     }
+
+                     let notesHtml = '';
+                     snapshot.forEach((doc) => {
+                         const note = doc.data();
+                         const date = note.createdAt ? note.createdAt.toDate().toLocaleDateString() : 'Unknown date';
+                         const time = note.createdAt ? note.createdAt.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+                         
+                         notesHtml += `
+                             <div class="operative-note-card">
+                                 <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                                     <h4>${note.surgeryType || 'Operative Procedure'}</h4>
+                                     <span style="font-size: 12px; color: #888;">${date} ${time}</span>
+                                 </div>
+                                 
+                                 <div class="operative-note-header">
+                                     <span><strong>Date:</strong> ${note.surgeryDate || 'N/A'}</span>
+                                     <span><strong>Surgeon:</strong> ${note.surgeon || 'N/A'}</span>
+                                     <span><strong>Anesthesia:</strong> ${note.anesthesiaType || 'N/A'}</span>
+                                     <span><strong>Blood Loss:</strong> ${note.bloodLoss || 'N/A'}</span>
+                                 </div>
+                                 
+                                 <div class="operative-section">
+                                     <h5>Findings</h5>
+                                     <p>${note.findings || 'Not documented'}</p>
+                                 </div>
+                                 
+                                 <div class="operative-section">
+                                     <h5>Operative Steps</h5>
+                                     <p>${note.operativeSteps || 'Not documented'}</p>
+                                 </div>
+                                 
+                                 <div class="operative-section">
+                                     <h5>Complications</h5>
+                                     <p>${note.complications || 'None reported'}</p>
+                                 </div>
+                                 
+                                 <div class="operative-note-meta">
+                                     <span>Created by: ${note.createdBy || 'Unknown'}</span>
+                                     <div class="operative-note-actions">
+                                         <button class="btn btn-sm btn-secondary" onclick="editOperativeNote('${doc.id}')" style="padding: 4px 8px; font-size: 12px;">
+                                             ✏️ Edit
+                                         </button>
+                                         <button class="btn btn-sm btn-danger" onclick="deleteOperativeNote('${doc.id}')" style="padding: 4px 8px; font-size: 12px;">
+                                             🗑️ Delete
+                                         </button>
+                                     </div>
+                                 </div>
+                             </div>
+                         `;
+                     });
+                     
+                     container.innerHTML = notesHtml;
+                 });
+         }
+
+         function saveOperativeNote() {
+             if (!currentPatientId) {
+                 showAlert('Please select a patient first.', 'error');
+                 return;
+             }
+
+             const surgeryType = document.getElementById('surgeryType').value;
+             const surgeryDate = document.getElementById('surgeryDate').value;
+             const surgeon = document.getElementById('surgeon').value;
+
+             if (!surgeryType || !surgeryDate || !surgeon) {
+                 showAlert('Please fill in all required fields (Surgery Type, Date, Surgeon).', 'error');
+                 return;
+             }
+
+             const operativeNoteData = {
+                 surgeryType: surgeryType,
+                 surgeryDate: surgeryDate,
+                 surgeon: surgeon,
+                 anesthesiaType: document.getElementById('anesthesiaType').value,
+                 findings: document.getElementById('findings').value,
+                 operativeSteps: document.getElementById('operativeSteps').value,
+                 complications: document.getElementById('complications').value,
+                 bloodLoss: document.getElementById('bloodLoss').value,
+                 patientId: currentPatientId,
+                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                 createdBy: auth.currentUser.email
+             };
+
+             if (currentEditingNoteId) {
+                 // Update existing note
+                 db.collection('patients').doc(currentPatientId).collection('operativeNotes').doc(currentEditingNoteId).update({
+                     ...operativeNoteData,
+                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                 })
+                 .then(() => {
+                     showAlert('Operative note updated successfully!', 'success');
+                     showOperativeNotes();
+                 })
+                 .catch((error) => {
+                     showAlert('Error updating operative note: ' + error.message, 'error');
+                 });
+             } else {
+                 // Add new note
+                 db.collection('patients').doc(currentPatientId).collection('operativeNotes').add(operativeNoteData)
+                 .then(() => {
+                     showAlert('Operative note saved successfully!', 'success');
+                     showOperativeNotes();
+                 })
+                 .catch((error) => {
+                     showAlert('Error saving operative note: ' + error.message, 'error');
+                 });
+             }
+         }
+
+         function editOperativeNote(noteId) {
+             currentEditingNoteId = noteId;
+             
+             db.collection('patients').doc(currentPatientId).collection('operativeNotes').doc(noteId).get()
+             .then((doc) => {
+                 if (doc.exists) {
+                     const note = doc.data();
+                     
+                     // Switch to edit form
+                     document.getElementById('operativeNotesView').classList.remove('active');
+                     document.getElementById('addOperativeNoteView').classList.add('active');
+                     document.getElementById('operativeNoteTitle').textContent = '✏️ Edit Operative Note';
+                     
+                     // Fill form with existing data
+                     document.getElementById('surgeryType').value = note.surgeryType || '';
+                     document.getElementById('surgeryDate').value = note.surgeryDate || '';
+                     document.getElementById('surgeon').value = note.surgeon || '';
+                     document.getElementById('anesthesiaType').value = note.anesthesiaType || '';
+                     document.getElementById('findings').value = note.findings || '';
+                     document.getElementById('operativeSteps').value = note.operativeSteps || '';
+                     document.getElementById('complications').value = note.complications || '';
+                     document.getElementById('bloodLoss').value = note.bloodLoss || '';
+                 }
+             })
+             .catch((error) => {
+                 showAlert('Error loading operative note: ' + error.message, 'error');
+             });
+         }
+
+         function deleteOperativeNote(noteId) {
+             if (confirm('Are you sure you want to delete this operative note? This action cannot be undone.')) {
+                 db.collection('patients').doc(currentPatientId).collection('operativeNotes').doc(noteId).delete()
+                 .then(() => {
+                     showAlert('Operative note deleted successfully!', 'success');
+                 })
+                 .catch((error) => {
+                     showAlert('Error deleting operative note: ' + error.message, 'error');
+                 });
+             }
+         }
+
+         function clearOperativeNoteForm() {
+             document.getElementById('surgeryType').value = '';
+             document.getElementById('surgeryDate').value = '';
+             document.getElementById('surgeon').value = '';
+             document.getElementById('anesthesiaType').value = '';
+             document.getElementById('findings').value = '';
+             document.getElementById('operativeSteps').value = '';
+             document.getElementById('complications').value = '';
+             document.getElementById('bloodLoss').value = '';
+             
+             // Remove active state from template buttons
+             document.querySelectorAll('.template-btn').forEach(btn => {
+                 btn.classList.remove('active');
+             });
+         }
+
+         // Template button handler
+         document.addEventListener('click', function(e) {
+             if (e.target.classList.contains('template-btn')) {
+                 const templateKey = e.target.getAttribute('data-template');
+                 const template = surgeryTemplates[templateKey];
+                 
+                 if (template) {
+                     // Remove active class from all buttons
+                     document.querySelectorAll('.template-btn').forEach(btn => {
+                         btn.classList.remove('active');
+                     });
+                     
+                     // Add active class to clicked button
+                     e.target.classList.add('active');
+                     
+                     // Fill form with template data
+                     document.getElementById('surgeryType').value = template.surgeryType;
+                     document.getElementById('anesthesiaType').value = template.anesthesiaType;
+                     document.getElementById('findings').value = template.findings;
+                     document.getElementById('operativeSteps').value = template.operativeSteps;
+                     document.getElementById('complications').value = template.complications;
+                     document.getElementById('bloodLoss').value = template.bloodLoss;
+                     
+                     // Set today's date and current user
+                     document.getElementById('surgeryDate').value = new Date().toISOString().split('T')[0];
+                     document.getElementById('surgeon').value = auth.currentUser.email.split('@')[0];
+                 }
+             }
+         });
+
+         // Allow Enter key to login
+         document.addEventListener('keypress', function(event) {
             if (event.key === 'Enter' && !document.getElementById('loginScreen').classList.contains('hidden')) {
                 login();
             }
