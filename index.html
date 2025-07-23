@@ -253,6 +253,110 @@
             font-size: 0.9rem;
         }
         
+        .template-btn {
+            padding: 8px 12px;
+            font-size: 13px;
+            border-radius: 5px;
+            border: 2px solid #ddd;
+            background: white;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .template-btn:hover {
+            border-color: #2196F3;
+            background: #e3f2fd;
+            color: #1976D2;
+            transform: translateY(-1px);
+        }
+        
+        .template-btn.active {
+            background: #2196F3;
+            color: white;
+            border-color: #2196F3;
+        }
+        
+        .operative-note-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 5px solid #4CAF50;
+        }
+        
+        .operative-note-card h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .operative-note-header {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .operative-note-header span {
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .operative-note-header strong {
+            color: #333;
+            display: inline-block;
+            min-width: 80px;
+        }
+        
+        .operative-section {
+            margin-bottom: 20px;
+        }
+        
+        .operative-section h5 {
+            color: #2196F3;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #e3f2fd;
+            padding-bottom: 5px;
+        }
+        
+        .operative-section p {
+            color: #666;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+        
+        .operative-note-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 13px;
+            color: #888;
+        }
+        
+        .operative-note-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .no-operative-notes {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border: 2px dashed #ddd;
+        }
+        
         @media (max-width: 768px) {
             .dashboard {
                 grid-template-columns: 1fr;
@@ -368,104 +472,190 @@
                         <button onclick="cancelAddPatient()" class="btn btn-secondary">Cancel</button>
                     </div>
 
-                    <!-- Follow-up Form -->
-                    <div id="followUpForm" class="follow-up-form">
-                        <h3 id="selectedPatientName">Patient Follow-up</h3>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="followUpDate">Follow-up Date:</label>
-                                <input type="date" id="followUpDate">
-                            </div>
-                            <div class="form-group">
-                                <label for="followUpType">Follow-up Type:</label>
-                                <select id="followUpType">
-                                    <option value="">Select Type</option>
-                                    <option value="Post-operative">Post-operative</option>
-                                    <option value="Routine Check-up">Routine Check-up</option>
-                                    <option value="Symptom Assessment">Symptom Assessment</option>
-                                    <option value="Lab Results Review">Lab Results Review</option>
-                                    <option value="Imaging Review">Imaging Review</option>
-                                    <option value="Treatment Response">Treatment Response</option>
-                                </select>
-                            </div>
-                        </div>
+                                         <!-- Follow-up Form -->
+                     <div id="followUpForm" class="follow-up-form">
+                         <h3 id="selectedPatientName">Patient Follow-up</h3>
+                         
+                         <div class="form-row">
+                             <div class="form-group">
+                                 <label for="followUpDate">Follow-up Date:</label>
+                                 <input type="date" id="followUpDate">
+                             </div>
+                             <div class="form-group">
+                                 <label for="followUpType">Follow-up Type:</label>
+                                 <select id="followUpType">
+                                     <option value="">Select Type</option>
+                                     <option value="Post-operative">Post-operative</option>
+                                     <option value="Routine Check-up">Routine Check-up</option>
+                                     <option value="Symptom Assessment">Symptom Assessment</option>
+                                     <option value="Lab Results Review">Lab Results Review</option>
+                                     <option value="Imaging Review">Imaging Review</option>
+                                     <option value="Treatment Response">Treatment Response</option>
+                                 </select>
+                             </div>
+                         </div>
 
-                        <div class="form-group">
-                            <label for="symptoms">Current Symptoms:</label>
-                            <textarea id="symptoms" placeholder="Describe current symptoms or complaints"></textarea>
-                        </div>
+                         <div class="form-group">
+                             <label for="symptoms">Current Symptoms:</label>
+                             <textarea id="symptoms" placeholder="Describe current symptoms or complaints"></textarea>
+                         </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="painLevel">Pain Level (0-10):</label>
-                                <select id="painLevel">
-                                    <option value="">Select Level</option>
-                                    <option value="0">0 - No Pain</option>
-                                    <option value="1">1 - Minimal</option>
-                                    <option value="2">2 - Mild</option>
-                                    <option value="3">3 - Mild</option>
-                                    <option value="4">4 - Moderate</option>
-                                    <option value="5">5 - Moderate</option>
-                                    <option value="6">6 - Moderate</option>
-                                    <option value="7">7 - Severe</option>
-                                    <option value="8">8 - Severe</option>
-                                    <option value="9">9 - Very Severe</option>
-                                    <option value="10">10 - Worst Possible</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="functionalStatus">Functional Status:</label>
-                                <select id="functionalStatus">
-                                    <option value="">Select Status</option>
-                                    <option value="Normal">Normal Activity</option>
-                                    <option value="Slightly Limited">Slightly Limited</option>
-                                    <option value="Moderately Limited">Moderately Limited</option>
-                                    <option value="Severely Limited">Severely Limited</option>
-                                    <option value="Unable">Unable to Function</option>
-                                </select>
-                            </div>
-                        </div>
+                         <div class="form-row">
+                             <div class="form-group">
+                                 <label for="painLevel">Pain Level (0-10):</label>
+                                 <select id="painLevel">
+                                     <option value="">Select Level</option>
+                                     <option value="0">0 - No Pain</option>
+                                     <option value="1">1 - Minimal</option>
+                                     <option value="2">2 - Mild</option>
+                                     <option value="3">3 - Mild</option>
+                                     <option value="4">4 - Moderate</option>
+                                     <option value="5">5 - Moderate</option>
+                                     <option value="6">6 - Moderate</option>
+                                     <option value="7">7 - Severe</option>
+                                     <option value="8">8 - Severe</option>
+                                     <option value="9">9 - Very Severe</option>
+                                     <option value="10">10 - Worst Possible</option>
+                                 </select>
+                             </div>
+                             <div class="form-group">
+                                 <label for="functionalStatus">Functional Status:</label>
+                                 <select id="functionalStatus">
+                                     <option value="">Select Status</option>
+                                     <option value="Normal">Normal Activity</option>
+                                     <option value="Slightly Limited">Slightly Limited</option>
+                                     <option value="Moderately Limited">Moderately Limited</option>
+                                     <option value="Severely Limited">Severely Limited</option>
+                                     <option value="Unable">Unable to Function</option>
+                                 </select>
+                             </div>
+                         </div>
 
-                        <div class="form-group">
-                            <label for="medications">Current Medications:</label>
-                            <textarea id="medications" placeholder="List current medications and dosages"></textarea>
-                        </div>
+                         <div class="form-group">
+                             <label for="medications">Current Medications:</label>
+                             <textarea id="medications" placeholder="List current medications and dosages"></textarea>
+                         </div>
 
-                        <div class="form-group">
-                            <label for="examination">Physical Examination Findings:</label>
-                            <textarea id="examination" placeholder="Document examination findings"></textarea>
-                        </div>
+                         <div class="form-group">
+                             <label for="examination">Physical Examination Findings:</label>
+                             <textarea id="examination" placeholder="Document examination findings"></textarea>
+                         </div>
 
-                        <div class="form-group">
-                            <label for="assessment">Assessment:</label>
-                            <textarea id="assessment" placeholder="Clinical assessment and impression"></textarea>
-                        </div>
+                         <div class="form-group">
+                             <label for="assessment">Assessment:</label>
+                             <textarea id="assessment" placeholder="Clinical assessment and impression"></textarea>
+                         </div>
 
-                        <div class="form-group">
-                            <label for="plan">Treatment Plan:</label>
-                            <textarea id="plan" placeholder="Treatment plan and next steps"></textarea>
-                        </div>
+                         <div class="form-group">
+                             <label for="plan">Treatment Plan:</label>
+                             <textarea id="plan" placeholder="Treatment plan and next steps"></textarea>
+                         </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="nextAppointment">Next Appointment:</label>
-                                <input type="date" id="nextAppointment">
-                            </div>
-                            <div class="form-group">
-                                <label for="urgency">Urgency Level:</label>
-                                <select id="urgency">
-                                    <option value="">Select Urgency</option>
-                                    <option value="Routine">Routine</option>
-                                    <option value="Urgent">Urgent</option>
-                                    <option value="Emergency">Emergency</option>
-                                </select>
-                            </div>
-                        </div>
+                         <div class="form-row">
+                             <div class="form-group">
+                                 <label for="nextAppointment">Next Appointment:</label>
+                                 <input type="date" id="nextAppointment">
+                             </div>
+                             <div class="form-group">
+                                 <label for="urgency">Urgency Level:</label>
+                                 <select id="urgency">
+                                     <option value="">Select Urgency</option>
+                                     <option value="Routine">Routine</option>
+                                     <option value="Urgent">Urgent</option>
+                                     <option value="Emergency">Emergency</option>
+                                 </select>
+                             </div>
+                         </div>
 
-                        <button onclick="saveFollowUp()" class="btn">Save Follow-up</button>
-                        <button onclick="clearForm()" class="btn btn-secondary">Clear Form</button>
-                    </div>
+                         <button onclick="saveFollowUp()" class="btn">Save Follow-up</button>
+                         <button onclick="clearForm()" class="btn btn-secondary">Clear Form</button>
+                         <button onclick="showOperativeNotes()" class="btn btn-primary" style="margin-left: 10px;">🔪 View Operative Notes</button>
+                         <button onclick="showAddOperativeNote()" class="btn" style="margin-left: 10px;">➕ Add Operative Note</button>
+                     </div>
+
+                     <!-- Operative Notes View -->
+                     <div id="operativeNotesView" class="follow-up-form">
+                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                             <h3>🔪 Operative Notes</h3>
+                             <button onclick="backToPatientView()" class="btn btn-secondary">← Back to Patient</button>
+                         </div>
+                         <div id="operativeNotesList">Loading operative notes...</div>
+                     </div>
+
+                     <!-- Add Operative Note Form -->
+                     <div id="addOperativeNoteView" class="follow-up-form">
+                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                             <h3 id="operativeNoteTitle">🔪 Add Operative Note</h3>
+                             <button onclick="backToPatientView()" class="btn btn-secondary">← Back to Patient</button>
+                         </div>
+
+                         <!-- Surgery Templates -->
+                         <div style="margin-bottom: 25px; padding: 15px; background: #f0f8ff; border-radius: 8px; border-left: 4px solid #2196F3;">
+                             <h4 style="margin-bottom: 15px; color: #333;">📋 Surgery Templates (Click to Auto-Fill)</h4>
+                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px;">
+                                 <button type="button" class="template-btn" data-template="urs_laser">🔹 URS + Laser</button>
+                                 <button type="button" class="template-btn" data-template="flexible_urs">🔹 Flexible URS</button>
+                                 <button type="button" class="template-btn" data-template="turp">🔹 TURP</button>
+                                 <button type="button" class="template-btn" data-template="orchiopexy">🔹 Orchiopexy</button>
+                                 <button type="button" class="template-btn" data-template="circumcision">🔹 Circumcision</button>
+                                 <button type="button" class="template-btn" data-template="pcnl">🔹 PCNL</button>
+                                 <button type="button" class="template-btn" data-template="turbt">🔹 TURBT</button>
+                                 <button type="button" class="template-btn" data-template="other">✏️ Other Surgery</button>
+                             </div>
+                         </div>
+
+                         <div class="form-row">
+                             <div class="form-group">
+                                 <label for="surgeryType">Surgery Type *</label>
+                                 <input type="text" id="surgeryType" required placeholder="Enter surgery type">
+                             </div>
+                             <div class="form-group">
+                                 <label for="surgeryDate">Surgery Date *</label>
+                                 <input type="date" id="surgeryDate" required>
+                             </div>
+                         </div>
+
+                         <div class="form-row">
+                             <div class="form-group">
+                                 <label for="surgeon">Surgeon *</label>
+                                 <input type="text" id="surgeon" required placeholder="Enter surgeon name">
+                             </div>
+                             <div class="form-group">
+                                 <label for="anesthesiaType">Anesthesia Type</label>
+                                 <select id="anesthesiaType">
+                                     <option value="">Select Type</option>
+                                     <option value="General anesthesia">General</option>
+                                     <option value="Spinal anesthesia">Spinal</option>
+                                     <option value="Local anesthesia">Local</option>
+                                     <option value="Local + sedation">Local + Sedation</option>
+                                 </select>
+                             </div>
+                         </div>
+
+                         <div class="form-group">
+                             <label for="findings">Operative Findings</label>
+                             <textarea id="findings" placeholder="Describe operative findings and observations..." style="height: 100px;"></textarea>
+                         </div>
+
+                         <div class="form-group">
+                             <label for="operativeSteps">Operative Steps</label>
+                             <textarea id="operativeSteps" placeholder="Detailed operative procedure steps..." style="height: 150px;"></textarea>
+                         </div>
+
+                         <div class="form-row">
+                             <div class="form-group">
+                                 <label for="complications">Complications</label>
+                                 <textarea id="complications" placeholder="Any complications encountered..."></textarea>
+                             </div>
+                             <div class="form-group">
+                                 <label for="bloodLoss">Estimated Blood Loss</label>
+                                 <input type="text" id="bloodLoss" placeholder="e.g., <50 mL, 100-200 mL">
+                             </div>
+                         </div>
+
+                         <button onclick="saveOperativeNote()" class="btn">Save Operative Note</button>
+                         <button onclick="clearOperativeNoteForm()" class="btn btn-secondary">Clear Form</button>
+                     </div>
                 </div>
             </div>
 
