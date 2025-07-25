@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urology Patient Follow-Up</title>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background: #45a049;
+        }
+        
+        .btn-danger {
+            background: #f44336;
+        }
+        
+        .btn-danger:hover {
+            background: #da190b;
+        }
+        
+        .btn-primary {
+            background: #2196F3;
+        }
+        
+        .btn-primary:hover {
+            background: #1976D2;
+        }
+        
+        .btn-secondary {
+            background: #757575;
+        }
+        
+        .btn-secondary:hover {
+            background: #616161;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .error-message {
+            color: #f44336;
+            margin-top: 10px;
+            padding: 10px;
+            background: #ffebee;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .success-message {
+            color: #4CAF50;
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f5e8;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #667eea;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .patient-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 5px solid #667eea;
+        }
+        
+        .patient-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .patient-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .patient-info span {
+            color: #666;
+        }
+        
+        .patient-actions {
+            text-align: right;
+        }
+        
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .form-container h2 {
+            margin-bottom: 25px;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-pre-op {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status-post-op {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+        
+        .status-discharged {
+            background: #e8f5e8;
+            color: #388e3c;
+        }
+        
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1000;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Debug Info -->
+    <div id="debugInfo" class="debug-info hidden">
+        <div>Firebase Status: <span id="firebaseStatus">Initializing...</span></div>
+        <div>Auth Status: <span id="authStatus">Checking...</span></div>
+        <div>User: <span id="debugUser">None</span></div>
+    </div>
+    
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading">
+        <div class="spinner"></div>
+        <p>Loading application...</p>
+        <p id="loadingStatus" style="font-size: 14px; color: #666; margin-top: 10px;">Initializing Firebase...</p>
+    </div>
+    
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container hidden">
+        <h2 style="text-align: center; margin-bottom: 30px; color: #333;">
+            🏥 Urology Patient System
+        </h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                Login
+            </button>
+            <div id="loginError" class="error-message"></div>
+        </form>
+        
+        <!-- Debug toggle -->
+        <div style="text-align: center; margin-top: 20px;">
+            <button type="button" onclick="toggleDebug()" class="btn btn-secondary" style="font-size: 12px; padding: 5px 10px;">
+                Toggle Debug Info
+            </button>
+        </div>
+    </div>
+    
+    <!-- Main Application -->
+    <div id="mainApp" class="container hidden">
+        <div class="header">
+            <h1>🏥 Urology Patient Follow-Up</h1>
+            <div class="user-info">
+                <div>
+                    <span id="userEmail"></span> | 
+                    <span id="userRole"></span>
+                </div>
+                <button id="logoutBtn" class="btn btn-danger">Logout</button>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div id="navigation" style="margin-bottom: 20px;">
+            <button id="showPatientsBtn" class="btn btn-primary">📋 All Patients</button>
+            <button id="showAddPatientBtn" class="btn">➕ Add New Patient</button>
+        </div>
+        
+        <!-- Content Area -->
+        <div id="contentArea">
+            <!-- Patients List View -->
+            <div id="patientsView">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="🔍 Search by name, MRN, or room number...">
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>All Patients (<span id="patientCount">0</span>)</h2>
+                    <div>
+                        <select id="statusFilter" style="padding: 8px; border-radius: 5px; border: 2px solid #ddd;">
+                            <option value="">All Status</option>
+                            <option value="pre-op">Pre-Op</option>
+                            <option value="post-op">Post-Op</option>
+                            <option value="discharged">Discharged</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="patientsList">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading patients...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add Patient Form -->
+            <div id="addPatientView" class="hidden">
+                <div class="form-container">
+                    <h2>➕ Add New Patient</h2>
+                    <form id="addPatientForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="patientName">Patient Name *</label>
+                                <input type="text" id="patientName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="patientMRN">MRN *</label>
+                                <input type="text" id="patientMRN" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="patientAge">Age</label>
+                                <input type="number" id="patientAge" min="0" max="150">
+                            </div>
+                            <div class="form-group">
+                                <label for="patientGender">Gender</label>
+                                <select id="patientGender">
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="patientPhone">Phone</label>
+                                <input type="tel" id="patientPhone">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="roomNumber">Room Number</label>
+                                <input type="text" id="roomNumber">
+                            </div>
+                            <div class="form-group">
+                                <label for="admissionDate">Admission Date</label>
+                                <input type="date" id="admissionDate">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="presentingComplaint">Presenting Complaint</label>
+                            <textarea id="presentingComplaint" placeholder="Chief complaint and history of present illness..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="pmh">Past Medical History</label>
+                            <textarea id="pmh" placeholder="Relevant past medical history..."></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="allergies">Allergies</label>
+                                <textarea id="allergies" placeholder="Known allergies..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="medications">Current Medications</label>
+                                <textarea id="medications" placeholder="Current medications..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="physicalExam">Physical Examination</label>
+                            <textarea id="physicalExam" placeholder="Physical examination findings..."></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="imagingSummary">Imaging Summary</label>
+                                <textarea id="imagingSummary" placeholder="Imaging results and interpretation..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="labsSummary">Labs Summary</label>
+                                <textarea id="labsSummary" placeholder="Laboratory results..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: right; margin-top: 30px;">
+                            <button type="button" id="cancelAddPatient" class="btn btn-secondary">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Patient</button>
+                        </div>
+                        
+                        <div id="addPatientError" class="error-message"></div>
+                        <div id="addPatientSuccess" class="success-message"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Debug functions
+        function updateDebugInfo(key, value) {
+            const element = document.getElementById(key);
+            if (element) {
+                element.textContent = value;
+            }
+        }
+        
+        function toggleDebug() {
+            const debugInfo = document.getElementById('debugInfo');
+            debugInfo.classList.toggle('hidden');
+        }
+        
+        function updateLoadingStatus(message) {
+            const loadingStatus = document.getElementById('loadingStatus');
+            if (loadingStatus) {
+                loadingStatus.textContent = message;
+            }
+            console.log('Loading Status:', message);
+        }
+        
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCaKJgggVlJYLl6j6klgKUuEc3NmGFQZv4",
+            authDomain: "urology-app-6f2d2.firebaseapp.com",
+            projectId: "urology-app-6f2d2",
+            storageBucket: "urology-app-6f2d2.firebasestorage.app",
+            messagingSenderId: "996503565094",
+            appId: "1:996503565094:web:7aed31cf47abd380ab07e7"
+        };
+
+        // Initialize Firebase with error handling
+        try {
+            updateLoadingStatus('Connecting to Firebase...');
+            firebase.initializeApp(firebaseConfig);
+            updateDebugInfo('firebaseStatus', 'Connected');
+            updateLoadingStatus('Firebase connected, checking authentication...');
+            console.log('Firebase initialized successfully');
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+            updateDebugInfo('firebaseStatus', 'Error: ' + error.message);
+            updateLoadingStatus('Firebase connection failed');
+            showScreen('login');
+            showMessage('loginError', 'Failed to connect to Firebase: ' + error.message);
+        }
+        
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        // Global variables
+        let currentUser = null;
+        let userRole = null;
+        let allPatients = [];
+        
+        // DOM elements
+        const loadingScreen = document.getElementById('loadingScreen');
+        const loginScreen = document.getElementById('loginScreen');
+        const mainApp = document.getElementById('mainApp');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userEmail = document.getElementById('userEmail');
+        const userRoleSpan = document.getElementById('userRole');
+        
+        // Navigation elements
+        const showPatientsBtn = document.getElementById('showPatientsBtn');
+        const showAddPatientBtn = document.getElementById('showAddPatientBtn');
+        const patientsView = document.getElementById('patientsView');
+        const addPatientView = document.getElementById('addPatientView');
+        
+        // Patient management elements
+        const patientsList = document.getElementById('patientsList');
+        const patientCount = document.getElementById('patientCount');
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const addPatientForm = document.getElementById('addPatientForm');
+        const cancelAddPatient = document.getElementById('cancelAddPatient');
+        const addPatientError = document.getElementById('addPatientError');
+        const addPatientSuccess = document.getElementById('addPatientSuccess');
+
+        // Show/hide screens
+        function showScreen(screenName) {
+            console.log('Showing screen:', screenName);
+            loadingScreen.classList.add('hidden');
+            loginScreen.classList.add('hidden');
+            mainApp.classList.add('hidden');
+            
+            if (screenName === 'loading') {
+                loadingScreen.classList.remove('hidden');
+            } else if (screenName === 'login') {
+                loginScreen.classList.remove('hidden');
+            } else if (screenName === 'main') {
+                mainApp.classList.remove('hidden');
+            }
+        }
+
+        // Update showView function
+        function showView(viewName) {
+            console.log('Showing view:', viewName);
+            // Hide all views
+            const views = ['patientsView', 'addPatientView'];
+            
+            views.forEach(viewId => {
+                const element = document.getElementById(viewId);
+                if (element) element.classList.add('hidden');
+            });
+    
+            // Reset button states
+            if (showPatientsBtn) showPatientsBtn.classList.remove('btn-primary');
+            if (showAddPatientBtn) showAddPatientBtn.classList.remove('btn-primary');
+    
+            // Show requested view
+            if (viewName === 'patients') {
+                if (patientsView) patientsView.classList.remove('hidden');
+                if (showPatientsBtn) showPatientsBtn.classList.add('btn-primary');
+            } else if (viewName === 'addPatient') {
+                if (addPatientView) addPatientView.classList.remove('hidden');
+                if (showAddPatientBtn) showAddPatientBtn.classList.add('btn-primary');
+            }
+        }
+        
+        // Show error/success messages
+        function showMessage(elementId, message, isSuccess = false) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.style.display = 'block';
+                
+                setTimeout(() => {
+                    element.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Authentication state listener with improved error handling
+        auth.onAuthStateChanged(async (user) => {
+            console.log('Auth state changed:', user ? 'User logged in' : 'No user');
+            updateDebugInfo('authStatus', user ? 'Authenticated' : 'Not authenticated');
+            updateDebugInfo('debugUser', user ? user.email : 'None');
+            
+            if (user) {
+                currentUser = user;
+                updateLoadingStatus('Loading user profile...');
+                console.log('Loading user data for:', user.uid);
+                
+                try {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        userRole = userData.role;
+                        userEmail.textContent = userData.email;
+                        userRoleSpan.textContent = userData.role.toUpperCase();
+                        
+                        console.log('User data loaded successfully');
+                        updateLoadingStatus('Loading complete!');
+                        showScreen('main');
+                        showView('patients');
+                        loadPatients();
+                        
+                        // Set today's date as default
+                        const admissionDateElement = document.getElementById('admissionDate');
+                        if (admissionDateElement) {
+                            admissionDateElement.valueAsDate = new Date();
+                        }
+                    } else {
+                        console.error('User document does not exist');
+                        updateDebugInfo('authStatus', 'No user profile found');
+                        showMessage('loginError', 'User role not found. Please contact administrator.');
+                        auth.signOut();
+                        showScreen('login');
+                    }
+                } catch (error) {
+                    console.error('Error getting user data:', error);
+                    updateDebugInfo('authStatus', 'Profile load error');
+                    showMessage('loginError', 'Error loading user data: ' + error.message);
+                    showScreen('login');
+                }
+            } else {
+                currentUser = null;
+                userRole = null;
+                console.log('No user, showing login screen');
+                updateLoadingStatus('Ready to login');
+                showScreen('login');
+            }
+        });
+        
+        // Add timeout to prevent infinite loading
+        setTimeout(() => {
+            if (!loadingScreen.classList.contains('hidden')) {
+                console.error('App stuck on loading screen - forcing login screen');
+                updateLoadingStatus('Connection timeout - please try again');
+                showScreen('login');
+                showMessage('loginError', 'Connection timeout. Please refresh the page and try again.');
+            }
+        }, 15000); // 15 second timeout
+        
+        // Login form handler
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                updateLoadingStatus('Signing in...');
+                showScreen('loading');
+                
+                try {
+                    await auth.signInWithEmailAndPassword(email, password);
+                    console.log('Login successful');
+                } catch (error) {
+                    console.error('Login error:', error);
+                    showScreen('login');
+                    showMessage('loginError', 'Invalid email or password: ' + error.message);
+                }
+            });
+        }
+        
+        // Logout handler
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                auth.signOut();
+            });
+        }
+        
+        // Navigation handlers
+        if (showPatientsBtn) {
+            showPatientsBtn.addEventListener('click', () => {
+                showView('patients');
+                loadPatients();
+            });
+        }
+        
+        if (showAddPatientBtn) {
+            showAddPatientBtn.addEventListener('click', () => {
+                showView('addPatient');
+                if (addPatientForm) addPatientForm.reset();
+                const admissionDate = document.getElementById('admissionDate');
+                if (admissionDate) admissionDate.valueAsDate = new Date();
+            });
+        }
+        
+        if (cancelAddPatient) {
+            cancelAddPatient.addEventListener('click', () => {
+                showView('patients');
+            });
+        }
+        
+        // Load patients from Firestore
+        async function loadPatients() {
+            try {
+                if (patientsList) {
+                    patientsList.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading patients...</p></div>';
+                }
+                
+                const snapshot = await db.collection('patients').orderBy('createdAt', 'desc').get();
+                allPatients = [];
+                
+                snapshot.forEach(doc => {
+                    allPatients.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                displayPatients(allPatients);
+                
+            } catch (error) {
+                console.error('Error loading patients:', error);
+                if (patientsList) {
+                    patientsList.innerHTML = '<p style="text-align: center; color: #f44336;">Error loading patients: ' + error.message + '</p>';
+                }
+            }
+        }
+        
+        // Display patients list
+        function displayPatients(patients) {
+            if (patientCount) patientCount.textContent = patients.length;
+            
+            if (patients.length === 0) {
+                if (patientsList) {
+                    patientsList.innerHTML = '<p style="text-align: center; color: #666;">No patients found. Click "Add New Patient" to get started.</p>';
+                }
+                return;
+            }
+            
+            if (patientsList) {
+                patientsList.innerHTML = patients.map(patient => `
+                    <div class="patient-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <h3>${patient.name || 'Unnamed Patient'}</h3>
+                            <span class="status-badge status-${patient.status || 'pre-op'}">${patient.status || 'pre-op'}</span>
+                        </div>
+                        <div class="patient-info">
+                            <span><strong>MRN:</strong> ${patient.mrn || 'N/A'}</span>
+                            <span><strong>Age:</strong> ${patient.age || 'N/A'}</span>
+                            <span><strong>Gender:</strong> ${patient.gender || 'N/A'}</span>
+                            <span><strong>Room:</strong> ${patient.roomNumber || 'N/A'}</span>
+                            <span><strong>Admission:</strong> ${patient.admissionDate || 'N/A'}</span>
+                            <span><strong>Phone:</strong> ${patient.phone || 'N/A'}</span>
+                        </div>
+                        <div class="patient-info">
+                            <span><strong>Complaint:</strong> ${(patient.presentingComplaint || 'N/A').substring(0, 100)}${(patient.presentingComplaint || '').length > 100 ? '...' : ''}</span>
+                        </div>
+                        <div class="patient-actions">
+                            <button class="btn btn-primary btn-sm" onclick="alert('View details feature coming soon!')">📋 View Details</button>
+                            <button class="btn btn-secondary btn-sm" onclick="alert('Edit feature coming soon!')">✏️ Edit</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        // Search and filter functionality
+        if (searchInput) {
+            searchInput.addEventListener('input', filterPatients);
+        }
+        if (statusFilter) {
+            statusFilter.addEventListener('change', filterPatients);
+        }
+        
+        function filterPatients() {
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+            const statusFilterValue = statusFilter ? statusFilter.value : '';
+            
+            let filteredPatients = allPatients.filter(patient => {
+                const matchesSearch = !searchTerm || 
+                    (patient.name || '').toLowerCase().includes(searchTerm) ||
+                    (patient.mrn || '').toLowerCase().includes(searchTerm) ||
+                    (patient.roomNumber || '').toLowerCase().includes(searchTerm);
+                
+                const matchesStatus = !statusFilterValue || patient.status === statusFilterValue;
+                
+                return matchesSearch && matchesStatus;
+            });
+            
+            displayPatients(filteredPatients);
+        }
+        
+        // Add patient form handler
+        if (addPatientForm) {
+            addPatientForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                try {
+                    const patientData = {
+                        name: document.getElementById('patientName').value,
+                        mrn: document.getElementById('patientMRN').value,
+                        age: parseInt(document.getElementById('patientAge').value) || null,
+                        gender: document.getElementById('patientGender').value,
+                        phone: document.getElementById('patientPhone').value,
+                        roomNumber: document.getElementById('roomNumber').value,
+                        admissionDate: document.getElementById('admissionDate').value,
+                        presentingComplaint: document.getElementById('presentingComplaint').value,
+                        pmh: document.getElementById('pmh').value,
+                        allergies: document.getElementById('allergies').value,
+                        medications: document.getElementById('medications').value,
+                        physicalExam: document.getElementById('physicalExam').value,
+                        imagingSummary: document.getElementById('imagingSummary').value,
+                        labsSummary: document.getElementById('labsSummary').value,
+                        status: 'pre-op',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        createdBy: currentUser.uid,
+                        createdByName: userEmail.textContent
+                    };
+                    
+                    await db.collection('patients').add(patientData);
+                    
+                    showMessage('addPatientSuccess', 'Patient added successfully!', true);
+                    addPatientForm.reset();
+                    const admissionDate = document.getElementById('admissionDate');
+                    if (admissionDate) admissionDate.valueAsDate = new Date();
+                    
+                    setTimeout(() => {
+                        showView('patients');
+                        loadPatients();
+                    }, 2000);
+                    
+                } catch (error) {
+                    console.error('Error adding patient:', error);
+                    showMessage('addPatientError', 'Error adding patient: ' + error.message);
+                }
+            });
+        }
+        
+        // Initialize app
+        console.log('App initializing...');
+        showScreen('loading');
+    </script>
+</body>
+</html>
