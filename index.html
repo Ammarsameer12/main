@@ -3,8 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Urology Patient Follow-Up</title>
+    <title>Urology Patient Follow-Up System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-blue: #1e40af;
+            --primary-blue-light: #3b82f6;
+            --primary-blue-dark: #1e3a8a;
+            --secondary-teal: #0891b2;
+            --success-green: #10b981;
+            --warning-amber: #f59e0b;
+            --danger-red: #ef4444;
+            --neutral-50: #f8fafc;
+            --neutral-100: #f1f5f9;
+            --neutral-200: #e2e8f0;
+            --neutral-300: #cbd5e1;
+            --neutral-400: #94a3b8;
+            --neutral-500: #64748b;
+            --neutral-600: #475569;
+            --neutral-700: #334155;
+            --neutral-800: #1e293b;
+            --neutral-900: #0f172a;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -12,190 +37,503 @@
         }
         
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--neutral-50) 0%, var(--neutral-100) 100%);
+            color: var(--neutral-700);
             line-height: 1.6;
+            min-height: 100vh;
         }
         
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        /* Navigation */
-        .nav {
-            background-color: #2c5aa0;
+        /* Header/Navigation */
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
             color: white;
             padding: 1rem 0;
-            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
-        .nav-content {
-            max-width: 1200px;
+        .header-content {
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        .nav h1 {
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .logo i {
+            font-size: 2rem;
+            color: #60a5fa;
         }
         
         .nav-links {
             display: flex;
-            gap: 20px;
+            gap: 1rem;
+            align-items: center;
         }
         
-        .nav-links a {
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
             color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
             text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
         
-        .nav-links a:hover {
-            background-color: rgba(255,255,255,0.1);
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #93c5fd;
+            font-size: 0.9rem;
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
         }
         
         /* Pages */
         .page {
             display: none;
-            background: white;
-            border-radius: 8px;
-            padding: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            animation: fadeIn 0.5s ease-in-out;
         }
         
         .page.active {
             display: block;
         }
         
-        /* Login Form */
-        .login-form {
-            max-width: 400px;
-            margin: 0 auto;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Login Page */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 3rem;
+            box-shadow: var(--shadow-xl);
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid var(--neutral-200);
+        }
+        
+        .login-header {
             text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .login-header h2 {
+            color: var(--primary-blue);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-header p {
+            color: var(--neutral-500);
+            font-size: 1rem;
+        }
+        
+        .login-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-blue-light), var(--secondary-teal));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .login-icon i {
+            font-size: 2.5rem;
+            color: white;
         }
         
         .form-group {
-            margin-bottom: 1rem;
-            text-align: left;
+            margin-bottom: 1.5rem;
         }
         
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #333;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--neutral-700);
+            font-size: 0.9rem;
+        }
+        
+        .input-wrapper {
+            position: relative;
         }
         
         .form-group input {
             width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            border: 2px solid var(--neutral-200);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--neutral-50);
         }
         
         .form-group input:focus {
             outline: none;
-            border-color: #2c5aa0;
+            border-color: var(--primary-blue-light);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neutral-400);
+            font-size: 1.1rem;
         }
         
         .btn {
-            background-color: #2c5aa0;
+            background: linear-gradient(135deg, var(--primary-blue-light), var(--primary-blue));
             color: white;
-            padding: 12px 24px;
             border: none;
-            border-radius: 4px;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
         }
         
         .btn:hover {
-            background-color: #1e3f73;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-full {
+            width: 100%;
         }
         
         .btn-secondary {
-            background-color: #6c757d;
+            background: linear-gradient(135deg, var(--neutral-500), var(--neutral-600));
         }
         
-        .btn-secondary:hover {
-            background-color: #545b62;
-        }
-        
-        /* Patient List */
-        .patient-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-        
-        .patient-list {
-            display: grid;
-            gap: 1rem;
-        }
-        
-        .patient-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
+        .demo-info {
+            text-align: center;
+            margin-top: 1.5rem;
             padding: 1rem;
-            background: #f9f9f9;
-            transition: box-shadow 0.3s;
+            background: var(--neutral-50);
+            border-radius: 0.5rem;
+            border: 1px solid var(--neutral-200);
         }
         
-        .patient-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        .patient-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #2c5aa0;
+        .demo-info p {
+            color: var(--neutral-600);
+            font-size: 0.9rem;
             margin-bottom: 0.5rem;
         }
         
-        .patient-info {
-            color: #666;
+        .demo-info .highlight {
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+        
+        /* Patient List Page */
+        .patients-header {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+        }
+        
+        .patients-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .patients-title h2 {
+            color: var(--primary-blue);
+            font-size: 2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .btn-add {
+            background: linear-gradient(135deg, var(--success-green), #059669);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+        }
+        
+        .search-bar {
+            position: relative;
+            max-width: 500px;
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid var(--neutral-200);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            background: var(--neutral-50);
+            transition: all 0.3s ease;
+        }
+        
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary-blue-light);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .search-bar .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neutral-400);
+            font-size: 1.1rem;
+        }
+        
+        /* Patient Cards Grid */
+        .patients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .patient-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .patient-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-teal));
+        }
+        
+        .patient-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .patient-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .patient-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.25rem;
+        }
+        
+        .patient-mrn {
+            color: var(--neutral-500);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .patient-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             font-size: 0.9rem;
         }
         
-        /* Status indicator */
+        .detail-item i {
+            color: var(--neutral-400);
+            width: 16px;
+        }
+        
+        .detail-item .label {
+            color: var(--neutral-500);
+            font-weight: 500;
+        }
+        
+        .detail-item .value {
+            color: var(--neutral-700);
+            font-weight: 600;
+        }
+        
+        .patient-surgery {
+            background: var(--neutral-50);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--neutral-200);
+        }
+        
+        .surgery-type {
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.25rem;
+        }
+        
+        .surgery-date {
+            color: var(--neutral-600);
+            font-size: 0.9rem;
+        }
+        
+        /* Status Badges */
         .status {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.85rem;
+            font-weight: 600;
             text-transform: uppercase;
+            letter-spacing: 0.025em;
         }
         
         .status.pre-op {
-            background-color: #fff3cd;
-            color: #856404;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #92400e;
         }
         
         .status.post-op {
-            background-color: #d1ecf1;
-            color: #0c5460;
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #1e40af;
         }
         
         .status.discharged {
-            background-color: #d4edda;
-            color: #155724;
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
         }
         
-        /* Responsive */
+        .status i {
+            font-size: 0.8rem;
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            text-align: center;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .stat-icon.pre-op { background: linear-gradient(135deg, var(--warning-amber), #d97706); }
+        .stat-icon.post-op { background: linear-gradient(135deg, var(--primary-blue-light), var(--primary-blue)); }
+        .stat-icon.discharged { background: linear-gradient(135deg, var(--success-green), #059669); }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--neutral-800);
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            color: var(--neutral-600);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .patients-grid {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            }
+        }
+        
         @media (max-width: 768px) {
-            .nav-content {
+            .header-content {
                 flex-direction: column;
-                gap: 10px;
+                gap: 1rem;
+                padding: 0 1rem;
             }
             
             .nav-links {
@@ -203,88 +541,307 @@
                 justify-content: center;
             }
             
-            .patient-header {
+            .container {
+                padding: 1rem;
+            }
+            
+            .patients-title {
                 flex-direction: column;
-                gap: 10px;
+                gap: 1rem;
                 align-items: stretch;
             }
+            
+            .patients-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .patient-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .login-card {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="nav">
-        <div class="nav-content">
-            <h1>🏥 Urology Follow-Up</h1>
-            <div class="nav-links">
-                <a href="#" onclick="showPage('login')">Login</a>
-                <a href="#" onclick="showPage('patients')" id="patientsLink" style="display: none;">Patients</a>
-                <a href="#" onclick="logout()" id="logoutLink" style="display: none;">Logout</a>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-hospital-alt"></i>
+                <span>Urology Follow-Up System</span>
             </div>
+            <nav class="nav-links">
+                <a href="#" onclick="showPage('login')" class="nav-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="#" onclick="showPage('patients')" id="patientsLink" class="nav-btn" style="display: none;">
+                    <i class="fas fa-users"></i> Patients
+                </a>
+                <a href="#" onclick="logout()" id="logoutLink" class="nav-btn" style="display: none;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+                <div id="userInfo" class="user-info" style="display: none;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userEmail"></span>
+                </div>
+            </nav>
         </div>
-    </nav>
+    </header>
 
     <div class="container">
         <!-- Login Page -->
         <div id="loginPage" class="page active">
-            <div class="login-form">
-                <h2 style="margin-bottom: 2rem; color: #2c5aa0;">👨‍⚕️ Login to Continue</h2>
-                <form onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label for="email">Email:</label>
-                        <input type="email" id="email" required placeholder="doctor@hospital.com">
+            <div class="login-container">
+                <div class="login-card">
+                    <div class="login-header">
+                        <div class="login-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h2>Welcome Back</h2>
+                        <p>Please sign in to access the patient management system</p>
                     </div>
-                    <div class="form-group">
-                        <label for="password">Password:</label>
-                        <input type="password" id="password" required placeholder="Your password">
+                    
+                    <form onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-envelope input-icon"></i>
+                                <input type="email" id="email" required placeholder="doctor@hospital.com">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input type="password" id="password" required placeholder="Enter your secure password">
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-full">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Sign In Securely
+                        </button>
+                    </form>
+                    
+                    <div class="demo-info">
+                        <p><i class="fas fa-info-circle"></i> <span class="highlight">Demo Mode:</span></p>
+                        <p>Use any email and password combination to test the interface</p>
                     </div>
-                    <button type="submit" class="btn">Login</button>
-                </form>
-                <p style="margin-top: 1rem; color: #666; font-size: 0.9rem;">
-                    Demo: Use any email/password to test
-                </p>
+                </div>
             </div>
         </div>
 
         <!-- Patient List Page -->
         <div id="patientsPage" class="page">
-            <div class="patient-header">
-                <h2>📋 Patient List</h2>
-                <button class="btn" onclick="addPatient()">+ Add New Patient</button>
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon pre-op">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">Pre-Operative</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon post-op">
+                        <i class="fas fa-procedures"></i>
+                    </div>
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">Post-Operative</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon discharged">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">Discharged</div>
+                </div>
             </div>
             
-            <!-- Search Bar -->
-            <div style="margin-bottom: 2rem;">
-                <input type="text" placeholder="🔍 Search by name, MRN, or room number..." 
-                       style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px; font-size: 16px;">
+            <!-- Header Section -->
+            <div class="patients-header">
+                <div class="patients-title">
+                    <h2>
+                        <i class="fas fa-clipboard-list"></i>
+                        Patient Management
+                    </h2>
+                    <button class="btn btn-add" onclick="addPatient()">
+                        <i class="fas fa-plus"></i>
+                        Add New Patient
+                    </button>
+                </div>
+                
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Search by name, MRN, room number, or surgery type..." 
+                           oninput="filterPatients(this.value)">
+                </div>
             </div>
             
-            <!-- Sample Patient Cards -->
-            <div class="patient-list">
+            <!-- Patient Cards -->
+            <div class="patients-grid">
                 <div class="patient-card" onclick="viewPatient('001')">
-                    <div class="patient-name">John Smith</div>
-                    <div class="patient-info">
-                        <strong>MRN:</strong> 12345 | <strong>Room:</strong> 201A | <strong>Age:</strong> 65<br>
-                        <strong>Surgery:</strong> TURP | <strong>Date:</strong> 2025-07-25<br>
-                        <span class="status post-op">Post-Op Day 1</span>
+                    <div class="patient-main">
+                        <div>
+                            <div class="patient-name">John Smith</div>
+                            <div class="patient-mrn">MRN: 12345</div>
+                        </div>
+                        <span class="status post-op">
+                            <i class="fas fa-procedures"></i>
+                            Post-Op Day 1
+                        </span>
+                    </div>
+                    
+                    <div class="patient-details">
+                        <div class="detail-item">
+                            <i class="fas fa-bed"></i>
+                            <span class="label">Room:</span>
+                            <span class="value">201A</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-birthday-cake"></i>
+                            <span class="label">Age:</span>
+                            <span class="value">65 years</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-phone"></i>
+                            <span class="label">Contact:</span>
+                            <span class="value">+1-555-0123</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-calendar"></i>
+                            <span class="label">Admitted:</span>
+                            <span class="value">Jul 25, 2025</span>
+                        </div>
+                    </div>
+                    
+                    <div class="patient-surgery">
+                        <div class="surgery-type">
+                            <i class="fas fa-scalpel"></i>
+                            Transurethral Resection of Prostate (TURP)
+                        </div>
+                        <div class="surgery-date">
+                            <i class="fas fa-clock"></i>
+                            Surgery: July 25, 2025 at 09:30 AM
+                        </div>
                     </div>
                 </div>
                 
                 <div class="patient-card" onclick="viewPatient('002')">
-                    <div class="patient-name">Maria Garcia</div>
-                    <div class="patient-info">
-                        <strong>MRN:</strong> 67890 | <strong>Room:</strong> 203B | <strong>Age:</strong> 42<br>
-                        <strong>Surgery:</strong> URS | <strong>Date:</strong> 2025-07-26<br>
-                        <span class="status pre-op">Pre-Op</span>
+                    <div class="patient-main">
+                        <div>
+                            <div class="patient-name">Maria Garcia</div>
+                            <div class="patient-mrn">MRN: 67890</div>
+                        </div>
+                        <span class="status pre-op">
+                            <i class="fas fa-clock"></i>
+                            Pre-Operative
+                        </span>
+                    </div>
+                    
+                    <div class="patient-details">
+                        <div class="detail-item">
+                            <i class="fas fa-bed"></i>
+                            <span class="label">Room:</span>
+                            <span class="value">203B</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-birthday-cake"></i>
+                            <span class="label">Age:</span>
+                            <span class="value">42 years</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-phone"></i>
+                            <span class="label">Contact:</span>
+                            <span class="value">+1-555-0456</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-calendar"></i>
+                            <span class="label">Scheduled:</span>
+                            <span class="value">Jul 27, 2025</span>
+                        </div>
+                    </div>
+                    
+                    <div class="patient-surgery">
+                        <div class="surgery-type">
+                            <i class="fas fa-microscope"></i>
+                            Ureteroscopy with Stone Removal (URS)
+                        </div>
+                        <div class="surgery-date">
+                            <i class="fas fa-calendar-check"></i>
+                            Scheduled: July 27, 2025 at 14:00 PM
+                        </div>
                     </div>
                 </div>
                 
                 <div class="patient-card" onclick="viewPatient('003')">
-                    <div class="patient-name">Ahmed Hassan</div>
-                    <div class="patient-info">
-                        <strong>MRN:</strong> 11223 | <strong>Room:</strong> 205A | <strong>Age:</strong> 58<br>
-                        <strong>Surgery:</strong> PCNL | <strong>Date:</strong> 2025-07-24<br>
-                        <span class="status discharged">Discharged</span>
+                    <div class="patient-main">
+                        <div>
+                            <div class="patient-name">Ahmed Hassan</div>
+                            <div class="patient-mrn">MRN: 11223</div>
+                        </div>
+                        <span class="status discharged">
+                            <i class="fas fa-home"></i>
+                            Discharged
+                        </span>
+                    </div>
+                    
+                    <div class="patient-details">
+                        <div class="detail-item">
+                            <i class="fas fa-bed"></i>
+                            <span class="label">Room:</span>
+                            <span class="value">205A</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-birthday-cake"></i>
+                            <span class="label">Age:</span>
+                            <span class="value">58 years</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-phone"></i>
+                            <span class="label">Contact:</span>
+                            <span class="value">+1-555-0789</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-calendar"></i>
+                            <span class="label">Discharged:</span>
+                            <span class="value">Jul 26, 2025</span>
+                        </div>
+                    </div>
+                    
+                    <div class="patient-surgery">
+                        <div class="surgery-type">
+                            <i class="fas fa-kidneys"></i>
+                            Percutaneous Nephrolithotomy (PCNL)
+                        </div>
+                        <div class="surgery-date">
+                            <i class="fas fa-check-circle"></i>
+                            Completed: July 24, 2025 - Recovery successful
+                        </div>
                     </div>
                 </div>
             </div>
@@ -294,23 +851,26 @@
     <script>
         // Track login state
         let isLoggedIn = false;
+        let currentUser = null;
         
-        // Show specific page
+        // Show specific page with smooth transition
         function showPage(pageId) {
             // Hide all pages
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
             });
             
-            // Show requested page
-            if (pageId === 'login') {
-                document.getElementById('loginPage').classList.add('active');
-            } else if (pageId === 'patients' && isLoggedIn) {
-                document.getElementById('patientsPage').classList.add('active');
-            } else if (pageId === 'patients' && !isLoggedIn) {
-                alert('Please login first!');
-                showPage('login');
-            }
+            // Show requested page with delay for animation
+            setTimeout(() => {
+                if (pageId === 'login') {
+                    document.getElementById('loginPage').classList.add('active');
+                } else if (pageId === 'patients' && isLoggedIn) {
+                    document.getElementById('patientsPage').classList.add('active');
+                } else if (pageId === 'patients' && !isLoggedIn) {
+                    showNotification('Please login first!', 'warning');
+                    showPage('login');
+                }
+            }, 100);
         }
         
         // Handle login form submission
@@ -319,56 +879,284 @@
             
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const submitBtn = event.target.querySelector('button[type="submit"]');
             
-            // Simple validation (we'll replace with Firebase later)
-            if (email && password) {
-                isLoggedIn = true;
+            // Show loading state
+            const originalContent = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<div class="loading"></div> Signing In...';
+            submitBtn.disabled = true;
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                if (email && password) {
+                    isLoggedIn = true;
+                    currentUser = { email: email };
+                    
+                    // Update navigation
+                    updateUIForLoggedInUser();
+                    
+                    // Show success notification
+                    showNotification('Welcome back, ' + email.split('@')[0] + '!', 'success');
+                    
+                    // Go to patients page
+                    showPage('patients');
+                } else {
+                    showNotification('Please enter both email and password', 'error');
+                }
                 
-                // Update navigation
-                document.getElementById('patientsLink').style.display = 'inline';
-                document.getElementById('logoutLink').style.display = 'inline';
-                
-                // Show success message
-                alert('Login successful! Welcome ' + email);
-                
-                // Go to patients page
-                showPage('patients');
-            } else {
-                alert('Please enter both email and password');
-            }
+                // Reset button
+                submitBtn.innerHTML = originalContent;
+                submitBtn.disabled = false;
+            }, 1500);
         }
         
         // Handle logout
         function logout() {
+            if (!confirm('Are you sure you want to logout?')) return;
+            
             isLoggedIn = false;
+            currentUser = null;
             
             // Update navigation
-            document.getElementById('patientsLink').style.display = 'none';
-            document.getElementById('logoutLink').style.display = 'none';
+            updateUIForLoggedOutUser();
             
             // Clear form
             document.getElementById('email').value = '';
             document.getElementById('password').value = '';
             
-            alert('Logged out successfully');
+            showNotification('Logged out successfully', 'info');
             showPage('login');
         }
         
-        // Add new patient (placeholder)
+        // Update UI for logged in user
+        function updateUIForLoggedInUser() {
+            document.getElementById('patientsLink').style.display = 'inline-block';
+            document.getElementById('logoutLink').style.display = 'inline-block';
+            
+            const userInfo = document.getElementById('userInfo');
+            const userEmail = document.getElementById('userEmail');
+            if (userInfo && userEmail && currentUser) {
+                userEmail.textContent = currentUser.email;
+                userInfo.style.display = 'flex';
+            }
+        }
+        
+        // Update UI for logged out user
+        function updateUIForLoggedOutUser() {
+            document.getElementById('patientsLink').style.display = 'none';
+            document.getElementById('logoutLink').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'none';
+        }
+        
+        // Search/Filter patients
+        function filterPatients(searchTerm) {
+            const cards = document.querySelectorAll('.patient-card');
+            const term = searchTerm.toLowerCase();
+            
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(term)) {
+                    card.style.display = 'block';
+                    card.style.animation = 'fadeIn 0.3s ease-in-out';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Show no results message if no cards visible
+            const visibleCards = Array.from(cards).filter(card => card.style.display !== 'none');
+            if (visibleCards.length === 0 && searchTerm.trim() !== '') {
+                showNotification(`No patients found matching "${searchTerm}"`, 'info');
+            }
+        }
+        
+        // Show notifications
+        function showNotification(message, type = 'info') {
+            // Remove existing notifications
+            const existing = document.querySelector('.notification');
+            if (existing) existing.remove();
+            
+            // Create notification
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas ${getNotificationIcon(type)}"></i>
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="notification-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Add styles
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 1000;
+                min-width: 300px;
+                background: white;
+                border-left: 4px solid ${getNotificationColor(type)};
+                border-radius: 0.5rem;
+                box-shadow: var(--shadow-lg);
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            const content = notification.querySelector('.notification-content');
+            content.style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 1rem;
+                color: ${getNotificationTextColor(type)};
+            `;
+            
+            const icon = content.querySelector('i');
+            icon.style.color = getNotificationColor(type);
+            
+            const closeBtn = content.querySelector('.notification-close');
+            closeBtn.style.cssText = `
+                background: none;
+                border: none;
+                color: var(--neutral-400);
+                cursor: pointer;
+                margin-left: auto;
+                padding: 0.25rem;
+                border-radius: 0.25rem;
+                transition: all 0.2s ease;
+            `;
+            
+            // Add to page
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.style.animation = 'slideOut 0.3s ease-in';
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, 5000);
+        }
+        
+        function getNotificationIcon(type) {
+            switch(type) {
+                case 'success': return 'fa-check-circle';
+                case 'error': return 'fa-exclamation-circle';
+                case 'warning': return 'fa-exclamation-triangle';
+                default: return 'fa-info-circle';
+            }
+        }
+        
+        function getNotificationColor(type) {
+            switch(type) {
+                case 'success': return 'var(--success-green)';
+                case 'error': return 'var(--danger-red)';
+                case 'warning': return 'var(--warning-amber)';
+                default: return 'var(--primary-blue)';
+            }
+        }
+        
+        function getNotificationTextColor(type) {
+            switch(type) {
+                case 'success': return '#065f46';
+                case 'error': return '#991b1b';
+                case 'warning': return '#92400e';
+                default: return 'var(--neutral-700)';
+            }
+        }
+        
+        // Placeholder functions with better UX
         function addPatient() {
-            alert('Add Patient feature coming in Part 3! 🚧');
+            showNotification('Add Patient feature will be available in Part 3! 🚧', 'info');
         }
         
-        // View patient details (placeholder)
         function viewPatient(patientId) {
-            alert('Patient details for ID: ' + patientId + ' coming in Part 5! 🚧');
+            showNotification(`Opening patient details for ID: ${patientId} - Coming in Part 5! 🚧`, 'info');
         }
         
-        // Initialize app
+        // Initialize app with animations
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏥 Urology App Part 1 loaded successfully!');
+            console.log('🏥 Urology App Part 1 (Redesigned) loaded successfully!');
+            
+            // Add CSS animations
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+                .notification-close:hover {
+                    background: var(--neutral-100) !important;
+                    color: var(--neutral-600) !important;
+                }
+            `;
+            document.head.appendChild(style);
+            
             showPage('login');
+            
+            // Add some interactive enhancements
+            addInteractiveEnhancements();
         });
+        
+        // Add interactive enhancements
+        function addInteractiveEnhancements() {
+            // Add hover sound effect simulation
+            document.querySelectorAll('.btn, .patient-card, .nav-btn').forEach(element => {
+                element.addEventListener('mouseenter', function() {
+                    this.style.transition = 'all 0.2s ease';
+                });
+            });
+            
+            // Add keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const notification = document.querySelector('.notification');
+                    if (notification) notification.remove();
+                }
+                
+                if (e.ctrlKey && e.key === 'k') {
+                    e.preventDefault();
+                    const searchInput = document.querySelector('.search-bar input');
+                    if (searchInput && isLoggedIn) {
+                        searchInput.focus();
+                        searchInput.select();
+                    }
+                }
+            });
+            
+            // Add real-time clock to header
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+        
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour12: true, 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            // Add clock to user info if logged in
+            if (isLoggedIn && currentUser) {
+                const userInfo = document.getElementById('userInfo');
+                if (userInfo && !userInfo.querySelector('.clock')) {
+                    const clock = document.createElement('div');
+                    clock.className = 'clock';
+                    clock.style.cssText = 'font-size: 0.8rem; opacity: 0.8; margin-left: 0.5rem;';
+                    userInfo.appendChild(clock);
+                }
+                const clockElement = userInfo.querySelector('.clock');
+                if (clockElement) {
+                    clockElement.textContent = timeString;
+                }
+            }
+        }
     </script>
 </body>
 </html>
