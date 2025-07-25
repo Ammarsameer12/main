@@ -711,11 +711,19 @@
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Initialize Supabase
+        // Initialize Supabase with both keys
         const SUPABASE_URL = 'https://xqsfajxxpcxsguqezcpr.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhxc2Zhanh4cGN4c2d1cWV6Y3ByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0ODEzOTQsImV4cCI6MjA2OTA1NzM5NH0.-cd5LQ0CSB9DNenAhjgALhTg8JRBo8gS4MPwEWN4CMI';
         
+        // TODO: Add your service_role key here for admin functions
+        const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhxc2Zhanh4cGN4c2d1cWV6Y3ByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0ODEzOTQsImV4cCI6MjA2OTA1NzM5NH0.-cd5LQ0CSB9DNenAhjgALhTg8JRBo8gS4MPwEWN4CMI'; // Get this from Supabase Dashboard → Settings → API
+        
+        // Regular client for auth
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Admin client for user creation
+        const supabaseAdmin = window.supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+        
         console.log('🚀 Supabase initialized successfully!');
     </script>
 </head>
@@ -1153,17 +1161,23 @@
                 return;
             }
             
+            // Check if service key is configured
+            if (SUPABASE_SERVICE_KEY === 'YOUR_SERVICE_ROLE_KEY_HERE') {
+                showAdminMessage(`Please add your service_role key to enable automatic user creation.\n\nFor now, create manually:\nEmail: ${email}\nPassword: ${password}\nRole: ${role}`, 'warning');
+                return;
+            }
+            
             // Show loading state
             const originalContent = submitBtn.innerHTML;
             submitBtn.innerHTML = '<div class="loading"></div> Creating Account...';
             submitBtn.disabled = true;
             
             try {
-                // Create user in Supabase
-                const { data, error } = await supabase.auth.admin.createUser({
+                // Create user using admin client
+                const { data, error } = await supabaseAdmin.auth.admin.createUser({
                     email: email,
                     password: password,
-                    email_confirm: true, // Auto-confirm email
+                    email_confirm: true,
                     user_metadata: {
                         role: role,
                         created_by: 'admin',
@@ -1173,7 +1187,7 @@
                 
                 if (error) throw error;
                 
-                showAdminMessage(`Account created successfully for ${email} with role: ${role}`, 'success');
+                showAdminMessage(`✅ Account created successfully!\nEmail: ${email}\nRole: ${role}\nPassword: ${password}`, 'success');
                 
                 // Clear form
                 document.getElementById('newUserEmail').value = '';
@@ -1182,9 +1196,7 @@
                 
             } catch (error) {
                 console.error('User creation error:', error);
-                
-                // Fallback: Show instructions for manual creation
-                showAdminMessage(`Please create this account manually in Supabase Dashboard:\nEmail: ${email}\nRole: ${role}`, 'warning');
+                showAdminMessage(`Error creating account: ${error.message}\n\nPlease create manually in Supabase Dashboard.`, 'error');
             }
             
             // Reset button
