@@ -860,7 +860,6 @@
                     <div style="margin-top: 30px; text-align: center;">
                         <button id="addOperativeNoteBtn" class="btn btn-primary">🔪 Add Operative Note</button>
                         <button id="viewDailyLogsBtn" class="btn btn-primary" style="margin-left: 10px;">📊 Daily Logs</button>
-                        <button id="createDischargeBtn" class="btn btn-success" style="margin-left: 10px; background: #28a745;">🏠 Create Discharge Summary</button>
                         <button id="deletePatientBtn" class="btn btn-danger" style="margin-left: 20px;">🗑️ Delete Patient</button>
                     </div>
                 </div>
@@ -1309,7 +1308,6 @@
            const views = [
     'patientsView', 'addPatientView', 'patientDetailView', 'editPatientView',
     'operativeNoteView', 'viewOperativeNotesView', 'dailyLogsView', 'addDailyLogView',
-    'dischargeSummaryView'
            ];
            
            views.forEach(viewId => {
@@ -1659,21 +1657,10 @@
                         </div>
                     </div>            
                 </div>
-
-                <div class="detail-section" style="grid-column: 1 / -1;">
-                    <h3>🏠 Discharge Summary</h3>
-                    <div id="dischargeSummaryContainer">
-                        <div class="loading" style="text-align: center; padding: 20px;">
-                            <div class="spinner" style="width: 20px; height: 20px;"></div>
-                            <p>Loading discharge summary...</p>
-                        </div>
-                    </div>
-                </div>
             `;
                     
         // Load operative notes
         loadOperativeNotes(patient.id);
-        loadDischargeSummary(patient.id);
         }
 
         // Load and display operative notes
@@ -2631,7 +2618,6 @@
             const views = [
     'patientsView', 'addPatientView', 'patientDetailView', 'editPatientView',
     'operativeNoteView', 'viewOperativeNotesView', 'dailyLogsView', 'addDailyLogView',
-    'dischargeSummaryView'
             ];
             
             views.forEach(viewId => {
@@ -2672,10 +2658,6 @@
             } else if (viewName === 'addDailyLog') {
                 const addDailyLogView = document.getElementById('addDailyLogView');
                 if (addDailyLogView) addDailyLogView.classList.remove('hidden');
-} else if (viewName === 'dischargeSummary') {
-    const dischargeSummaryView = document.getElementById('dischargeSummaryView');
-    if (dischargeSummaryView) dischargeSummaryView.classList.remove('hidden');
-            }
         };
         
         // Check vital signs for abnormal values
