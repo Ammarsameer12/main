@@ -583,6 +583,40 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        <!-- Firebase v9 SDK -->
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+  
+  // Your Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCaKJgggVlJYLl6j6klgKUuEc3NmGFQZv4",
+    authDomain: "urology-app-6f2d2.firebaseapp.com",
+    projectId: "urology-app-6f2d2",
+    storageBucket: "urology-app-6f2d2.firebasestorage.app",
+    messagingSenderId: "996503565094",
+    appId: "1:996503565094:web:7aed31cf47abd380ab07e7"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  
+  // Make auth available globally
+  window.firebaseAuth = auth;
+  window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+  window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+  window.signOut = signOut;
+  window.onAuthStateChanged = onAuthStateChanged;
+  
+  console.log('🔥 Firebase initialized successfully!');
+  
+  // Dispatch custom event when Firebase is ready
+  window.dispatchEvent(new CustomEvent('firebaseReady'));
+</script>
+</head>
     </style>
 </head>
 <body>
@@ -616,41 +650,54 @@
         <div id="loginPage" class="page active">
             <div class="login-container">
                 <div class="login-card">
-                    <div class="login-header">
-                        <div class="login-icon">
-                            <i class="fas fa-user-md"></i>
-                        </div>
-                        <h2>Welcome Back</h2>
-                        <p>Please sign in to access the patient management system</p>
-                    </div>
-                    
-                    <form onsubmit="handleLogin(event)">
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-envelope input-icon"></i>
-                                <input type="email" id="email" required placeholder="doctor@hospital.com">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-lock input-icon"></i>
-                                <input type="password" id="password" required placeholder="Enter your secure password">
-                            </div>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-full">
-                            <i class="fas fa-sign-in-alt"></i>
-                            Sign In Securely
-                        </button>
-                    </form>
-                    
-                    <div class="demo-info">
-                        <p><i class="fas fa-info-circle"></i> <span class="highlight">Demo Mode:</span></p>
-                        <p>Use any email and password combination to test the interface</p>
-                    </div>
+<div class="login-header">
+    <div class="login-icon">
+        <i class="fas fa-user-md"></i>
+    </div>
+    <h2>Welcome Back</h2>
+    <p>Please sign in to access the patient management system</p>
+</div>
+
+<!-- Auth Mode Toggle -->
+<div style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
+    <button type="button" id="loginTab" class="btn" style="flex: 1; padding: 0.75rem;" onclick="setAuthMode('login')">
+        <i class="fas fa-sign-in-alt"></i> Login
+    </button>
+    <button type="button" id="registerTab" class="btn btn-secondary" style="flex: 1; padding: 0.75rem;" onclick="setAuthMode('register')">
+        <i class="fas fa-user-plus"></i> Register
+    </button>
+</div>
+
+<form id="authForm" onsubmit="handleAuth(event)">
+    <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-wrapper">
+            <i class="fas fa-envelope input-icon"></i>
+            <input type="email" id="email" required placeholder="doctor@hospital.com">
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" id="password" required placeholder="Minimum 6 characters">
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-full" id="authButton">
+        <i class="fas fa-sign-in-alt"></i>
+        Sign In Securely
+    </button>
+</form>
+
+<!-- Auth Messages -->
+<div id="authMessage" style="margin-top: 1rem; padding: 1rem; border-radius: 0.75rem; display: none; animation: fadeIn 0.3s ease;"></div>
+
+<div class="demo-info">
+    <p><i class="fas fa-fire"></i> <span class="highlight">Real Firebase Authentication!</span></p>
+    <p>Create an account or login with existing credentials</p>
+</div>
                 </div>
             </div>
         </div>
@@ -1075,33 +1122,34 @@
             showNotification(`Opening patient details for ID: ${patientId} - Coming in Part 5! 🚧`, 'info');
         }
         
-        // Initialize app with animations
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏥 Urology App Part 1 (Redesigned) loaded successfully!');
-            
-            // Add CSS animations
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideIn {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                @keyframes slideOut {
-                    from { transform: translateX(0); opacity: 1; }
-                    to { transform: translateX(100%); opacity: 0; }
-                }
-                .notification-close:hover {
-                    background: var(--neutral-100) !important;
-                    color: var(--neutral-600) !important;
-                }
-            `;
-            document.head.appendChild(style);
-            
-            showPage('login');
-            
-            // Add some interactive enhancements
-            addInteractiveEnhancements();
-        });
+// Initialize app with Firebase
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🏥 Urology App Part 2 (Firebase) loaded successfully!');
+    
+    // Add CSS animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        .notification-close:hover {
+            background: var(--neutral-100) !important;
+            color: var(--neutral-600) !important;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Initialize Firebase auth
+    initializeFirebaseAuth();
+    
+    showPage('login');
+    addInteractiveEnhancements();
+});
         
         // Add interactive enhancements
         function addInteractiveEnhancements() {
@@ -1157,6 +1205,105 @@
                 }
             }
         }
+
+        // Firebase-specific functions
+function getFirebaseErrorMessage(errorCode) {
+    switch(errorCode) {
+        case 'auth/user-not-found':
+            return 'No account found with this email address';
+        case 'auth/wrong-password':
+            return 'Incorrect password. Please try again';
+        case 'auth/email-already-in-use':
+            return 'An account with this email already exists';
+        case 'auth/weak-password':
+            return 'Password is too weak. Use at least 6 characters';
+        case 'auth/invalid-email':
+            return 'Please enter a valid email address';
+        case 'auth/too-many-requests':
+            return 'Too many failed attempts. Please try again later';
+        case 'auth/network-request-failed':
+            return 'Network error. Please check your connection';
+        default:
+            return `Authentication error: ${errorCode}`;
+    }
+}
+
+function showAuthMessage(message, type) {
+    const messageEl = document.getElementById('authMessage');
+    messageEl.textContent = message;
+    messageEl.style.display = 'block';
+    
+    // Style based on type
+    if (type === 'error') {
+        messageEl.style.background = 'linear-gradient(135deg, #fef2f2, #fee2e2)';
+        messageEl.style.color = '#991b1b';
+        messageEl.style.border = '1px solid #fecaca';
+    } else if (type === 'success') {
+        messageEl.style.background = 'linear-gradient(135deg, #f0fdf4, #dcfce7)';
+        messageEl.style.color = '#166534';
+        messageEl.style.border = '1px solid #bbf7d0';
+    } else {
+        messageEl.style.background = 'linear-gradient(135deg, #eff6ff, #dbeafe)';
+        messageEl.style.color = '#1e40af';
+        messageEl.style.border = '1px solid #bfdbfe';
+    }
+    
+    // Auto-hide success messages
+    if (type === 'success') {
+        setTimeout(hideAuthMessage, 3000);
+    }
+}
+
+function hideAuthMessage() {
+    const messageEl = document.getElementById('authMessage');
+    if (messageEl) messageEl.style.display = 'none';
+}
+
+// Initialize Firebase auth listener
+function initializeFirebaseAuth() {
+    window.addEventListener('firebaseReady', function() {
+        console.log('🔥 Firebase is ready, setting up auth listener...');
+        firebaseReady = true;
+        
+        // Listen for auth state changes
+        window.onAuthStateChanged(window.firebaseAuth, (user) => {
+            if (user) {
+                console.log('✅ User authenticated:', user.email);
+                currentUser = user;
+                isLoggedIn = true;
+                
+                // Reset form button if still loading
+                const authButton = document.getElementById('authButton');
+                if (authButton && authButton.disabled) {
+                    if (authMode === 'login') {
+                        authButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In Securely';
+                    } else {
+                        authButton.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+                    }
+                    authButton.disabled = false;
+                }
+                
+                updateUIForLoggedInUser();
+                showPage('patients');
+            } else {
+                console.log('❌ User not authenticated');
+                currentUser = null;
+                isLoggedIn = false;
+                updateUIForLoggedOutUser();
+                showPage('login');
+            }
+        });
+    });
+    
+    // Fallback timeout
+    setTimeout(() => {
+        if (!firebaseReady) {
+            console.error('❌ Firebase took too long to load');
+            showNotification('Connection issue. Please refresh the page.', 'error');
+        }
+    }, 10000);
+}
+        
     </script>
 </body>
 </html>
