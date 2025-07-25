@@ -1355,9 +1355,25 @@
             }, 5000);
         }
         
-        // Authentication state listener
+// Fixed Authentication state listener with better error handling
+        console.log('🔄 Setting up authentication...');
+        
+        // Add a timeout to prevent infinite loading
+        let authInitialized = false;
+        
+        setTimeout(() => {
+            if (!authInitialized) {
+                console.warn('⚠️ Auth timeout - showing login');
+                showScreen('login');
+            }
+        }, 8000); // 8 second timeout
+        
         auth.onAuthStateChanged(async (user) => {
+            console.log('🔄 Auth state changed triggered');
+            authInitialized = true; // Mark as initialized
+            
             if (user) {
+                console.log('✅ User found:', user.email);
                 currentUser = user;
                 
                 try {
@@ -1373,22 +1389,61 @@
                         loadPatients();
                         
                         // Set today's date as default
-                        document.getElementById('admissionDate').valueAsDate = new Date();
+                        const admissionDateEl = document.getElementById('admissionDate');
+                        if (admissionDateEl) {
+                            admissionDateEl.valueAsDate = new Date();
+                        }
                     } else {
+                        console.error('❌ User document not found');
                         showMessage('loginError', 'User role not found. Please contact administrator.');
                         auth.signOut();
                     }
                 } catch (error) {
-                    console.error('Error getting user data:', error);
+                    console.error('❌ Error getting user data:', error);
                     showMessage('loginError', 'Error loading user data.');
                     auth.signOut();
                 }
             } else {
+                console.log('❌ No user - showing login');
                 currentUser = null;
                 userRole = null;
                 showScreen('login');
             }
         });
+        
+        console.log('✅ Auth listener set up');
+        
+        // Create a test user function (run this in console if you need a user to login)
+        window.createTestUser = async function() {
+            try {
+                console.log('Creating test user...');
+                const userCredential = await auth.createUserWithEmailAndPassword('admin@hospital.com', 'admin123');
+                const user = userCredential.user;
+                
+                await db.collection('users').doc(user.uid).set({
+                    email: 'admin@hospital.com',
+                    role: 'doctor',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                console.log('✅ Test user created!');
+                console.log('Login with: admin@hospital.com / admin123');
+                alert('Test user created! Login with:\nEmail: admin@hospital.com\nPassword: admin123');
+            } catch (error) {
+                console.error('Error creating user:', error);
+                alert('Error: ' + error.message);
+            }
+        };
+        
+        console.log('💡 To create a test user, open console and type: createTestUser()');
+        
+        // Emergency fallback - show login screen if still loading after 10 seconds
+        setTimeout(() => {
+            if (!document.getElementById('loadingScreen').classList.contains('hidden')) {
+                console.warn('🚨 Emergency fallback - showing login');
+                showScreen('login');
+            }
+        }, 10000);
         
         // Login form handler
         loginForm.addEventListener('submit', async (e) => {
@@ -3401,6 +3456,26 @@
         
         // Initialize app
         showScreen('loading');
+
+            // EMERGENCY BYPASS - If loading screen doesn't disappear, click anywhere to show login
+        document.addEventListener('click', function(e) {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+                console.log('🚨 Manual bypass activated - showing login');
+                showScreen('login');
+            }
+        });
+        
+        // Also add keyboard bypass (press any key)
+        document.addEventListener('keydown', function(e) {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+                console.log('🚨 Keyboard bypass activated - showing login');
+                showScreen('login');
+            }
+        });
+        
+        console.log('🆘 Emergency bypass activated: Click anywhere or press any key if stuck on loading');
 
     </script>
 </body>
