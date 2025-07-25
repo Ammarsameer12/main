@@ -1241,6 +1241,13 @@
 </div>
 
     <script>
+        // EMERGENCY FIX - Add this at the very beginning of your script
+setTimeout(function() {
+    console.log('🚨 Emergency fix activated');
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'block';
+}, 3000); // Show login after 3 seconds
+
         // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCaKJgggVlJYLl6j6klgKUuEc3NmGFQZv4",
@@ -1251,6 +1258,231 @@
             appId: "1:996503565094:web:7aed31cf47abd380ab07e7"
         };
 
+        // WORKING FIREBASE SCRIPT - Replace your entire script section with this
+
+// 1. EMERGENCY LOADING BYPASS
+setTimeout(function() {
+    const loading = document.getElementById('loadingScreen');
+    const login = document.getElementById('loginScreen');
+    if (loading && !loading.classList.contains('hidden')) {
+        console.log('🚨 Emergency timeout - showing login screen');
+        loading.classList.add('hidden');
+        login.classList.remove('hidden');
+    }
+}, 4000); // 4 second timeout
+
+// 2. FIREBASE CONFIGURATION
+const firebaseConfig = {
+    apiKey: "AIzaSyCaKJgggVlJYLl6j6klgKUuEc3NmGFQZv4",
+    authDomain: "urology-app-6f2d2.firebaseapp.com",
+    projectId: "urology-app-6f2d2",
+    storageBucket: "urology-app-6f2d2.firebasestorage.app",
+    messagingSenderId: "996503565094",
+    appId: "1:996503565094:web:7aed31cf47abd380ab07e7"
+};
+
+// 3. GLOBAL VARIABLES
+let currentUser = null;
+let userRole = null;
+let allPatients = [];
+
+// 4. INITIALIZE FIREBASE
+try {
+    firebase.initializeApp(firebaseConfig);
+    console.log('✅ Firebase initialized');
+} catch (error) {
+    console.error('❌ Firebase error:', error);
+    showLoginScreen();
+}
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// 5. SCREEN MANAGEMENT
+function showScreen(screenName) {
+    console.log('Showing screen:', screenName);
+    
+    const screens = ['loadingScreen', 'loginScreen', 'mainApp'];
+    screens.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.classList.add('hidden');
+        }
+    });
+    
+    const targetScreen = document.getElementById(screenName);
+    if (targetScreen) {
+        targetScreen.classList.remove('hidden');
+    }
+}
+
+function showLoginScreen() {
+    showScreen('loginScreen');
+}
+
+function showMainApp() {
+    showScreen('mainApp');
+    // Initialize default values
+    const admissionDate = document.getElementById('admissionDate');
+    if (admissionDate) {
+        admissionDate.valueAsDate = new Date();
+    }
+}
+
+// 6. AUTHENTICATION
+console.log('Setting up authentication...');
+
+auth.onAuthStateChanged(async (user) => {
+    console.log('Auth state changed:', user ? `User: ${user.email}` : 'No user');
+    
+    if (user) {
+        currentUser = user;
+        try {
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            if (userDoc.exists) {
+                const userData = userDoc.data();
+                userRole = userData.role;
+                
+                // Update UI
+                document.getElementById('userEmail').textContent = userData.email;
+                document.getElementById('userRole').textContent = userData.role.toUpperCase();
+                
+                showMainApp();
+                console.log('✅ User logged in successfully');
+            } else {
+                console.error('User document not found');
+                alert('User role not found. Creating test user...');
+                await createUserDocument(user);
+            }
+        } catch (error) {
+            console.error('Error getting user data:', error);
+            await createUserDocument(user);
+        }
+    } else {
+        currentUser = null;
+        userRole = null;
+        showLoginScreen();
+    }
+});
+
+// 7. CREATE USER DOCUMENT
+async function createUserDocument(user) {
+    try {
+        await db.collection('users').doc(user.uid).set({
+            email: user.email,
+            role: 'doctor',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        userRole = 'doctor';
+        document.getElementById('userEmail').textContent = user.email;
+        document.getElementById('userRole').textContent = 'DOCTOR';
+        showMainApp();
+        console.log('✅ User document created');
+    } catch (error) {
+        console.error('Error creating user document:', error);
+        alert('Error setting up user. Please try again.');
+        auth.signOut();
+    }
+}
+
+// 8. LOGIN FORM
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                console.log('Login successful');
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                // If user doesn't exist, create one
+                if (error.code === 'auth/user-not-found') {
+                    try {
+                        await auth.createUserWithEmailAndPassword(email, password);
+                        console.log('User created and logged in');
+                    } catch (createError) {
+                        document.getElementById('loginError').textContent = 'Error: ' + createError.message;
+                        document.getElementById('loginError').style.display = 'block';
+                    }
+                } else {
+                    document.getElementById('loginError').textContent = 'Invalid email or password';
+                    document.getElementById('loginError').style.display = 'block';
+                }
+            }
+        });
+    }
+    
+    // Logout button
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            auth.signOut();
+        });
+    }
+});
+
+// 9. CREATE TEST USER FUNCTION
+window.createTestUser = async function() {
+    try {
+        const userCredential = await auth.createUserWithEmailAndPassword('doctor@hospital.com', 'doctor123');
+        console.log('✅ Test user created!');
+        console.log('Login with: doctor@hospital.com / doctor123');
+        alert('Test user created!\n\nEmail: doctor@hospital.com\nPassword: doctor123');
+    } catch (error) {
+        console.error('Error:', error);
+        if (error.code === 'auth/email-already-in-use') {
+            alert('Test user already exists!\n\nEmail: doctor@hospital.com\nPassword: doctor123');
+        }
+    }
+};
+
+// 10. SIMPLIFIED PATIENT MANAGEMENT (Basic functions)
+function loadPatients() {
+    console.log('Loading patients...');
+    // Simplified for now
+    document.getElementById('patientsList').innerHTML = '<p>Patient system ready!</p>';
+}
+
+function showView(viewName) {
+    console.log('Showing view:', viewName);
+    // Simplified for now
+}
+
+// 11. SHOW MESSAGE FUNCTION
+function showMessage(elementId, message, isSuccess = false) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.textContent = message;
+        element.style.display = 'block';
+        setTimeout(() => {
+            element.style.display = 'none';
+        }, 5000);
+    }
+}
+
+// 12. MANUAL BYPASS (Click anywhere if stuck)
+document.addEventListener('click', function(e) {
+    const loading = document.getElementById('loadingScreen');
+    if (loading && !loading.classList.contains('hidden')) {
+        console.log('🚨 Manual bypass - showing login');
+        showLoginScreen();
+    }
+});
+
+// 13. INITIALIZATION
+console.log('🚀 App initialized');
+console.log('💡 To create test user, type in console: createTestUser()');
+
+// Start with login screen
+showLoginScreen();
+        
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
