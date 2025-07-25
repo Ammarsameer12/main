@@ -356,47 +356,13 @@
                 return;
             }
             
-            // Check if service key is configured
-            if (!supabaseAdmin) {
-                showAdminMessage(`Please add your service_role key to enable automatic user creation.\n\nFor now, create manually:\nEmail: ${email}\nPassword: ${password}\nRole: ${role}`, 'warning');
-                return;
-            }
+            // Show manual creation message since we don't have automatic creation
+            showAdminMessage(`Please create this account manually in Supabase Dashboard:\n\nEmail: ${email}\nPassword: ${password}\nRole: ${role}`, 'warning');
             
-            // Show loading state
-            const originalContent = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<div class="loading"></div> Creating Account...';
-            submitBtn.disabled = true;
-            
-            try {
-                // Create user using admin client
-                const { data, error } = await supabaseAdmin.auth.admin.createUser({
-                    email: email,
-                    password: password,
-                    email_confirm: true,
-                    user_metadata: {
-                        role: role,
-                        created_by: 'admin',
-                        created_at: new Date().toISOString()
-                    }
-                });
-                
-                if (error) throw error;
-                
-                showAdminMessage(`✅ Account created successfully!\nEmail: ${email}\nRole: ${role}\nPassword: ${password}`, 'success');
-                
-                // Clear form
-                document.getElementById('newUserEmail').value = '';
-                document.getElementById('newUserPassword').value = '';
-                document.getElementById('userRole').value = 'doctor';
-                
-            } catch (error) {
-                console.error('User creation error:', error);
-                showAdminMessage(`Error creating account: ${error.message}\n\nPlease create manually in Supabase Dashboard.`, 'error');
-            }
-            
-            // Reset button
-            submitBtn.innerHTML = originalContent;
-            submitBtn.disabled = false;
+            // Clear form
+            document.getElementById('newUserEmail').value = '';
+            document.getElementById('newUserPassword').value = '';
+            document.getElementById('userRole').value = 'doctor';
         }
 
         function showAdminMessage(message, type) {
@@ -811,13 +777,24 @@
         // App Initialization
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🏥 Urology App Part 3 (Complete Database) loaded successfully!');
-            showPage('login');
+            
+            // Ensure only login page is visible initially
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById('loginPage').classList.add('active');
+            
+            // Hide all navigation buttons initially
+            document.getElementById('patientsLink').style.display = 'none';
+            document.getElementById('logoutLink').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'none';
             
             // Check if user is already logged in
             const checkSession = async () => {
                 const { data: { session } } = await supabase.auth.getSession();
                 if (session?.user) {
                     console.log('✅ User already logged in:', session.user.email);
+                    // Auth state change will handle UI updates
                 }
             };
             
