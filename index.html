@@ -346,6 +346,12 @@
             border: 1px solid #bfdbfe;
         }
         
+        .auth-message.warning {
+            background: linear-gradient(135deg, #fefbf2, #fef3c7);
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+        
         .demo-info {
             text-align: center;
             margin-top: 1.5rem;
@@ -702,36 +708,15 @@
         }
     </style>
 
-    <!-- Firebase v9 SDK -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Initialize Supabase
+        const SUPABASE_URL = 'https://xqsfajxxpcxsguqezcpr.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhxc2Zhanh4cGN4c2d1cWV6Y3ByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0ODEzOTQsImV4cCI6MjA2OTA1NzM5NH0.-cd5LQ0CSB9DNenAhjgALhTg8JRBo8gS4MPwEWN4CMI';
         
-        // Your Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCaKJgggVlJYLl6j6klgKUuEc3NmGFQZv4",
-            authDomain: "urology-app-6f2d2.firebaseapp.com",
-            projectId: "urology-app-6f2d2",
-            storageBucket: "urology-app-6f2d2.firebasestorage.app",
-            messagingSenderId: "996503565094",
-            appId: "1:996503565094:web:7aed31cf47abd380ab07e7"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        
-        // Make auth available globally
-        window.firebaseAuth = auth;
-        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
-        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
-        window.signOut = signOut;
-        window.onAuthStateChanged = onAuthStateChanged;
-        
-        console.log('🔥 Firebase initialized successfully!');
-        
-        // Dispatch custom event when Firebase is ready
-        window.dispatchEvent(new CustomEvent('firebaseReady'));
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('🚀 Supabase initialized successfully!');
     </script>
 </head>
 <body>
@@ -773,14 +758,12 @@
                         <p>Please sign in to access the patient management system</p>
                     </div>
                     
-                    <!-- Auth Mode Toggle -->
-                    <div class="auth-tabs">
-                        <button type="button" id="loginTab" class="auth-tab active" onclick="setAuthMode('login')">
-                            <i class="fas fa-sign-in-alt"></i> Login
-                        </button>
-                        <button type="button" id="registerTab" class="auth-tab" onclick="setAuthMode('register')">
-                            <i class="fas fa-user-plus"></i> Register
-                        </button>
+                    <!-- No registration tab - login only -->
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <p style="color: var(--neutral-600); font-size: 0.9rem;">
+                            <i class="fas fa-shield-alt"></i> 
+                            Access restricted to authorized medical staff
+                        </p>
                     </div>
                     
                     <form id="authForm" onsubmit="handleAuth(event)">
@@ -810,8 +793,11 @@
                     <div id="authMessage" class="auth-message"></div>
                     
                     <div class="demo-info">
-                        <p><i class="fas fa-fire"></i> <span class="highlight">Real Firebase Authentication!</span></p>
-                        <p>Create an account or login with existing credentials</p>
+                        <p><i class="fas fa-user-shield"></i> <span class="highlight">Secure Access Only</span></p>
+                        <p>Contact admin for account creation</p>
+                        <button class="btn btn-secondary" style="margin-top: 1rem; padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="showAdminPanel()">
+                            <i class="fas fa-cog"></i> Admin Panel
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1008,6 +994,83 @@
                 </div>
             </div>
         </div>
+
+        <!-- Admin Panel Page -->
+        <div id="adminPage" class="page">
+            <div class="login-container">
+                <div class="login-card">
+                    <div class="login-header">
+                        <div class="login-icon" style="background: linear-gradient(135deg, var(--warning-amber), #d97706);">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <h2>Admin Panel</h2>
+                        <p>Create accounts for medical staff</p>
+                    </div>
+                    
+                    <div id="adminAuth" style="display: block;">
+                        <div class="form-group">
+                            <label for="adminPassword">Admin Password</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-key input-icon"></i>
+                                <input type="password" id="adminPassword" required placeholder="Enter admin password">
+                            </div>
+                        </div>
+                        
+                        <button onclick="verifyAdmin()" class="btn btn-full">
+                            <i class="fas fa-unlock"></i>
+                            Access Admin Panel
+                        </button>
+                        
+                        <button onclick="showPage('login')" class="btn btn-secondary btn-full" style="margin-top: 1rem;">
+                            <i class="fas fa-arrow-left"></i>
+                            Back to Login
+                        </button>
+                    </div>
+                    
+                    <div id="adminPanel" style="display: none;">
+                        <form onsubmit="createUserAccount(event)">
+                            <div class="form-group">
+                                <label for="newUserEmail">Staff Email</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-envelope input-icon"></i>
+                                    <input type="email" id="newUserEmail" required placeholder="doctor@hospital.com">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="newUserPassword">Temporary Password</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-lock input-icon"></i>
+                                    <input type="password" id="newUserPassword" required placeholder="Minimum 6 characters">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="userRole">Role</label>
+                                <select id="userRole" style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50);">
+                                    <option value="admin">Admin</option>
+                                    <option value="doctor">Doctor</option>
+                                    <option value="nurse">Nurse</option>
+                                    <option value="rotator">Rotator</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-full" id="createUserBtn">
+                                <i class="fas fa-user-plus"></i>
+                                Create Staff Account
+                            </button>
+                        </form>
+                        
+                        <div id="adminMessage" class="auth-message"></div>
+                        
+                        <button onclick="logout(); showPage('login');" class="btn btn-secondary btn-full" style="margin-top: 1rem;">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout Admin
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1015,62 +1078,43 @@
         let authMode = 'login';
         let currentUser = null;
         let isLoggedIn = false;
-        let firebaseReady = false;
+        let isAdmin = false;
+        
+        // Admin password - Change this to your secure password
+        const ADMIN_PASSWORD = 'admin123'; // TODO: Change this!
 
-        // Firebase Authentication Functions
+        // Authentication Functions - Login only, no registration
         function setAuthMode(mode) {
-            authMode = mode;
-            const loginTab = document.getElementById('loginTab');
-            const registerTab = document.getElementById('registerTab');
-            const authButton = document.getElementById('authButton');
-            
-            if (mode === 'login') {
-                loginTab.className = 'auth-tab active';
-                registerTab.className = 'auth-tab';
-                authButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In Securely';
-            } else {
-                loginTab.className = 'auth-tab';
-                registerTab.className = 'auth-tab active';
-                authButton.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
-            }
-            
+            // Always login mode now
+            authMode = 'login';
             hideAuthMessage();
         }
 
         async function handleAuth(event) {
             event.preventDefault();
             
-            if (!firebaseReady) {
-                showAuthMessage('Firebase is still loading, please wait...', 'info');
-                return;
-            }
-            
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const submitBtn = document.getElementById('authButton');
             
-            // Validation
-            if (password.length < 6) {
-                showAuthMessage('Password must be at least 6 characters long', 'error');
-                return;
-            }
-            
             // Show loading state
             const originalContent = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<div class="loading"></div> Processing...';
+            submitBtn.innerHTML = '<div class="loading"></div> Signing In...';
             submitBtn.disabled = true;
             
             try {
-                if (authMode === 'login') {
-                    const userCredential = await window.signInWithEmailAndPassword(window.firebaseAuth, email, password);
-                    showAuthMessage(`Welcome back, ${userCredential.user.email}!`, 'success');
-                } else {
-                    const userCredential = await window.createUserWithEmailAndPassword(window.firebaseAuth, email, password);
-                    showAuthMessage(`Account created successfully! Welcome, ${userCredential.user.email}!`, 'success');
-                }
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                showAuthMessage(`Welcome back, ${data.user.email}!`, 'success');
+                
             } catch (error) {
                 console.error('Authentication error:', error);
-                showAuthMessage(getFirebaseErrorMessage(error.code), 'error');
+                showAuthMessage(getSupabaseErrorMessage(error.message), 'error');
                 
                 // Reset button on error
                 submitBtn.innerHTML = originalContent;
@@ -1078,11 +1122,96 @@
             }
         }
 
+        // Admin Functions
+        function showAdminPanel() {
+            showPage('admin');
+        }
+
+        function verifyAdmin() {
+            const password = document.getElementById('adminPassword').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                document.getElementById('adminAuth').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                isAdmin = true;
+                showNotification('Admin access granted', 'success');
+            } else {
+                showNotification('Invalid admin password', 'error');
+            }
+        }
+
+        async function createUserAccount(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('newUserEmail').value;
+            const password = document.getElementById('newUserPassword').value;
+            const role = document.getElementById('userRole').value;
+            const submitBtn = document.getElementById('createUserBtn');
+            
+            if (password.length < 6) {
+                showAdminMessage('Password must be at least 6 characters long', 'error');
+                return;
+            }
+            
+            // Show loading state
+            const originalContent = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<div class="loading"></div> Creating Account...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Create user in Supabase
+                const { data, error } = await supabase.auth.admin.createUser({
+                    email: email,
+                    password: password,
+                    email_confirm: true, // Auto-confirm email
+                    user_metadata: {
+                        role: role,
+                        created_by: 'admin',
+                        created_at: new Date().toISOString()
+                    }
+                });
+                
+                if (error) throw error;
+                
+                showAdminMessage(`Account created successfully for ${email} with role: ${role}`, 'success');
+                
+                // Clear form
+                document.getElementById('newUserEmail').value = '';
+                document.getElementById('newUserPassword').value = '';
+                document.getElementById('userRole').value = 'doctor';
+                
+            } catch (error) {
+                console.error('User creation error:', error);
+                
+                // Fallback: Show instructions for manual creation
+                showAdminMessage(`Please create this account manually in Supabase Dashboard:\nEmail: ${email}\nRole: ${role}`, 'warning');
+            }
+            
+            // Reset button
+            submitBtn.innerHTML = originalContent;
+            submitBtn.disabled = false;
+        }
+
+        function showAdminMessage(message, type) {
+            const messageEl = document.getElementById('adminMessage');
+            messageEl.textContent = message;
+            messageEl.className = `auth-message ${type}`;
+            messageEl.style.display = 'block';
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    messageEl.style.display = 'none';
+                }, 5000);
+            }
+        }
+
         async function logout() {
             if (!confirm('Are you sure you want to logout?')) return;
             
             try {
-                await window.signOut(window.firebaseAuth);
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+                
                 showNotification('Logged out successfully', 'info');
             } catch (error) {
                 console.error('Logout error:', error);
@@ -1090,26 +1219,21 @@
             }
         }
 
-        function getFirebaseErrorMessage(errorCode) {
-            switch(errorCode) {
-                case 'auth/user-not-found':
-                    return 'No account found with this email address';
-                case 'auth/wrong-password':
-                    return 'Incorrect password. Please try again';
-                case 'auth/email-already-in-use':
-                    return 'An account with this email already exists';
-                case 'auth/weak-password':
-                    return 'Password is too weak. Use at least 6 characters';
-                case 'auth/invalid-email':
-                    return 'Please enter a valid email address';
-                case 'auth/too-many-requests':
-                    return 'Too many failed attempts. Please try again later';
-                case 'auth/network-request-failed':
-                    return 'Network error. Please check your connection';
-                case 'auth/invalid-credential':
-                    return 'Invalid email or password. Please check your credentials';
-                default:
-                    return `Authentication error: ${errorCode}`;
+        function getSupabaseErrorMessage(errorMessage) {
+            if (errorMessage.includes('Invalid login credentials')) {
+                return 'Invalid email or password. Please check your credentials.';
+            } else if (errorMessage.includes('User already registered')) {
+                return 'An account with this email already exists. Try logging in instead.';
+            } else if (errorMessage.includes('Password should be at least')) {
+                return 'Password is too weak. Use at least 6 characters.';
+            } else if (errorMessage.includes('Unable to validate email')) {
+                return 'Please enter a valid email address.';
+            } else if (errorMessage.includes('Email not confirmed')) {
+                return 'Please check your email and click the confirmation link.';
+            } else if (errorMessage.includes('Too many requests')) {
+                return 'Too many attempts. Please try again later.';
+            } else {
+                return errorMessage;
             }
         }
 
@@ -1119,9 +1243,9 @@
             messageEl.className = `auth-message ${type}`;
             messageEl.style.display = 'block';
             
-            // Auto-hide success messages
-            if (type === 'success') {
-                setTimeout(hideAuthMessage, 3000);
+            // Auto-hide success and warning messages
+            if (type === 'success' || type === 'warning') {
+                setTimeout(hideAuthMessage, 5000);
             }
         }
 
@@ -1139,6 +1263,8 @@
             setTimeout(() => {
                 if (pageId === 'login') {
                     document.getElementById('loginPage').classList.add('active');
+                } else if (pageId === 'admin') {
+                    document.getElementById('adminPage').classList.add('active');
                 } else if (pageId === 'patients') {
                     if (isLoggedIn) {
                         document.getElementById('patientsPage').classList.add('active');
@@ -1268,42 +1394,37 @@
             }
         }
 
-        // Firebase Initialization
-        function initializeFirebaseAuth() {
-            window.addEventListener('firebaseReady', function() {
-                console.log('🔥 Firebase is ready, setting up auth listener...');
-                firebaseReady = true;
-                
-                window.onAuthStateChanged(window.firebaseAuth, (user) => {
-                    if (user) {
-                        console.log('✅ User authenticated:', user.email);
-                        currentUser = user;
-                        isLoggedIn = true;
-                        updateUIForLoggedInUser();
-                        showPage('patients');
-                    } else {
-                        console.log('❌ User not authenticated');
-                        currentUser = null;
-                        isLoggedIn = false;
-                        updateUIForLoggedOutUser();
-                        showPage('login');
-                    }
-                });
-            });
+        // Supabase Auth State Listener
+        supabase.auth.onAuthStateChange((event, session) => {
+            console.log('🔐 Auth state changed:', event, session?.user?.email);
             
-            setTimeout(() => {
-                if (!firebaseReady) {
-                    console.error('❌ Firebase took too long to load');
-                    showNotification('Connection issue. Please refresh the page.', 'error');
-                }
-            }, 10000);
-        }
+            if (session?.user) {
+                currentUser = session.user;
+                isLoggedIn = true;
+                updateUIForLoggedInUser();
+                showPage('patients');
+            } else {
+                currentUser = null;
+                isLoggedIn = false;
+                updateUIForLoggedOutUser();
+                showPage('login');
+            }
+        });
 
         // App Initialization
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏥 Urology App Part 2 (Firebase Complete) loaded successfully!');
-            initializeFirebaseAuth();
+            console.log('🏥 Urology App with Supabase loaded successfully!');
             showPage('login');
+            
+            // Check if user is already logged in
+            const checkSession = async () => {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session?.user) {
+                    console.log('✅ User already logged in:', session.user.email);
+                }
+            };
+            
+            checkSession();
         });
     </script>
 </body>
