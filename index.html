@@ -2594,7 +2594,251 @@ function closeOperativeNoteModal() {
 }
 
 function printOperativeNote() {
-    window.print();
+    if (!currentPatient) return;
+    
+    // Get the operative note data from the modal
+    const modal = document.getElementById('operativeNoteModal');
+    if (!modal) return;
+    
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    
+    // Get current date for header
+    const currentDate = new Date().toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+    
+    // Get operative note data (we'll need to fetch it again)
+    fetchOperativeNoteForPrint(printWindow, currentDate);
+}
+
+async function fetchOperativeNoteForPrint(printWindow, currentDate) {
+    try {
+        const { data: operativeNote, error } = await supabase
+            .from('operative_notes')
+            .select('*')
+            .eq('patient_id', currentPatient.id)
+            .single();
+        
+        if (error) {
+            printWindow.close();
+            showNotification('Error loading operative note for printing', 'error');
+            return;
+        }
+        
+        // Create the print document
+        const printContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Operative Note - ${currentPatient.name}</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            line-height: 1.6;
+            color: #000;
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 1in;
+            background: white;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .hospital-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .document-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .patient-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border: 1px solid #000;
+            padding: 10px;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-weight: bold;
+            font-size: 14px;
+            text-decoration: underline;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .field-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .field {
+            margin-bottom: 10px;
+        }
+        .field-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 120px;
+        }
+        .field-value {
+            display: inline-block;
+        }
+        .text-content {
+            white-space: pre-wrap;
+            text-align: justify;
+            margin-top: 10px;
+            padding: 10px;
+            border-left: 3px solid #ccc;
+        }
+        .signature-section {
+            margin-top: 50px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+        }
+        .signature-line {
+            border-bottom: 1px solid #000;
+            height: 40px;
+            margin-bottom: 5px;
+        }
+        @media print {
+            body {
+                margin: 0;
+                padding: 0.5in;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="hospital-name">UROLOGY DEPARTMENT</div>
+        <div class="hospital-name">OPERATIVE REPORT</div>
+        <div style="font-size: 12px; margin-top: 10px;">Date Printed: ${currentDate}</div>
+    </div>
+    
+    <div class="patient-info">
+        <div>
+            <strong>Patient Name:</strong> ${currentPatient.name}<br>
+            <strong>MRN:</strong> ${currentPatient.mrn}<br>
+            <strong>Age:</strong> ${currentPatient.age} years<br>
+            <strong>Gender:</strong> ${currentPatient.gender}
+        </div>
+        <div>
+            <strong>Room:</strong> ${currentPatient.room_number || 'N/A'}<br>
+            <strong>Admission Date:</strong> ${currentPatient.admission_date ? new Date(currentPatient.admission_date).toLocaleDateString() : 'N/A'}<br>
+            <strong>Report Date:</strong> ${operativeNote.created_at ? new Date(operativeNote.created_at).toLocaleDateString() : currentDate}
+        </div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">Procedure Performed</div>
+        <div class="text-content">${operativeNote.procedure_performed}</div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">Personnel & Anesthesia</div>
+        <div class="field-group">
+            <div class="field">
+                <span class="field-label">Primary Surgeon:</span>
+                <span class="field-value">${operativeNote.primary_surgeon || 'Not specified'}</span>
+            </div>
+            <div class="field">
+                <span class="field-label">Assistant:</span>
+                <span class="field-value">${operativeNote.assistant_surgeon || 'None'}</span>
+            </div>
+            <div class="field">
+                <span class="field-label">Anesthesiologist:</span>
+                <span class="field-value">${operativeNote.anesthesiologist || 'Not specified'}</span>
+            </div>
+        </div>
+        <div class="field-group">
+            <div class="field">
+                <span class="field-label">Anesthesia Type:</span>
+                <span class="field-value">${operativeNote.anesthesia_type || 'Not specified'}</span>
+            </div>
+            <div class="field">
+                <span class="field-label">Position:</span>
+                <span class="field-value">${operativeNote.patient_position || 'Not specified'}</span>
+            </div>
+            <div class="field">
+                <span class="field-label">EBL:</span>
+                <span class="field-value">${operativeNote.estimated_blood_loss || 'Not recorded'}</span>
+            </div>
+        </div>
+    </div>
+    
+    ${operativeNote.findings ? `
+    <div class="section">
+        <div class="section-title">Operative Findings</div>
+        <div class="text-content">${operativeNote.findings}</div>
+    </div>
+    ` : ''}
+    
+    <div class="section">
+        <div class="section-title">Operative Technique/Steps</div>
+        <div class="text-content">${operativeNote.operative_steps}</div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">Complications</div>
+        <div class="text-content">${operativeNote.complications}</div>
+    </div>
+    
+    <div class="signature-section">
+        <div>
+            <div class="signature-line"></div>
+            <div style="text-align: center; font-size: 12px;">
+                <strong>Surgeon Signature</strong><br>
+                ${operativeNote.primary_surgeon || 'Primary Surgeon'}<br>
+                Date: _______________
+            </div>
+        </div>
+        <div>
+            <div class="signature-line"></div>
+            <div style="text-align: center; font-size: 12px;">
+                <strong>Attending Physician</strong><br>
+                Date: _______________
+            </div>
+        </div>
+    </div>
+    
+    <div style="margin-top: 30px; font-size: 10px; text-align: center; color: #666;">
+        This operative report was generated electronically on ${currentDate}
+    </div>
+</body>
+</html>
+        `;
+        
+        // Write content to print window
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        
+        // Wait for content to load then print
+        printWindow.onload = function() {
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+        };
+        
+    } catch (error) {
+        console.error('Error preparing operative note for printing:', error);
+        printWindow.close();
+        showNotification('Error preparing document for printing', 'error');
+    }
 }
 
         async function handleSaveOperativeNote(event) {
