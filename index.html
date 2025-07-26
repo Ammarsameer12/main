@@ -1961,8 +1961,10 @@ await loadPostOpEntries();
             }
         }
 
-        async function loadPostOpEntries() {
+            async function loadPostOpEntries() {
             try {
+                console.log('Loading post-op entries for patient:', currentPatient.id);
+                
                 const { data: entries, error } = await supabase
                     .from('post_operative_entries')
                     .select('*')
@@ -1970,7 +1972,11 @@ await loadPostOpEntries();
                     .order('entry_date', { ascending: false })
                     .order('entry_time', { ascending: false });
 
+                console.log('Supabase response:', { entries, error });
+
                 if (error) throw error;
+
+                console.log('Found entries:', entries.length);
 
                 // Update stats
                 document.getElementById('totalEntries').textContent = entries.length;
@@ -1989,8 +1995,8 @@ await loadPostOpEntries();
                 displayPostOpEntries(entries);
 
             } catch (error) {
-                console.error('Error loading post-op entries:', error);
-                showNotification('Error loading entries', 'error');
+                console.error('Detailed error loading post-op entries:', error);
+                showNotification('Error loading entries: ' + error.message, 'error');
                 displayPostOpEntries([]);
             }
         }
