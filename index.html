@@ -2712,15 +2712,31 @@ async function fetchOperativeNoteForPrint(printWindow, currentDate) {
             height: 40px;
             margin-bottom: 5px;
         }
-        @media print {
-            body {
-                margin: 0;
-                padding: 0.5in;
-            }
-            .no-print {
-                display: none;
-            }
-        }
+@media print {
+    @page {
+        margin: 0.5in;
+        size: letter;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0.5in;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .no-print {
+        display: none;
+    }
+    
+    /* Remove browser print headers/footers */
+    @page {
+        margin-top: 0.5in;
+        margin-bottom: 0.5in;
+        margin-left: 0.5in;
+        margin-right: 0.5in;
+    }
+}
     </style>
 </head>
 <body>
@@ -2830,7 +2846,20 @@ async function fetchOperativeNoteForPrint(printWindow, currentDate) {
         // Wait for content to load then print
         printWindow.onload = function() {
             printWindow.focus();
-            printWindow.print();
+// Remove browser headers/footers programmatically
+try {
+    // For Chrome/Edge
+    printWindow.print({
+        silent: false,
+        printBackground: true,
+        margins: {
+            marginType: 'none'
+        }
+    });
+} catch (e) {
+    // Fallback for other browsers
+    printWindow.print();
+}
             printWindow.close();
         };
         
