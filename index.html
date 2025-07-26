@@ -1443,6 +1443,130 @@ function showOperativeNoteForm() {
     }
     showPage('operativeNote');
 }
+
+        function loadOperativeTemplate() {
+    const templateSelect = document.getElementById('operativeTemplate');
+    const contentDiv = document.getElementById('operativeNoteContent');
+    const selectedTemplate = templateSelect.value;
+    
+    if (!selectedTemplate) {
+        contentDiv.innerHTML = `
+            <p style="text-align: center; color: var(--neutral-500); padding: 2rem;">
+                Please select a surgery type above to load the operative note template.
+            </p>
+        `;
+        return;
+    }
+    
+    const templates = {
+        'urs_stone': {
+            procedure: 'Right/Left ureteroscopic stone extraction with Thulium laser lithotripsy and DJ stent placement',
+            anesthesia: 'General anesthesia',
+            position: 'Lithotomy position',
+            findings: 'A single/multiple stone(s) were identified in the mid/distal ureter. The ureter was mildly edematous. No evidence of perforation or extravasation was noted.',
+            steps: `1. After induction of general anesthesia, the patient was placed in lithotomy position and prepped and draped in sterile fashion.
+2. A safety guidewire was introduced into the ureter under cystoscopic guidance.
+3. A semi-rigid ureteroscope was advanced to visualize the ureteric stone.
+4. Thulium laser lithotripsy was performed to dust and fragment the stone.
+5. Fragments were retrieved with a basket as needed.
+6. A retrograde pyelogram was performed to assess the upper tract and confirm integrity.
+7. A 5/6 Fr DJ stent was inserted over the guidewire with the distal curl in the bladder and proximal coil in the renal pelvis.
+8. Hemostasis was confirmed, and instruments were withdrawn.`,
+            complications: 'None encountered intraoperatively',
+            ebl: '<50 mL'
+        },
+        
+        'turp': {
+            procedure: 'Transurethral resection of the prostate (TURP)',
+            anesthesia: 'Spinal anesthesia',
+            position: 'Lithotomy position',
+            findings: 'Enlarged prostate gland with prominent lateral and median lobes protruding into the bladder. Mild trabeculation of bladder noted. No bladder stones or tumors observed. Ureteric orifices identified bilaterally and preserved.',
+            steps: `1. Under spinal anesthesia, the patient was placed in the lithotomy position, prepped, and draped in sterile fashion.
+2. Initial cystoscopy was performed to assess the bladder and visualize the prostatic enlargement and ureteric orifices.
+3. A monopolar/bipolar resectoscope was introduced.
+4. Resection began at the median lobe, followed by the lateral lobes, proceeding in a systematic fashion down to the surgical capsule.
+5. Bladder neck was resected and smoothed.
+6. Complete hemostasis was achieved using coagulation current.
+7. Prostatic chips were evacuated using an Ellik evacuator.
+8. A 22/24 Fr three-way Foley catheter was inserted and continuous bladder irrigation was started.`,
+            complications: 'None encountered intraoperatively',
+            ebl: 'Approximately 200 mL'
+        }
+    };
+    
+    if (selectedTemplate === 'other') {
+        // Show empty form for manual entry
+        contentDiv.innerHTML = createOperativeNoteForm('', '', '', '', '', '', '');
+    } else if (templates[selectedTemplate]) {
+        const template = templates[selectedTemplate];
+        contentDiv.innerHTML = createOperativeNoteForm(
+            template.procedure,
+            template.anesthesia,
+            template.position,
+            template.findings,
+            template.steps,
+            template.complications,
+            template.ebl
+        );
+    }
+}
+
+function createOperativeNoteForm(procedure, anesthesia, position, findings, steps, complications, ebl) {
+    return `
+        <div style="display: grid; gap: 1.5rem;">
+            <div class="form-group">
+                <label for="procedurePerformed">Procedure Performed *</label>
+                <textarea id="procedurePerformed" rows="2" required 
+                         style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                         placeholder="Describe the procedure performed">${procedure}</textarea>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="anesthesiaType">Anesthesia Type</label>
+                    <input type="text" id="anesthesiaType" value="${anesthesia}"
+                           style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50);"
+                           placeholder="General, Spinal, Local...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="patientPosition">Patient Position</label>
+                    <input type="text" id="patientPosition" value="${position}"
+                           style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50);"
+                           placeholder="Lithotomy, Supine, Prone...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="estimatedBloodLoss">Estimated Blood Loss</label>
+                    <input type="text" id="estimatedBloodLoss" value="${ebl}"
+                           style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50);"
+                           placeholder="<50 mL, 200 mL...">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="operativeFindings">Operative Findings</label>
+                <textarea id="operativeFindings" rows="3"
+                         style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                         placeholder="Describe the operative findings">${findings}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="operativeSteps">Operative Steps *</label>
+                <textarea id="operativeSteps" rows="8" required
+                         style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                         placeholder="Describe the step-by-step procedure">${steps}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="complications">Complications</label>
+                <textarea id="complications" rows="2"
+                         style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                         placeholder="None encountered intraoperatively">${complications}</textarea>
+            </div>
+        </div>
+    `;
+}
         
         // Page Navigation
         function showPage(pageId) {
