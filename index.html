@@ -1435,6 +1435,15 @@
         let allPatients = [];
         let currentPatient = null;
 
+        // Add this function with your other functions
+function showOperativeNoteForm() {
+    if (!currentPatient) {
+        showNotification('No patient selected', 'error');
+        return;
+    }
+    showPage('operativeNote');
+}
+        
         // Page Navigation
         function showPage(pageId) {
             // Hide all pages
