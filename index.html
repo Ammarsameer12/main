@@ -1351,6 +1351,76 @@
             </div>
         </div>
 
+    <!-- Operative Notes Page -->
+<div id="operativeNotePage" class="page">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        <div style="background: white; border-radius: 1rem; padding: 2rem; box-shadow: var(--shadow-xl); border: 1px solid var(--neutral-200);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2 style="color: var(--primary-blue); font-size: 2rem; font-weight: 700;">
+                    <i class="fas fa-scalpel"></i>
+                    Operative Note
+                </h2>
+                <button onclick="showPage('patientDetail')" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Patient
+                </button>
+            </div>
+            
+            <!-- Surgery Type Selection -->
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--neutral-50); border-radius: 0.75rem; border: 1px solid var(--neutral-200);">
+                <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">
+                    <i class="fas fa-list"></i> Select Surgery Type
+                </h3>
+                <div class="form-group">
+                    <select id="operativeTemplate" onchange="loadOperativeTemplate()" style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: white;">
+                        <option value="">Select Surgery Type</option>
+                        <option value="urs_stone">URS - Ureteric Stone Extraction</option>
+                        <option value="flexible_urs">Flexible URS - Renal Stones</option>
+                        <option value="turp">TURP - Transurethral Resection of Prostate</option>
+                        <option value="orchiopexy">Orchiopexy for Undescended Testis</option>
+                        <option value="inguinal_hernia">Inguinal Hernia Repair</option>
+                        <option value="pediatric_hernia">Pediatric Inguinal Hernia</option>
+                        <option value="hydrocelectomy">Hydrocelectomy</option>
+                        <option value="varicocelectomy">Microscopic Varicocelectomy</option>
+                        <option value="urethrotomy">Optical Internal Urethrotomy</option>
+                        <option value="circumcision">Surgical Circumcision</option>
+                        <option value="pcnl">Percutaneous Nephrolithotomy (PCNL)</option>
+                        <option value="turbt">TURBT - Bladder Tumor Resection</option>
+                        <option value="radical_nephrectomy">Radical Nephrectomy</option>
+                        <option value="partial_nephrectomy">Partial Nephrectomy</option>
+                        <option value="radical_prostatectomy">Radical Prostatectomy</option>
+                        <option value="other">Other Surgery (Manual Entry)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Operative Note Form -->
+            <form id="operativeNoteForm" onsubmit="handleSaveOperativeNote(event)">
+                <div id="operativeNoteContent">
+                    <p style="text-align: center; color: var(--neutral-500); padding: 2rem;">
+                        Please select a surgery type above to load the operative note template.
+                    </p>
+                </div>
+                
+                <div style="border-top: 2px solid var(--neutral-200); padding-top: 2rem; margin-top: 2rem;">
+                    <div id="operativeNoteMessage" class="auth-message"></div>
+                    
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button type="button" onclick="showPage('patientDetail')" class="btn btn-secondary">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn" id="saveOperativeNoteButton">
+                            <i class="fas fa-save"></i>
+                            Save Operative Note
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
     <script>
         // Initialize Supabase
         const SUPABASE_URL = 'https://xqsfajxxpcxsguqezcpr.supabase.co';
