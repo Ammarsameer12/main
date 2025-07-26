@@ -1968,6 +1968,77 @@
             </div>
         </div>
     </div>
+
+    function showPostOpChart() {
+            if (!currentPatient) {
+                showNotification('No patient selected', 'error');
+                return;
+            }
+            showPage('postOpChart');
+            loadPostOpChart();
+        }
+
+        async function loadPostOpChart() {
+            if (!currentPatient) return;
+            
+            try {
+                // Update patient info
+                document.getElementById('chartPatientInfo').innerHTML = `
+                    <strong>${currentPatient.name}</strong> (MRN: ${currentPatient.mrn}) - 
+                    ${currentPatient.surgery_type || 'Surgery'} ${currentPatient.surgery_date ? 'on ' + formatDate(currentPatient.surgery_date) : ''}
+                `;
+                
+                // Load post-op entries for charts
+                const { data: entries, error } = await supabase
+                    .from('post_operative_entries')
+                    .select('*')
+                    .eq('patient_id', currentPatient.id)
+                    .order('entry_date', { ascending: true })
+                    .order('entry_time', { ascending: true });
+
+                if (error) throw error;
+
+                // Show default vital signs chart
+                showVitalChart('vitals', entries);
+                
+            } catch (error) {
+                console.error('Error loading post-op chart:', error);
+                showNotification('Error loading chart data', 'error');
+            }
+        }
+
+        function showVitalChart(chartType, entries = null) {
+            // Update button states
+            document.querySelectorAll('.chart-toggle-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-chart="${chartType}"]`).classList.add('active');
+            
+            // For now, show a placeholder
+            const container = document.getElementById('chartsContainer');
+            container.innerHTML = `
+                <div style="background: white; border-radius: 1rem; padding: 2rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200); text-align: center;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">
+                        <i class="fas fa-chart-line"></i> ${getChartTitle(chartType)}
+                    </h3>
+                    <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 3rem; margin: 2rem 0;">
+                        <i class="fas fa-chart-area" style="font-size: 4rem; color: var(--neutral-400); margin-bottom: 1rem;"></i>
+                        <p style="color: var(--neutral-600); font-size: 1.1rem;">Chart visualization coming next!</p>
+                        <p style="color: var(--neutral-500); font-size: 0.9rem;">This will show ${chartType} trends over time</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getChartTitle(chartType) {
+            const titles = {
+                'vitals': 'Vital Signs Trends',
+                'pain': 'Pain Score Over Time', 
+                'urine': 'Urine Output Tracking'
+            };
+            return titles[chartType] || 'Chart';
+        }
+    
     <script>
         // Initialize Supabase
         const SUPABASE_URL = 'https://xqsfajxxpcxsguqezcpr.supabase.co';
