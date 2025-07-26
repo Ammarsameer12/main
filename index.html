@@ -1143,6 +1143,210 @@
         </div>
     </div>
 
+    <!-- Patient Detail Page -->
+        <div id="patientDetailPage" class="page">
+            <div style="max-width: 1400px; margin: 0 auto;">
+                <!-- Patient Header -->
+                <div style="background: white; border-radius: 1rem; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow-xl); border: 1px solid var(--neutral-200);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <button onclick="showPage('patients')" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            Back to Patients
+                        </button>
+                        <div style="display: flex; gap: 1rem;">
+                            <button class="btn" onclick="showNotification('Post-operative logging coming in Part 5! 🚧', 'info')" style="background: linear-gradient(135deg, var(--success-green), #059669);">
+                                <i class="fas fa-plus"></i>
+                                Add Post-Op Entry
+                            </button>
+                            <button class="btn" onclick="showNotification('Patient editing coming soon! 📝', 'info')" style="background: linear-gradient(135deg, var(--warning-amber), #d97706);">
+                                <i class="fas fa-edit"></i>
+                                Edit Info
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <h1 id="detailPatientName" style="color: var(--primary-blue); font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
+                                Loading...
+                            </h1>
+                            <div style="display: flex; flex-wrap: wrap; gap: 2rem; margin-bottom: 1rem;">
+                                <span id="detailMRN" style="color: var(--neutral-600); font-size: 1.1rem; font-weight: 600;"></span>
+                                <span id="detailAge" style="color: var(--neutral-600); font-size: 1.1rem;"></span>
+                                <span id="detailGender" style="color: var(--neutral-600); font-size: 1.1rem;"></span>
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 2rem;">
+                                <span id="detailRoom" style="color: var(--neutral-600); font-size: 1rem;"></span>
+                                <span id="detailAdmissionDate" style="color: var(--neutral-600); font-size: 1rem;"></span>
+                                <span id="detailPhone" style="color: var(--neutral-600); font-size: 1rem;"></span>
+                            </div>
+                        </div>
+                        <div id="detailStatus"></div>
+                    </div>
+                </div>
+
+                <!-- Main Content Grid -->
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+                    <!-- Left Column - Main Details -->
+                    <div style="display: flex; flex-direction: column; gap: 2rem;">
+                        <!-- Presenting Complaint -->
+                        <div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-file-medical-alt"></i>
+                                Presenting Complaint
+                            </h3>
+                            <p id="detailPresentingComplaint" style="color: var(--neutral-700); line-height: 1.6; white-space: pre-wrap;">
+                                Loading...
+                            </p>
+                        </div>
+
+                        <!-- Assessment & Plan -->
+                        <div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-stethoscope"></i>
+                                Assessment & Plan
+                            </h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                <div>
+                                    <h4 style="color: var(--neutral-700); margin-bottom: 0.5rem; font-size: 1rem; font-weight: 600;">Clinical Assessment</h4>
+                                    <p id="detailClinicalAssessment" style="color: var(--neutral-600); line-height: 1.6; white-space: pre-wrap;"></p>
+                                </div>
+                                <div>
+                                    <h4 style="color: var(--neutral-700); margin-bottom: 0.5rem; font-size: 1rem; font-weight: 600;">Treatment Plan</h4>
+                                    <p id="detailTreatmentPlan" style="color: var(--neutral-600); line-height: 1.6; white-space: pre-wrap;"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Medical History -->
+                        <div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-history"></i>
+                                Medical History
+                            </h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                <div>
+                                    <h4 style="color: var(--neutral-700); margin-bottom: 0.5rem;">Past Medical History</h4>
+                                    <p id="detailPMH" style="color: var(--neutral-600); line-height: 1.5; margin-bottom: 1rem;"></p>
+                                    
+                                    <h4 style="color: var(--neutral-700); margin-bottom: 0.5rem;">Allergies</h4>
+                                    <p id="detailAllergies" style="color: var(--neutral-600); line-height: 1.5;"></p>
+                                </div>
+                                <div>
+                                    <h4 style="color: var(--neutral-700); margin-bottom: 0.5rem;">Past Surgical History</h4>
+                                    <p id="detailPSH" style="color: var(--neutral-600); line-height: 1.5; margin-bottom: 1rem;"></p>
+                                    
+                                    <h4 style="color: var(--neutral-700); margin-bottom: 0.5rem;">Current Medications</h4>
+                                    <p id="detailMedications" style="color: var(--neutral-600); line-height: 1.5;"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Physical Examination -->
+                        <div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-user-md"></i>
+                                Physical Examination
+                            </h3>
+                            <p id="detailPhysicalExam" style="color: var(--neutral-700); line-height: 1.6; white-space: pre-wrap;"></p>
+                        </div>
+                    </div>
+
+                    <!-- Right Column - Quick Info & Labs -->
+                    <div style="display: flex; flex-direction: column; gap: 2rem;">
+                        <!-- Quick Stats -->
+                        <div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-chart-line"></i>
+                                Quick Stats
+                            </h3>
+                            <div style="display: grid; gap: 1rem;">
+                                <div style="background: var(--neutral-50); padding: 1rem; border-radius: 0.5rem; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-blue);" id="daysAdmitted">0</div>
+                                    <div style="font-size: 0.9rem; color: var(--neutral-600);">Days Admitted</div>
+                                </div>
+                                <div style="background: var(--neutral-50); padding: 1rem; border-radius: 0.5rem; text-align: center;">
+                                    <div style="font-size: 1.2rem; font-weight: 600;" id="surgeryCountdown">Not scheduled</div>
+                                    <div style="font-size: 0.9rem; color: var(--neutral-600);">Surgery Status</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Surgery Information -->
+                        <div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-scalpel"></i>
+                                Surgery Details
+                            </h3>
+                            <div style="space-y: 0.75rem;">
+                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--neutral-200);">
+                                    <span style="color: var(--neutral-600); font-weight: 500;">Type:</span>
+                                    <span id="detailSurgeryType" style="color: var(--neutral-800); font-weight: 600;">-</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--neutral-200);">
+                                    <span style="color: var(--neutral-600); font-weight: 500;">Date:</span>
+                                    <span id="detailSurgeryDate" style="color: var(--neutral-800); font-weight: 600;">-</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--neutral-200);">
+                                    <span style="color: var(--neutral-600); font-weight: 500;">Time:</span>
+                                    <span id="detailSurgeryTime" style="color: var(--neutral-800); font-weight: 600;">-</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--neutral-200);">
+                                    <span style="color: var(--neutral-600); font-weight: 500;">Surgeon:</span>
+                                    <span id="detailSurgeon" style="color: var(--neutral-800); font-weight: 600;">-</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                                    <span style="color: var(--neutral-600); font-weight: 500;">Anesthesia:</span>
+                                    <span id="detailAnesthesia" style="color: var(--neutral-800); font-weight: 600;">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Laboratory Results -->
+                        <div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-vials"></i>
+                                Lab Results
+                            </h3>
+                            <div id="detailLabResults" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                                <!-- Lab values will be populated here -->
+                            </div>
+                            
+                            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--neutral-200);">
+                                <h4 style="color: var(--neutral-700); margin-bottom: 0.5rem; font-size: 0.9rem;">Additional Labs</h4>
+                                <p id="detailAdditionalLabs" style="color: var(--neutral-600); font-size: 0.85rem; line-height: 1.4;"></p>
+                            </div>
+                        </div>
+
+                        <!-- Imaging Studies -->
+                        <div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-x-ray"></i>
+                                Imaging
+                            </h3>
+                            <p id="detailImaging" style="color: var(--neutral-600); font-size: 0.9rem; line-height: 1.5;"></p>
+                        </div>
+
+                        <!-- Post-Op Section (Preview) -->
+                        <div style="background: linear-gradient(135deg, var(--neutral-50), white); border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-procedures"></i>
+                                Post-Op Monitoring
+                            </h3>
+                            <div style="text-align: center; color: var(--neutral-500);">
+                                <i class="fas fa-clock" style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5;"></i>
+                                <p style="margin-bottom: 1rem; font-size: 0.9rem;">Daily vitals and progress notes</p>
+                                <button class="btn btn-secondary" onclick="showNotification('Post-operative logging coming in Part 5! 🚧', 'info')" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+                                    <i class="fas fa-plus"></i>
+                                    Coming Soon
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     <script>
         // Initialize Supabase
         const SUPABASE_URL = 'https://xqsfajxxpcxsguqezcpr.supabase.co';
@@ -1155,6 +1359,7 @@
         let currentUser = null;
         let isLoggedIn = false;
         let allPatients = [];
+        let currentPatient = null;
 
         // Page Navigation
         function showPage(pageId) {
@@ -1444,9 +1649,127 @@
             displayPatients(filtered);
         }
 
-        function viewPatient(patientId) {
-            showNotification(`Patient details for ID: ${patientId} - Coming in Part 4! 🚧`, 'info');
+function viewPatient(patientId) {
+    // Find the patient in our cached data
+    const patient = allPatients.find(p => p.id === patientId);
+    if (!patient) {
+        showNotification('Patient not found', 'error');
+        return;
+    }
+    
+    currentPatient = patient;
+    loadPatientDetail(patient);
+    showPage('patientDetail');
+}
+
+// Patient Detail Functions
+function loadPatientDetail(patient) {
+    try {
+        // Populate patient header
+        document.getElementById('detailPatientName').textContent = patient.name;
+        document.getElementById('detailMRN').textContent = `MRN: ${patient.mrn}`;
+        document.getElementById('detailAge').textContent = `Age: ${patient.age} years`;
+        document.getElementById('detailGender').textContent = `Gender: ${patient.gender}`;
+        document.getElementById('detailRoom').innerHTML = `<i class="fas fa-bed"></i> Room: ${patient.room_number || 'Not assigned'}`;
+        document.getElementById('detailAdmissionDate').innerHTML = `<i class="fas fa-calendar-plus"></i> Admitted: ${formatDate(patient.admission_date)}`;
+        document.getElementById('detailPhone').innerHTML = `<i class="fas fa-phone"></i> ${patient.phone || 'No contact'}`;
+        
+        // Populate status badge
+        const statusClass = patient.status.replace('-', '');
+        document.getElementById('detailStatus').innerHTML = `
+            <span class="status ${statusClass}" style="font-size: 1.1rem; padding: 0.75rem 1.5rem;">
+                <i class="fas ${getStatusIcon(patient.status)}"></i>
+                ${getStatusText(patient.status)}
+            </span>
+        `;
+        
+        // Populate main content
+        document.getElementById('detailPresentingComplaint').textContent = 
+            patient.presenting_complaint || 'No presenting complaint recorded';
+        document.getElementById('detailClinicalAssessment').textContent = 
+            patient.clinical_assessment || 'No clinical assessment recorded';
+        document.getElementById('detailTreatmentPlan').textContent = 
+            patient.treatment_plan || 'No treatment plan recorded';
+        
+        // Medical History
+        document.getElementById('detailPMH').textContent = 
+            patient.past_medical_history || 'No past medical history recorded';
+        document.getElementById('detailPSH').textContent = 
+            patient.past_surgical_history || 'No past surgical history recorded';
+        document.getElementById('detailAllergies').textContent = 
+            patient.allergies || 'NKDA (No Known Drug Allergies)';
+        document.getElementById('detailMedications').textContent = 
+            patient.current_medications || 'No current medications recorded';
+        document.getElementById('detailPhysicalExam').textContent = 
+            patient.physical_exam || 'No physical examination findings recorded';
+        
+        // Quick Stats
+        const daysAdmitted = patient.admission_date ? 
+            Math.floor((new Date() - new Date(patient.admission_date)) / (1000 * 60 * 60 * 24)) : 0;
+        document.getElementById('daysAdmitted').textContent = daysAdmitted;
+        
+        const surgeryDays = patient.surgery_date ? 
+            Math.floor((new Date(patient.surgery_date) - new Date()) / (1000 * 60 * 60 * 24)) : null;
+        const surgeryCountdown = document.getElementById('surgeryCountdown');
+        
+        if (surgeryDays !== null) {
+            if (surgeryDays > 0) {
+                surgeryCountdown.textContent = `In ${surgeryDays} days`;
+                surgeryCountdown.style.color = 'var(--warning-amber)';
+            } else if (surgeryDays === 0) {
+                surgeryCountdown.textContent = 'Today';
+                surgeryCountdown.style.color = 'var(--danger-red)';
+            } else {
+                surgeryCountdown.textContent = `${Math.abs(surgeryDays)} days ago`;
+                surgeryCountdown.style.color = 'var(--success-green)';
+            }
+        } else {
+            surgeryCountdown.textContent = 'Not scheduled';
+            surgeryCountdown.style.color = 'var(--neutral-400)';
         }
+        
+        // Surgery Details
+        document.getElementById('detailSurgeryType').textContent = 
+            patient.surgery_type || 'Not scheduled';
+        document.getElementById('detailSurgeryDate').textContent = 
+            patient.surgery_date ? formatDate(patient.surgery_date) : 'Not scheduled';
+        document.getElementById('detailSurgeryTime').textContent = 
+            patient.surgery_time || 'Not scheduled';
+        document.getElementById('detailSurgeon').textContent = 
+            patient.surgeon || 'Not assigned';
+        document.getElementById('detailAnesthesia').textContent = 
+            patient.anesthesia_type || 'Not specified';
+        
+        // Lab Results
+        const labs = [
+            { name: 'Hemoglobin', value: patient.hemoglobin, unit: 'g/dL', normal: '12-16' },
+            { name: 'WBC', value: patient.wbc, unit: '×10³/μL', normal: '4-11' },
+            { name: 'Platelets', value: patient.platelets, unit: '×10³/μL', normal: '150-450' },
+            { name: 'Creatinine', value: patient.creatinine, unit: 'mg/dL', normal: '0.7-1.3' },
+            { name: 'BUN', value: patient.bun, unit: 'mg/dL', normal: '7-25' },
+            { name: 'PSA', value: patient.psa, unit: 'ng/mL', normal: '<4.0' }
+        ];
+        
+        document.getElementById('detailLabResults').innerHTML = labs.map(lab => `
+            <div style="background: var(--neutral-50); border: 1px solid var(--neutral-200); border-radius: 0.5rem; padding: 0.75rem; text-align: center;">
+                <div style="font-size: 0.8rem; color: var(--neutral-600); font-weight: 600; margin-bottom: 0.25rem;">${lab.name}</div>
+                <div style="font-size: 1.1rem; color: var(--primary-blue); font-weight: 700; margin-bottom: 0.25rem;">${lab.value !== null ? lab.value : 'N/A'}</div>
+                <div style="font-size: 0.75rem; color: var(--neutral-500);">${lab.value !== null ? lab.unit : ''}</div>
+                <div style="font-size: 0.7rem; color: var(--neutral-500); margin-top: 0.25rem;">Normal: ${lab.normal}</div>
+            </div>
+        `).join('');
+        
+        // Additional Labs and Imaging
+        document.getElementById('detailAdditionalLabs').textContent = 
+            patient.lab_summary || 'No additional laboratory results recorded';
+        document.getElementById('detailImaging').textContent = 
+            patient.imaging_summary || 'No imaging studies recorded';
+        
+    } catch (error) {
+        console.error('Error loading patient detail:', error);
+        showNotification('Error loading patient details', 'error');
+    }
+}
 
         // Surgery Template Functions
         function fillSurgeryTemplate() {
