@@ -3649,10 +3649,105 @@ loadSurgeryAndOperativeNote(patient);
             }
         }
 
-        // Handle form submission
-        async function handleAddPostOpEntry(event) {
+async function handleAddPostOpEntry(event) {
             event.preventDefault();
-            showNotification('Form submission coming in next step! 🚧', 'info');
+            
+            if (!currentPatient) {
+                showNotification('No patient selected', 'error');
+                return;
+            }
+            
+            const button = document.getElementById('addPostOpEntryButton');
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<div class="loading"></div> Saving Entry...';
+            button.disabled = true;
+            
+            try {
+                // Collect all form data
+                const postOpData = {
+                    patient_id: currentPatient.id,
+                    entry_date: document.getElementById('entryDate').value,
+                    entry_time: document.getElementById('entryTime').value,
+                    post_op_day: parseInt(document.getElementById('postOpDay').value),
+                    
+                    // Vital Signs
+                    systolic_bp: parseInt(document.getElementById('systolicBP').value) || null,
+                    diastolic_bp: parseInt(document.getElementById('diastolicBP').value) || null,
+                    heart_rate: parseInt(document.getElementById('heartRate').value) || null,
+                    temperature: parseFloat(document.getElementById('temperature').value) || null,
+                    respiratory_rate: parseInt(document.getElementById('respiratoryRate').value) || null,
+                    oxygen_saturation: parseInt(document.getElementById('oxygenSaturation').value) || null,
+                    pain_score: parseInt(document.getElementById('painScore').value) || null,
+                    level_of_consciousness: document.getElementById('levelOfConsciousness').value || null,
+                    
+                    // Urological Assessment
+                    urine_output: parseInt(document.getElementById('urineOutput').value) || null,
+                    urine_color: document.getElementById('urineColor').value || null,
+                    catheter_status: document.getElementById('catheterStatus').value || null,
+                    drain_output: parseInt(document.getElementById('drainOutput').value) || null,
+                    drain_characteristics: document.getElementById('drainCharacteristics').value || null,
+                    
+                    // Wound Assessment
+                    wound_condition: document.getElementById('woundCondition').value || null,
+                    
+                    // Intake/Output
+                    oral_intake: parseInt(document.getElementById('oralIntake').value) || null,
+                    iv_fluids: parseInt(document.getElementById('ivFluids').value) || null,
+                    
+                    // Clinical Status
+                    ambulation_status: document.getElementById('ambulationStatus').value || null,
+                    diet_tolerance: document.getElementById('dietTolerance').value || null,
+                    bowel_movements: document.getElementById('bowelMovements').value === 'true' ? true : (document.getElementById('bowelMovements').value === 'false' ? false : null),
+                    nausea_vomiting: document.getElementById('nauseaVomiting').value === 'true' ? true : (document.getElementById('nauseaVomiting').value === 'false' ? false : null),
+                    sleep_pattern: document.getElementById('sleepPattern').value || null,
+                    
+                    // Clinical Notes
+                    medications_given: document.getElementById('medicationsGiven').value.trim() || null,
+                    progress_note: document.getElementById('progressNote').value.trim() || null,
+                    plan: document.getElementById('plan').value.trim() || null,
+                    
+                    // System fields
+                    created_by: currentUser.id
+                };
+                
+                // Validation - require date, time, and post-op day
+                if (!postOpData.entry_date || !postOpData.entry_time || !postOpData.post_op_day) {
+                    showMessage('addPostOpEntryMessage', 'Please fill in Entry Date, Time, and Post-Op Day', 'error');
+                    button.innerHTML = originalContent;
+                    button.disabled = false;
+                    return;
+                }
+                
+                // Save to database
+                const { data, error } = await supabase
+                    .from('post_operative_entries')
+                    .insert([postOpData])
+                    .select();
+                
+                if (error) throw error;
+                
+                showMessage('addPostOpEntryMessage', '✅ Post-operative entry saved successfully!', 'success');
+                
+                // Reset form after short delay
+                setTimeout(() => {
+                    document.getElementById('addPostOpEntryForm').reset();
+                    initializePostOpEntryForm();
+                }, 1500);
+                
+                // Navigate back to post-op page
+                setTimeout(() => {
+                    showPage('postOp');
+                    showNotification(`Post-op entry saved for ${currentPatient.name}!`, 'success');
+                }, 2500);
+                
+            } catch (error) {
+                console.error('Error saving post-op entry:', error);
+                showMessage('addPostOpEntryMessage', 'Error saving entry: ' + error.message, 'error');
+                
+                // Reset button
+                button.innerHTML = originalContent;
+                button.disabled = false;
+            }
         }
 
         // Utility Functions
