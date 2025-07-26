@@ -1603,8 +1603,8 @@ function displayPostOpEntries(entries) {
     const postOpSection = document.querySelector('[style*="Post-Op Monitoring"]').parentElement;
     
     if (entries.length > 0) {
-        postOpSection.innerHTML = `
-            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        postOpSection.innerHTML = 
+            `<h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                 <i class="fas fa-procedures"></i>
                 Post-Op Monitoring
             </h3>
@@ -1620,9 +1620,6 @@ function displayPostOpEntries(entries) {
         `;
     }
 }
-                }
-            }
-        }
 
         // Authentication Functions
         async function handleLogin(event) {
