@@ -2428,6 +2428,77 @@ function viewFullOperativeNote() {
     showNotification('Full operative note view coming soon!', 'info');
 }
 
+        async function handleSaveOperativeNote(event) {
+    event.preventDefault();
+    
+    if (!currentPatient) {
+        showNotification('No patient selected', 'error');
+        return;
+    }
+    
+    const button = document.getElementById('saveOperativeNoteButton');
+    const originalContent = button.innerHTML;
+    button.innerHTML = '<div class="loading"></div> Saving...';
+    button.disabled = true;
+    
+    try {
+        const operativeNoteData = {
+            patient_id: currentPatient.id,
+            procedure_performed: document.getElementById('procedurePerformed').value.trim(),
+            anesthesia_type: document.getElementById('anesthesiaType').value.trim() || null,
+            patient_position: document.getElementById('patientPosition').value.trim() || null,
+            primary_surgeon: document.getElementById('primarySurgeon').value.trim() || null,
+            assistant_surgeon: document.getElementById('assistantSurgeon').value.trim() || null,
+            anesthesiologist: document.getElementById('anesthesiologist').value.trim() || null,
+            findings: document.getElementById('operativeFindings').value.trim() || null,
+            operative_steps: document.getElementById('operativeSteps').value.trim(),
+            complications: document.getElementById('complications').value.trim() || 'None encountered intraoperatively',
+            estimated_blood_loss: document.getElementById('estimatedBloodLoss').value.trim() || null,
+            created_by: currentUser.id,
+            status: 'completed'
+        };
+        
+        // Validation
+        if (!operativeNoteData.procedure_performed || !operativeNoteData.operative_steps) {
+            showMessage('operativeNoteMessage', 'Please fill in all required fields (marked with *)', 'error');
+            button.innerHTML = originalContent;
+            button.disabled = false;
+            return;
+        }
+        
+        const { data, error } = await supabase
+            .from('operative_notes')
+            .insert([operativeNoteData])
+            .select();
+        
+        if (error) throw error;
+        
+        showMessage('operativeNoteMessage', '✅ Operative note saved successfully!', 'success');
+        
+        // Update patient status to post-op
+        const { error: updateError } = await supabase
+            .from('patients')
+            .update({ status: 'post-op' })
+            .eq('id', currentPatient.id);
+        
+        if (updateError) console.error('Error updating patient status:', updateError);
+        
+        // Navigate back to patient detail after delay
+        setTimeout(() => {
+            showPage('patientDetail');
+            showNotification(`Operative note saved for ${currentPatient.name}!`, 'success');
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Error saving operative note:', error);
+        showMessage('operativeNoteMessage', 'Error saving operative note: ' + error.message, 'error');
+        
+        // Reset button
+        button.innerHTML = originalContent;
+        button.disabled = false;
+    }
+}
+
 // Patient Detail Functions
 function loadPatientDetail(patient) {
     try {
