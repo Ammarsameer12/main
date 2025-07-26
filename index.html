@@ -824,14 +824,14 @@
             </div>
         </div>
 
-        <!-- Add Patient Form Page -->
+        <!-- Enhanced Add Patient Form Page -->
         <div id="addPatientPage" class="page">
-            <div style="max-width: 800px; margin: 0 auto;">
+            <div style="max-width: 1200px; margin: 0 auto;">
                 <div style="background: white; border-radius: 1rem; padding: 2rem; box-shadow: var(--shadow-xl); border: 1px solid var(--neutral-200);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                         <h2 style="color: var(--primary-blue); font-size: 2rem; font-weight: 700;">
                             <i class="fas fa-user-plus"></i>
-                            Add New Patient
+                            Complete Patient Assessment
                         </h2>
                         <button onclick="showPage('patients')" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i>
@@ -846,7 +846,7 @@
                                 <i class="fas fa-user"></i> Patient Demographics
                             </h3>
                             
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
                                 <div class="form-group">
                                     <label for="patientName">Full Name *</label>
                                     <div class="input-wrapper">
@@ -859,7 +859,7 @@
                                     <label for="patientMRN">MRN *</label>
                                     <div class="input-wrapper">
                                         <i class="fas fa-id-card input-icon"></i>
-                                        <input type="text" id="patientMRN" required placeholder="12345">
+                                        <input type="text" id="patientMRN" required placeholder="MRN12345">
                                     </div>
                                 </div>
                                 
@@ -897,26 +897,145 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                                <div class="form-group">
+                                    <label for="admissionDate">Admission Date *</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-calendar-plus input-icon"></i>
+                                        <input type="date" id="admissionDate" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="emergencyContact">Emergency Contact</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-phone-alt input-icon"></i>
+                                        <input type="text" id="emergencyContact" placeholder="Name: +1-555-0123">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
-                        <!-- Medical Information Section -->
+                        <!-- Clinical Assessment Section -->
                         <div style="margin-bottom: 2rem;">
                             <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
-                                <i class="fas fa-stethoscope"></i> Medical Information
+                                <i class="fas fa-stethoscope"></i> Clinical Assessment
                             </h3>
                             
                             <div class="form-group" style="margin-bottom: 1rem;">
                                 <label for="presentingComplaint">Presenting Complaint *</label>
                                 <textarea id="presentingComplaint" required rows="3" 
                                          style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
-                                         placeholder="Chief complaint and current symptoms..."></textarea>
+                                         placeholder="Chief complaint and history of present illness..."></textarea>
                             </div>
                             
-                            <div class="form-group" style="margin-bottom: 1rem;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label for="pastMedicalHistory">Past Medical History (PMH)</label>
+                                    <textarea id="pastMedicalHistory" rows="3" 
+                                             style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                             placeholder="DM, HTN, CAD, etc..."></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="pastSurgicalHistory">Past Surgical History (PSH)</label>
+                                    <textarea id="pastSurgicalHistory" rows="3" 
+                                             style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                             placeholder="Previous surgeries with dates..."></textarea>
+                                </div>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                                <div class="form-group">
+                                    <label for="allergies">Allergies</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-exclamation-triangle input-icon"></i>
+                                        <input type="text" id="allergies" placeholder="NKDA or list allergies...">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="currentMedications">Current Medications</label>
+                                    <textarea id="currentMedications" rows="2" 
+                                             style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                             placeholder="List current medications with doses..."></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="margin-top: 1rem;">
                                 <label for="physicalExam">Physical Examination</label>
-                                <textarea id="physicalExam" rows="3" 
+                                <textarea id="physicalExam" rows="4" 
                                          style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
-                                         placeholder="Physical examination findings..."></textarea>
+                                         placeholder="General appearance, vital signs, system examination findings..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Laboratory & Imaging Section -->
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                                <i class="fas fa-vials"></i> Laboratory & Imaging
+                            </h3>
+                            
+                            <!-- Common Lab Values Grid -->
+                            <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1rem; border: 1px solid var(--neutral-200);">
+                                <h4 style="color: var(--neutral-700); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-flask"></i> Common Lab Values
+                                </h4>
+                                
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.75rem;">
+                                    <div class="form-group">
+                                        <label for="hemoglobin">Hemoglobin (g/dL)</label>
+                                        <input type="number" id="hemoglobin" step="0.1" placeholder="12.5" 
+                                               style="width: 100%; padding: 0.5rem; border: 1px solid var(--neutral-300); border-radius: 0.5rem; font-size: 0.9rem;">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="wbc">WBC (×10³/μL)</label>
+                                        <input type="number" id="wbc" step="0.1" placeholder="7.5" 
+                                               style="width: 100%; padding: 0.5rem; border: 1px solid var(--neutral-300); border-radius: 0.5rem; font-size: 0.9rem;">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="platelets">Platelets (×10³/μL)</label>
+                                        <input type="number" id="platelets" placeholder="250" 
+                                               style="width: 100%; padding: 0.5rem; border: 1px solid var(--neutral-300); border-radius: 0.5rem; font-size: 0.9rem;">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="creatinine">Creatinine (mg/dL)</label>
+                                        <input type="number" id="creatinine" step="0.01" placeholder="1.0" 
+                                               style="width: 100%; padding: 0.5rem; border: 1px solid var(--neutral-300); border-radius: 0.5rem; font-size: 0.9rem;">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="bun">BUN (mg/dL)</label>
+                                        <input type="number" id="bun" placeholder="15" 
+                                               style="width: 100%; padding: 0.5rem; border: 1px solid var(--neutral-300); border-radius: 0.5rem; font-size: 0.9rem;">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="psa">PSA (ng/mL)</label>
+                                        <input type="number" id="psa" step="0.01" placeholder="2.5" 
+                                               style="width: 100%; padding: 0.5rem; border: 1px solid var(--neutral-300); border-radius: 0.5rem; font-size: 0.9rem;">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label for="labSummary">Additional Lab Results</label>
+                                    <textarea id="labSummary" rows="3" 
+                                             style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                             placeholder="PT/INR, electrolytes, urinalysis, cultures, etc..."></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="imagingSummary">Imaging Summary</label>
+                                    <textarea id="imagingSummary" rows="3" 
+                                             style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                             placeholder="CT, MRI, Ultrasound, X-ray findings..."></textarea>
+                                </div>
                             </div>
                         </div>
                         
@@ -929,12 +1048,15 @@
                             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
                                 <div class="form-group">
                                     <label for="surgeryType">Surgery Type</label>
-                                    <select id="surgeryType" style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50);">
+                                    <select id="surgeryType" onchange="fillSurgeryTemplate()" style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50);">
                                         <option value="">Select Surgery</option>
-                                        <option value="TURP">TURP</option>
-                                        <option value="URS">URS</option>
-                                        <option value="PCNL">PCNL</option>
+                                        <option value="TURP">TURP (Transurethral Resection of Prostate)</option>
+                                        <option value="URS">URS (Ureteroscopy)</option>
+                                        <option value="PCNL">PCNL (Percutaneous Nephrolithotomy)</option>
                                         <option value="Circumcision">Circumcision</option>
+                                        <option value="Nephrectomy">Nephrectomy</option>
+                                        <option value="Cystoscopy">Cystoscopy</option>
+                                        <option value="Prostatectomy">Radical Prostatectomy</option>
                                         <option value="Other">Other</option>
                                     </select>
                                 </div>
@@ -955,6 +1077,49 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                                <div class="form-group">
+                                    <label for="surgeon">Primary Surgeon</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-user-md input-icon"></i>
+                                        <input type="text" id="surgeon" placeholder="Dr. Smith">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="anesthesiaType">Anesthesia Type</label>
+                                    <select id="anesthesiaType" style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50);">
+                                        <option value="">Select Type</option>
+                                        <option value="General">General Anesthesia</option>
+                                        <option value="Spinal">Spinal Anesthesia</option>
+                                        <option value="Epidural">Epidural</option>
+                                        <option value="Local">Local Anesthesia</option>
+                                        <option value="MAC">MAC (Monitored Anesthesia Care)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Initial Assessment & Plan -->
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                                <i class="fas fa-clipboard-check"></i> Assessment & Plan
+                            </h3>
+                            
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label for="clinicalAssessment">Clinical Assessment</label>
+                                <textarea id="clinicalAssessment" rows="3" 
+                                         style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                         placeholder="Working diagnosis and clinical impression..."></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="treatmentPlan">Treatment Plan</label>
+                                <textarea id="treatmentPlan" rows="3" 
+                                         style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                         placeholder="Planned interventions, medications, monitoring..."></textarea>
+                            </div>
                         </div>
                         
                         <!-- Submit Section -->
@@ -968,7 +1133,7 @@
                                 </button>
                                 <button type="submit" class="btn" id="addPatientButton">
                                     <i class="fas fa-save"></i>
-                                    Save Patient
+                                    Save Complete Assessment
                                 </button>
                             </div>
                         </div>
@@ -1057,7 +1222,7 @@
             }
         }
 
-        // Patient Functions
+        // Enhanced Patient Functions
         async function loadPatients() {
             try {
                 const { data: patients, error } = await supabase
@@ -1156,39 +1321,75 @@
             `;
         }
 
+        // Enhanced Add Patient Function with Comprehensive Data
         async function handleAddPatient(event) {
             event.preventDefault();
             
             const button = document.getElementById('addPatientButton');
             const form = document.getElementById('addPatientForm');
             
-            // Get form data
+            // Get comprehensive form data
             const patientData = {
+                // Demographics
                 name: document.getElementById('patientName').value.trim(),
                 mrn: document.getElementById('patientMRN').value.trim(),
                 age: parseInt(document.getElementById('patientAge').value),
                 gender: document.getElementById('patientGender').value,
                 phone: document.getElementById('patientPhone').value.trim() || null,
                 room_number: document.getElementById('roomNumber').value.trim() || null,
+                admission_date: document.getElementById('admissionDate').value || new Date().toISOString().split('T')[0],
+                emergency_contact: document.getElementById('emergencyContact').value.trim() || null,
+                
+                // Clinical Assessment
                 presenting_complaint: document.getElementById('presentingComplaint').value.trim(),
+                past_medical_history: document.getElementById('pastMedicalHistory').value.trim() || null,
+                past_surgical_history: document.getElementById('pastSurgicalHistory').value.trim() || null,
+                allergies: document.getElementById('allergies').value.trim() || null,
+                current_medications: document.getElementById('currentMedications').value.trim() || null,
                 physical_exam: document.getElementById('physicalExam').value.trim() || null,
+                
+                // Laboratory Values
+                hemoglobin: parseFloat(document.getElementById('hemoglobin').value) || null,
+                wbc: parseFloat(document.getElementById('wbc').value) || null,
+                platelets: parseInt(document.getElementById('platelets').value) || null,
+                creatinine: parseFloat(document.getElementById('creatinine').value) || null,
+                bun: parseInt(document.getElementById('bun').value) || null,
+                psa: parseFloat(document.getElementById('psa').value) || null,
+                lab_summary: document.getElementById('labSummary').value.trim() || null,
+                imaging_summary: document.getElementById('imagingSummary').value.trim() || null,
+                
+                // Surgery Information
                 surgery_type: document.getElementById('surgeryType').value || null,
                 surgery_date: document.getElementById('surgeryDate').value || null,
                 surgery_time: document.getElementById('surgeryTime').value || null,
-                admission_date: new Date().toISOString().split('T')[0],
+                surgeon: document.getElementById('surgeon').value.trim() || null,
+                anesthesia_type: document.getElementById('anesthesiaType').value || null,
+                
+                // Assessment & Plan
+                clinical_assessment: document.getElementById('clinicalAssessment').value.trim() || null,
+                treatment_plan: document.getElementById('treatmentPlan').value.trim() || null,
+                
+                // System fields
                 status: 'pre-op',
-                created_by: currentUser.id
+                created_by: currentUser.id,
+                created_at: new Date().toISOString()
             };
             
-            // Validation
+            // Validation - only check required fields
             if (!patientData.name || !patientData.mrn || !patientData.age || !patientData.gender || !patientData.presenting_complaint) {
                 showMessage('addPatientMessage', 'Please fill in all required fields (marked with *)', 'error');
                 return;
             }
             
+            // Validate MRN format (basic check)
+            if (!/^[A-Z0-9]+$/i.test(patientData.mrn)) {
+                showMessage('addPatientMessage', 'MRN should contain only letters and numbers', 'error');
+                return;
+            }
+            
             // Show loading
             const originalContent = button.innerHTML;
-            button.innerHTML = '<div class="loading"></div> Saving...';
+            button.innerHTML = '<div class="loading"></div> Saving Complete Assessment...';
             button.disabled = true;
             
             try {
@@ -1204,18 +1405,26 @@
                     throw error;
                 }
                 
-                showMessage('addPatientMessage', `Patient ${patientData.name} created successfully!`, 'success');
-                form.reset();
+                showMessage('addPatientMessage', `✅ Complete assessment for ${patientData.name} saved successfully!`, 'success');
                 
+                // Reset form after short delay
+                setTimeout(() => {
+                    form.reset();
+                    // Reset admission date to today
+                    document.getElementById('admissionDate').value = new Date().toISOString().split('T')[0];
+                }, 1000);
+                
+                // Navigate back to patients list
                 setTimeout(() => {
                     showPage('patients');
-                    showNotification(`Patient ${patientData.name} added successfully!`, 'success');
-                }, 2000);
+                    showNotification(`Patient ${patientData.name} added with complete assessment!`, 'success');
+                }, 2500);
                 
             } catch (error) {
                 console.error('Error creating patient:', error);
                 showMessage('addPatientMessage', 'Error creating patient: ' + error.message, 'error');
                 
+                // Reset button
                 button.innerHTML = originalContent;
                 button.disabled = false;
             }
@@ -1237,6 +1446,61 @@
 
         function viewPatient(patientId) {
             showNotification(`Patient details for ID: ${patientId} - Coming in Part 4! 🚧`, 'info');
+        }
+
+        // Surgery Template Functions
+        function fillSurgeryTemplate() {
+            const surgeryType = document.getElementById('surgeryType').value;
+            const assessmentField = document.getElementById('clinicalAssessment');
+            const planField = document.getElementById('treatmentPlan');
+            
+            const templates = {
+                'TURP': {
+                    assessment: 'Benign prostatic hyperplasia (BPH) with urinary retention/LUTS. Enlarged prostate on DRE and imaging.',
+                    plan: '1. TURP (Transurethral Resection of Prostate)\n2. Foley catheter post-op\n3. CBI (Continuous Bladder Irrigation)\n4. Monitor for bleeding, clot retention\n5. Trial of void when irrigation clear'
+                },
+                'URS': {
+                    assessment: 'Ureteral/renal stone requiring endoscopic management. Stone size and location confirmed on imaging.',
+                    plan: '1. Ureteroscopy with stone fragmentation\n2. Possible ureteral stent placement\n3. Post-op analgesia\n4. Follow-up imaging\n5. Stent removal in 2-4 weeks if placed'
+                },
+                'PCNL': {
+                    assessment: 'Large renal stone (>2cm) or complex stone burden requiring percutaneous approach.',
+                    plan: '1. Percutaneous nephrolithotomy\n2. Nephrostomy tube placement\n3. Monitor for bleeding, infection\n4. Post-op imaging\n5. Nephrostomy removal when appropriate'
+                },
+                'Circumcision': {
+                    assessment: 'Phimosis/paraphimosis or recurrent balanitis requiring circumcision.',
+                    plan: '1. Circumcision procedure\n2. Post-op wound care instructions\n3. Pain management\n4. Follow-up in 1-2 weeks\n5. Activity restrictions'
+                },
+                'Nephrectomy': {
+                    assessment: 'Renal mass/malignancy or non-functioning kidney requiring surgical removal.',
+                    plan: '1. Radical/Partial nephrectomy\n2. Post-op pain management\n3. Monitor renal function\n4. Drain management\n5. Oncology follow-up if malignant'
+                },
+                'Cystoscopy': {
+                    assessment: 'Hematuria, bladder mass, or urethral pathology requiring cystoscopic evaluation.',
+                    plan: '1. Diagnostic cystoscopy\n2. Possible biopsy/resection\n3. Post-procedure monitoring\n4. Follow-up based on findings\n5. Pathology review if tissue obtained'
+                },
+                'Prostatectomy': {
+                    assessment: 'Localized prostate cancer requiring radical surgical treatment.',
+                    plan: '1. Radical prostatectomy (open/laparoscopic/robotic)\n2. Foley catheter 7-14 days\n3. Monitor for bleeding, infection\n4. PSA monitoring\n5. Oncology follow-up'
+                }
+            };
+            
+            if (templates[surgeryType]) {
+                if (assessmentField.value.trim() === '') {
+                    assessmentField.value = templates[surgeryType].assessment;
+                }
+                if (planField.value.trim() === '') {
+                    planField.value = templates[surgeryType].plan;
+                }
+                showNotification(`✨ Template loaded for ${surgeryType}`, 'info');
+            }
+        }
+
+        // Initialize form defaults
+        function initializeAddPatientForm() {
+            // Set admission date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('admissionDate').value = today;
         }
 
         // Utility Functions
@@ -1396,11 +1660,12 @@
 
         // App Initialization
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏥 Urology App (Fresh Start) loaded successfully!');
+            console.log('🏥 Urology App (Enhanced Assessment) loaded successfully!');
             
             // Initialize page state
             showPage('login');
             updateNavigationForGuest();
+            initializeAddPatientForm();
             
             // Check existing session
             supabase.auth.getSession().then(({ data: { session } }) => {
