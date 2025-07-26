@@ -1154,7 +1154,7 @@
                             Back to Patients
                         </button>
                         <div style="display: flex; gap: 1rem;">
-                            <button class="btn" onclick="showNotification('Post-operative logging coming in Part 5! 🚧', 'info')" style="background: linear-gradient(135deg, var(--success-green), #059669);">
+                            <button class="btn" onclick="addPostOpEntry()" style="background: linear-gradient(135deg, var(--success-green), #059669);">
                                 <i class="fas fa-plus"></i>
                                 Add Post-Op Entry
                             </button>
@@ -1336,13 +1336,211 @@
                             <div style="text-align: center; color: var(--neutral-500);">
                                 <i class="fas fa-clock" style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5;"></i>
                                 <p style="margin-bottom: 1rem; font-size: 0.9rem;">Daily vitals and progress notes</p>
-                                <button class="btn btn-secondary" onclick="showNotification('Post-operative logging coming in Part 5! 🚧', 'info')" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+                                <button class="btn btn-secondary" onclick="addPostOpEntry()" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
                                     <i class="fas fa-plus"></i>
                                     Coming Soon
                                 </button>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Post-Op Entry Form Page -->
+        <div id="postOpEntryPage" class="page">
+            <div style="max-width: 1000px; margin: 0 auto;">
+                <div style="background: white; border-radius: 1rem; padding: 2rem; box-shadow: var(--shadow-xl); border: 1px solid var(--neutral-200);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2 style="color: var(--primary-blue); font-size: 2rem; font-weight: 700;">
+                            <i class="fas fa-procedures"></i>
+                            Post-Operative Entry
+                        </h2>
+                        <button onclick="goBackToPatientDetail()" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            Back to Patient
+                        </button>
+                    </div>
+
+                    <!-- Patient Info Header -->
+                    <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 2rem; border: 1px solid var(--neutral-200);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 id="postOpPatientName" style="color: var(--primary-blue); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Patient Name</h3>
+                                <div style="display: flex; gap: 2rem;">
+                                    <span id="postOpPatientMRN" style="color: var(--neutral-600); font-weight: 600;"></span>
+                                    <span id="postOpPatientRoom" style="color: var(--neutral-600);"></span>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 1.2rem; font-weight: 600; color: var(--primary-blue);" id="postOpDayNumber">Post-Op Day #</div>
+                                <div style="font-size: 0.9rem; color: var(--neutral-600);" id="postOpCurrentDate"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form id="postOpForm" onsubmit="handlePostOpEntry(event)">
+                        <!-- Vitals Section -->
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                                <i class="fas fa-heartbeat"></i> Vital Signs
+                            </h3>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                                <div class="form-group">
+                                    <label for="bloodPressureSystolic">Blood Pressure *</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="number" id="bloodPressureSystolic" required min="50" max="300" placeholder="120" 
+                                               style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem;">
+                                        <span style="color: var(--neutral-600); font-weight: 600;">/</span>
+                                        <input type="number" id="bloodPressureDiastolic" required min="30" max="200" placeholder="80" 
+                                               style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem;">
+                                        <span style="color: var(--neutral-500); font-size: 0.9rem;">mmHg</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="heartRate">Heart Rate *</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="number" id="heartRate" required min="30" max="200" placeholder="72" 
+                                               style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem;">
+                                        <span style="color: var(--neutral-500); font-size: 0.9rem;">bpm</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="temperature">Temperature *</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="number" id="temperature" required min="30" max="45" step="0.1" placeholder="37.0" 
+                                               style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem;">
+                                        <span style="color: var(--neutral-500); font-size: 0.9rem;">°C</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="respiratoryRate">Respiratory Rate *</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="number" id="respiratoryRate" required min="8" max="60" placeholder="16" 
+                                               style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem;">
+                                        <span style="color: var(--neutral-500); font-size: 0.9rem;">rpm</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="oxygenSaturation">Oxygen Saturation</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="number" id="oxygenSaturation" min="70" max="100" placeholder="98" 
+                                               style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem;">
+                                        <span style="color: var(--neutral-500); font-size: 0.9rem;">%</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="urineOutput">Urine Output (24hr)</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="number" id="urineOutput" min="0" max="5000" placeholder="1500" 
+                                               style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem;">
+                                        <span style="color: var(--neutral-500); font-size: 0.9rem;">mL</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Drains & Output Section -->
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                                <i class="fas fa-tint"></i> Drains & Output
+                            </h3>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label for="drainOutput">Drain Output (24hr)</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="number" id="drainOutput" min="0" max="2000" placeholder="50" 
+                                               style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem;">
+                                        <span style="color: var(--neutral-500); font-size: 0.9rem;">mL</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="drainColor">Drain Color</label>
+                                    <select id="drainColor" style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: var(--neutral-50);">
+                                        <option value="">Select Color</option>
+                                        <option value="Clear">Clear</option>
+                                        <option value="Yellow">Yellow</option>
+                                        <option value="Pink">Pink</option>
+                                        <option value="Red">Red</option>
+                                        <option value="Brown">Brown</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="painScore">Pain Score (0-10) *</label>
+                                    <select id="painScore" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: var(--neutral-50);">
+                                        <option value="">Select Pain Level</option>
+                                        <option value="0">0 - No Pain</option>
+                                        <option value="1">1 - Minimal Pain</option>
+                                        <option value="2">2 - Mild Pain</option>
+                                        <option value="3">3 - Uncomfortable</option>
+                                        <option value="4">4 - Moderate Pain</option>
+                                        <option value="5">5 - Moderate Pain</option>
+                                        <option value="6">6 - Moderately Severe</option>
+                                        <option value="7">7 - Severe Pain</option>
+                                        <option value="8">8 - Very Severe</option>
+                                        <option value="9">9 - Nearly Unbearable</option>
+                                        <option value="10">10 - Unbearable</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Progress Notes Section -->
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                                <i class="fas fa-notes-medical"></i> Progress Notes
+                            </h3>
+                            
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label for="progressNotes">Clinical Progress Notes *</label>
+                                <textarea id="progressNotes" required rows="4" 
+                                         style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                         placeholder="Patient status, wound condition, mobility, diet tolerance, complications, plan..."></textarea>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label for="medicationsGiven">Medications Given</label>
+                                    <textarea id="medicationsGiven" rows="3" 
+                                             style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                             placeholder="Medications administered with time and dose..."></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="nextPlan">Plan for Next 24hrs</label>
+                                    <textarea id="nextPlan" rows="3" 
+                                             style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                             placeholder="Planned interventions, goals, discharge planning..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Submit Section -->
+                        <div style="border-top: 2px solid var(--neutral-200); padding-top: 2rem;">
+                            <div id="postOpMessage" class="auth-message"></div>
+                            
+                            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                                <button type="button" onclick="goBackToPatientDetail()" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i>
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn" id="postOpSubmitButton">
+                                    <i class="fas fa-save"></i>
+                                    Save Post-Op Entry
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -1376,6 +1574,11 @@
                 // Load patients when showing patients page
                 if (pageId === 'patients' && isLoggedIn) {
                     loadPatients();
+                }
+
+                // Load post-op entries when showing patient detail
+                if (pageId === 'patientDetail' && currentPatient) {
+                // Future: loadPostOpEntries(currentPatient.id);
                 }
             }
         }
@@ -1770,6 +1973,130 @@ function loadPatientDetail(patient) {
         showNotification('Error loading patient details', 'error');
     }
 }
+
+        // Post-Op Entry Functions
+        function addPostOpEntry() {
+            if (!currentPatient) {
+                showNotification('No patient selected', 'error');
+                return;
+            }
+            
+            // Populate the post-op form with patient info
+            document.getElementById('postOpPatientName').textContent = currentPatient.name;
+            document.getElementById('postOpPatientMRN').textContent = `MRN: ${currentPatient.mrn}`;
+            document.getElementById('postOpPatientRoom').innerHTML = `<i class="fas fa-bed"></i> Room: ${currentPatient.room_number || 'Not assigned'}`;
+            
+            // Calculate post-op day
+            const postOpDay = calculatePostOpDay(currentPatient);
+            document.getElementById('postOpDayNumber').textContent = `Post-Op Day ${postOpDay}`;
+            
+            // Set current date
+            const today = new Date().toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            document.getElementById('postOpCurrentDate').textContent = today;
+            
+            showPage('postOpEntry');
+        }
+
+        function goBackToPatientDetail() {
+            showPage('patientDetail');
+        }
+
+        function calculatePostOpDay(patient) {
+            if (!patient.surgery_date) return 1;
+            
+            const surgeryDate = new Date(patient.surgery_date);
+            const today = new Date();
+            const diffTime = today - surgeryDate;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            return diffDays > 0 ? diffDays : 1;
+        }
+
+        async function handlePostOpEntry(event) {
+            event.preventDefault();
+            
+            const button = document.getElementById('postOpSubmitButton');
+            const form = document.getElementById('postOpForm');
+            
+            // Get form data
+            const postOpData = {
+                patient_id: currentPatient.id,
+                entry_date: new Date().toISOString().split('T')[0],
+                entry_time: new Date().toTimeString().split(' ')[0],
+                post_op_day: calculatePostOpDay(currentPatient),
+                
+                // Vital Signs
+                blood_pressure_systolic: parseInt(document.getElementById('bloodPressureSystolic').value),
+                blood_pressure_diastolic: parseInt(document.getElementById('bloodPressureDiastolic').value),
+                heart_rate: parseInt(document.getElementById('heartRate').value),
+                temperature: parseFloat(document.getElementById('temperature').value),
+                respiratory_rate: parseInt(document.getElementById('respiratoryRate').value),
+                oxygen_saturation: parseInt(document.getElementById('oxygenSaturation').value) || null,
+                urine_output: parseInt(document.getElementById('urineOutput').value) || null,
+                
+                // Drains & Assessment
+                drain_output: parseInt(document.getElementById('drainOutput').value) || null,
+                drain_color: document.getElementById('drainColor').value || null,
+                pain_score: parseInt(document.getElementById('painScore').value),
+                
+                // Notes
+                progress_notes: document.getElementById('progressNotes').value.trim(),
+                medications_given: document.getElementById('medicationsGiven').value.trim() || null,
+                next_plan: document.getElementById('nextPlan').value.trim() || null,
+                
+                // System fields
+                created_by: currentUser.id,
+                created_at: new Date().toISOString()
+            };
+            
+            // Validation
+            if (!postOpData.blood_pressure_systolic || !postOpData.blood_pressure_diastolic || 
+                !postOpData.heart_rate || !postOpData.temperature || !postOpData.respiratory_rate || 
+                !postOpData.pain_score || !postOpData.progress_notes) {
+                showMessage('postOpMessage', 'Please fill in all required fields (marked with *)', 'error');
+                return;
+            }
+            
+            // Show loading
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<div class="loading"></div> Saving Entry...';
+            button.disabled = true;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('post_op_entries')
+                    .insert([postOpData])
+                    .select();
+                
+                if (error) throw error;
+                
+                showMessage('postOpMessage', `✅ Post-op entry for Day ${postOpData.post_op_day} saved successfully!`, 'success');
+                
+                // Reset form after short delay
+                setTimeout(() => {
+                    form.reset();
+                }, 1000);
+                
+                // Navigate back to patient detail
+                setTimeout(() => {
+                    showPage('patientDetail');
+                    showNotification(`Post-op entry saved for ${currentPatient.name}!`, 'success');
+                }, 2500);
+                
+            } catch (error) {
+                console.error('Error saving post-op entry:', error);
+                showMessage('postOpMessage', 'Error saving post-op entry: ' + error.message, 'error');
+                
+                // Reset button
+                button.innerHTML = originalContent;
+                button.disabled = false;
+            }
+        }
 
         // Surgery Template Functions
         function fillSurgeryTemplate() {
