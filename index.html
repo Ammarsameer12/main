@@ -1457,7 +1457,77 @@ function showOperativeNoteForm() {
         `;
         return;
     }
+
+            const templates = {
+    'urs_stone': {
+        procedure: 'Right/Left ureteroscopic stone extraction with Thulium laser lithotripsy and DJ stent placement',
+        anesthesia: 'General anesthesia',
+        position: 'Lithotomy position',
+        findings: 'A single/multiple stone(s) were identified in the mid/distal ureter. The ureter was mildly edematous. No evidence of perforation or extravasation was noted.',
+        steps: `1. After induction of general anesthesia, the patient was placed in lithotomy position and prepped and draped in sterile fashion.
+2. A safety guidewire was introduced into the ureter under cystoscopic guidance.
+3. A semi-rigid ureteroscope was advanced to visualize the ureteric stone.
+4. Thulium laser lithotripsy was performed to dust and fragment the stone.
+5. Fragments were retrieved with a basket as needed.
+6. A retrograde pyelogram was performed to assess the upper tract and confirm integrity.
+7. A 5/6 Fr DJ stent was inserted over the guidewire with the distal curl in the bladder and proximal coil in the renal pelvis.
+8. Hemostasis was confirmed, and instruments were withdrawn.`,
+        complications: 'None encountered intraoperatively',
+        ebl: '<50 mL'
+    },
     
+    'flexible_urs': {
+        procedure: 'Unilateral/Bilateral flexible ureteroscopy with laser lithotripsy and DJ stent placement',
+        anesthesia: 'General anesthesia',
+        position: 'Lithotomy position',
+        findings: 'Multiple/single stone(s) noted within the renal pelvis and calyces, most commonly lower pole. Mucosa was intact with mild edema. No extravasation or ureteral injury observed.',
+        steps: `1. Under general anesthesia, the patient was placed in the lithotomy position and prepped and draped in sterile fashion.
+2. A safety guidewire was inserted into the ureter under cystoscopic guidance.
+3. A ureteral access sheath was introduced where feasible.
+4. A flexible ureteroscope was advanced to the renal pelvis, and all calyces were systematically inspected.
+5. Stones were visualized and fragmented using Thulium laser (dusting and/or fragmentation technique).
+6. Fragments were actively retrieved using a nitinol basket where appropriate.
+7. Complete inspection of all calyces was performed to exclude residual fragments.
+8. A 5/6 Fr DJ stent was inserted in the treated side(s) under fluoroscopic or endoscopic guidance.
+9. Hemostasis was verified, and all instruments were removed.`,
+        complications: 'None encountered intraoperatively',
+        ebl: '<50 mL'
+    },
+    
+    'turp': {
+        procedure: 'Transurethral resection of the prostate (TURP)',
+        anesthesia: 'Spinal anesthesia',
+        position: 'Lithotomy position',
+        findings: 'Enlarged prostate gland with prominent lateral and median lobes protruding into the bladder. Mild trabeculation of bladder noted. No bladder stones or tumors observed. Ureteric orifices identified bilaterally and preserved.',
+        steps: `1. Under spinal anesthesia, the patient was placed in the lithotomy position, prepped, and draped in sterile fashion.
+2. Initial cystoscopy was performed to assess the bladder and visualize the prostatic enlargement and ureteric orifices.
+3. A monopolar/bipolar resectoscope was introduced.
+4. Resection began at the median lobe, followed by the lateral lobes, proceeding in a systematic fashion down to the surgical capsule.
+5. Bladder neck was resected and smoothed.
+6. Complete hemostasis was achieved using coagulation current.
+7. Prostatic chips were evacuated using an Ellik evacuator.
+8. A 22/24 Fr three-way Foley catheter was inserted and continuous bladder irrigation was started.`,
+        complications: 'None encountered intraoperatively',
+        ebl: 'Approximately 200 mL'
+    },
+    
+    'circumcision': {
+        procedure: 'Circumcision using sleeve technique',
+        anesthesia: 'Local anesthesia with/without sedation',
+        position: 'Supine position',
+        findings: 'Phimosis/paraphimosis/redundant foreskin. No signs of infection or inflammation. Glans penis appeared healthy and intact.',
+        steps: `1. The patient was placed in the supine position and prepped and draped in sterile fashion.
+2. Local anesthetic was infiltrated at the base of the penis (penile block) with or without dorsal nerve block.
+3. The preputial adhesions were released and the foreskin fully retracted.
+4. Markings were made for the sleeve excision at the junction of inner and outer prepuce.
+5. The foreskin was incised circumferentially and excised carefully, preserving the glans and frenulum.
+6. Hemostasis was achieved with electrocautery or ligatures.
+7. The edges of the skin were approximated with interrupted or running absorbable sutures (e.g., 4-0 Vicryl Rapide).
+8. Sterile dressing was applied.`,
+        complications: 'None encountered intraoperatively',
+        ebl: 'Minimal (<10 mL)'
+    }
+};
 'ureteric_reimplantation': {
     procedure: 'Right/Left ureteric reimplantation (extravesical/Lich-Gregoir or intravesical/Cohen technique)',
     anesthesia: 'General anesthesia',
