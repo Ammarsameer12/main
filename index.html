@@ -2005,10 +2005,7 @@ function loadPatientDetail(patient) {
             patient.lab_summary || 'No additional laboratory results recorded';
         document.getElementById('detailImaging').textContent = 
             patient.imaging_summary || 'No imaging studies recorded';
-
-        // Load post-op entries for this patient
-        loadPostOpEntries(patient.id);
-        
+       
     } catch (error) {
         console.error('Error loading patient detail:', error);
         showNotification('Error loading patient details', 'error');
