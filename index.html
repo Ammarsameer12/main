@@ -1458,7 +1458,7 @@ function showOperativeNoteForm() {
         return;
     }
     
-            const templates = {
+const templates = {
     'urs_stone': {
         procedure: 'Right/Left ureteroscopic stone extraction with Thulium laser lithotripsy and DJ stent placement',
         anesthesia: 'General anesthesia',
@@ -1724,7 +1724,8 @@ function showOperativeNoteForm() {
         complications: 'None encountered intraoperatively',
         ebl: '250–500 mL'
     }
-                'ureteric_reimplantation': {
+};
+            'ureteric_reimplantation': {
     procedure: 'Right/Left ureteric reimplantation (extravesical/Lich-Gregoir or intravesical/Cohen technique)',
     anesthesia: 'General anesthesia',
     position: 'Supine position',
@@ -1899,7 +1900,6 @@ function showOperativeNoteForm() {
     complications: 'None encountered intraoperatively',
     ebl: '50–150 mL'
 }
-};
             
     if (selectedTemplate === 'other') {
         // Show empty form for manual entry
