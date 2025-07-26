@@ -1277,32 +1277,14 @@
                         </div>
 
                         <!-- Surgery Information -->
+                        <!-- Surgery & Operative Note Information -->
                         <div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
                             <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                                 <i class="fas fa-scalpel"></i>
-                                Surgery Details
+                                Surgery & Operative Note
                             </h3>
-                            <div style="space-y: 0.75rem;">
-                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--neutral-200);">
-                                    <span style="color: var(--neutral-600); font-weight: 500;">Type:</span>
-                                    <span id="detailSurgeryType" style="color: var(--neutral-800); font-weight: 600;">-</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--neutral-200);">
-                                    <span style="color: var(--neutral-600); font-weight: 500;">Date:</span>
-                                    <span id="detailSurgeryDate" style="color: var(--neutral-800); font-weight: 600;">-</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--neutral-200);">
-                                    <span style="color: var(--neutral-600); font-weight: 500;">Time:</span>
-                                    <span id="detailSurgeryTime" style="color: var(--neutral-800); font-weight: 600;">-</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--neutral-200);">
-                                    <span style="color: var(--neutral-600); font-weight: 500;">Surgeon:</span>
-                                    <span id="detailSurgeon" style="color: var(--neutral-800); font-weight: 600;">-</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
-                                    <span style="color: var(--neutral-600); font-weight: 500;">Anesthesia:</span>
-                                    <span id="detailAnesthesia" style="color: var(--neutral-800); font-weight: 600;">-</span>
-                                </div>
+                            <div id="surgeryInfoContent">
+                                <!-- Content will be populated by JavaScript -->
                             </div>
                         </div>
 
@@ -1946,6 +1928,34 @@ const templates = {
 function createOperativeNoteForm(procedure, anesthesia, position, findings, steps, complications, ebl) {
     return `
         <div style="display: grid; gap: 1.5rem;">
+            <!-- Personnel Section -->
+            <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+                <h4 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-user-md"></i> Personnel
+                </h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="primarySurgeon">Primary Surgeon</label>
+                        <input type="text" id="primarySurgeon" 
+                               style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: white;"
+                               placeholder="Dr. Smith">
+                    </div>
+                    <div class="form-group">
+                        <label for="assistantSurgeon">Assistant Surgeon</label>
+                        <input type="text" id="assistantSurgeon" 
+                               style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: white;"
+                               placeholder="Dr. Jones">
+                    </div>
+                    <div class="form-group">
+                        <label for="anesthesiologist">Anesthesiologist</label>
+                        <input type="text" id="anesthesiologist" 
+                               style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: white;"
+                               placeholder="Dr. Williams">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Basic Procedure Info -->
             <div class="form-group">
                 <label for="procedurePerformed">Procedure Performed *</label>
                 <textarea id="procedurePerformed" rows="2" required 
@@ -2301,6 +2311,123 @@ function viewPatient(patientId) {
     showPage('patientDetail');
 }
 
+        async function loadSurgeryAndOperativeNote(patient) {
+    const surgeryInfoContent = document.getElementById('surgeryInfoContent');
+    
+    try {
+        // Load operative note from database
+        const { data: operativeNote, error } = await supabase
+            .from('operative_notes')
+            .select('*')
+            .eq('patient_id', patient.id)
+            .single();
+        
+        if (error && error.code !== 'PGRST116') {
+            console.error('Error loading operative note:', error);
+        }
+        
+        if (operativeNote) {
+            // Display operative note data
+            surgeryInfoContent.innerHTML = `
+                <div style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1rem; border: 1px solid #10b981;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-check-circle" style="color: #059669; font-size: 1.2rem;"></i>
+                            <span style="color: #065f46; font-weight: 700; font-size: 1.1rem;">Operative Note Completed</span>
+                        </div>
+                        <button onclick="viewFullOperativeNote()" class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                            <i class="fas fa-eye"></i>
+                            View Full Note
+                        </button>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div>
+                            <div style="margin-bottom: 0.75rem;">
+                                <span style="color: #065f46; font-weight: 600; font-size: 0.9rem;">Procedure:</span>
+                                <p style="color: #064e3b; margin: 0.25rem 0 0 0; font-size: 0.95rem; line-height: 1.4;">${operativeNote.procedure_performed}</p>
+                            </div>
+                            <div style="margin-bottom: 0.75rem;">
+                                <span style="color: #065f46; font-weight: 600; font-size: 0.9rem;">Primary Surgeon:</span>
+                                <p style="color: #064e3b; margin: 0.25rem 0 0 0; font-size: 0.95rem;">${operativeNote.primary_surgeon || 'Not specified'}</p>
+                            </div>
+                            <div>
+                                <span style="color: #065f46; font-weight: 600; font-size: 0.9rem;">Assistant:</span>
+                                <p style="color: #064e3b; margin: 0.25rem 0 0 0; font-size: 0.95rem;">${operativeNote.assistant_surgeon || 'None'}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="margin-bottom: 0.75rem;">
+                                <span style="color: #065f46; font-weight: 600; font-size: 0.9rem;">Anesthesia:</span>
+                                <p style="color: #064e3b; margin: 0.25rem 0 0 0; font-size: 0.95rem;">${operativeNote.anesthesia_type || 'Not specified'}</p>
+                            </div>
+                            <div style="margin-bottom: 0.75rem;">
+                                <span style="color: #065f46; font-weight: 600; font-size: 0.9rem;">Position:</span>
+                                <p style="color: #064e3b; margin: 0.25rem 0 0 0; font-size: 0.95rem;">${operativeNote.patient_position || 'Not specified'}</p>
+                            </div>
+                            <div>
+                                <span style="color: #065f46; font-weight: 600; font-size: 0.9rem;">EBL:</span>
+                                <p style="color: #064e3b; margin: 0.25rem 0 0 0; font-size: 0.95rem;">${operativeNote.estimated_blood_loss || 'Not recorded'}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #a7f3d0;">
+                        <span style="color: #065f46; font-weight: 600; font-size: 0.9rem;">Complications:</span>
+                        <p style="color: #064e3b; margin: 0.25rem 0 0 0; font-size: 0.95rem;">${operativeNote.complications}</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Display basic surgery info when no operative note exists
+            surgeryInfoContent.innerHTML = `
+                <div style="space-y: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--neutral-200);">
+                        <span style="color: var(--neutral-600); font-weight: 500;">Type:</span>
+                        <span style="color: var(--neutral-800); font-weight: 600;">${patient.surgery_type || 'Not scheduled'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--neutral-200);">
+                        <span style="color: var(--neutral-600); font-weight: 500;">Date:</span>
+                        <span style="color: var(--neutral-800); font-weight: 600;">${patient.surgery_date ? formatDate(patient.surgery_date) : 'Not scheduled'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--neutral-200);">
+                        <span style="color: var(--neutral-600); font-weight: 500;">Time:</span>
+                        <span style="color: var(--neutral-800); font-weight: 600;">${patient.surgery_time || 'Not scheduled'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--neutral-200);">
+                        <span style="color: var(--neutral-600); font-weight: 500;">Surgeon:</span>
+                        <span style="color: var(--neutral-800); font-weight: 600;">${patient.surgeon || 'Not assigned'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                        <span style="color: var(--neutral-600); font-weight: 500;">Anesthesia:</span>
+                        <span style="color: var(--neutral-800); font-weight: 600;">${patient.anesthesia_type || 'Not specified'}</span>
+                    </div>
+                </div>
+                
+                <div style="background: var(--neutral-50); border-radius: 0.5rem; padding: 1rem; margin-top: 1rem; text-align: center; border: 2px dashed var(--neutral-300);">
+                    <i class="fas fa-file-medical" style="font-size: 2rem; color: var(--neutral-400); margin-bottom: 0.5rem;"></i>
+                    <p style="color: var(--neutral-600); margin-bottom: 1rem;">No operative note recorded yet</p>
+                    <button onclick="showOperativeNoteForm()" class="btn" style="background: linear-gradient(135deg, var(--success-green), #059669);">
+                        <i class="fas fa-plus"></i>
+                        Add Operative Note
+                    </button>
+                </div>
+            `;
+        }
+        
+    } catch (error) {
+        console.error('Error loading surgery information:', error);
+        surgeryInfoContent.innerHTML = `
+            <p style="color: var(--danger-red); text-align: center;">Error loading surgery information</p>
+        `;
+    }
+}
+
+function viewFullOperativeNote() {
+    // You can implement a modal or full view here
+    showNotification('Full operative note view coming soon!', 'info');
+}
+
 // Patient Detail Functions
 function loadPatientDetail(patient) {
     try {
@@ -2367,17 +2494,8 @@ function loadPatientDetail(patient) {
             surgeryCountdown.style.color = 'var(--neutral-400)';
         }
         
-        // Surgery Details
-        document.getElementById('detailSurgeryType').textContent = 
-            patient.surgery_type || 'Not scheduled';
-        document.getElementById('detailSurgeryDate').textContent = 
-            patient.surgery_date ? formatDate(patient.surgery_date) : 'Not scheduled';
-        document.getElementById('detailSurgeryTime').textContent = 
-            patient.surgery_time || 'Not scheduled';
-        document.getElementById('detailSurgeon').textContent = 
-            patient.surgeon || 'Not assigned';
-        document.getElementById('detailAnesthesia').textContent = 
-            patient.anesthesia_type || 'Not specified';
+// Load surgery and operative note information
+loadSurgeryAndOperativeNote(patient);
         
         // Lab Results
         const labs = [
