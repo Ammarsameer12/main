@@ -2713,28 +2713,12 @@ async function fetchOperativeNoteForPrint(printWindow, currentDate) {
             margin-bottom: 5px;
         }
 @media print {
-    @page {
-        margin: 0.5in;
-        size: letter;
-    }
-    
     body {
         margin: 0;
         padding: 0.5in;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
     }
-    
     .no-print {
         display: none;
-    }
-    
-    /* Remove browser print headers/footers */
-    @page {
-        margin-top: 0.5in;
-        margin-bottom: 0.5in;
-        margin-left: 0.5in;
-        margin-right: 0.5in;
     }
 }
     </style>
@@ -2744,6 +2728,9 @@ async function fetchOperativeNoteForPrint(printWindow, currentDate) {
         <div class="hospital-name">UROLOGY DEPARTMENT</div>
         <div class="hospital-name">OPERATIVE REPORT</div>
         <div style="font-size: 12px; margin-top: 10px;">Date Printed: ${currentDate}</div>
+           <div style="font-size: 10px; margin-top: 5px; color: #666; font-style: italic;">
+              📝 To remove browser headers/footers: In print dialog, click "More settings" → Uncheck "Headers and footers"
+          </div>
     </div>
     
     <div class="patient-info">
@@ -2846,20 +2833,7 @@ async function fetchOperativeNoteForPrint(printWindow, currentDate) {
         // Wait for content to load then print
         printWindow.onload = function() {
             printWindow.focus();
-// Remove browser headers/footers programmatically
-try {
-    // For Chrome/Edge
-    printWindow.print({
-        silent: false,
-        printBackground: true,
-        margins: {
-            marginType: 'none'
-        }
-    });
-} catch (e) {
-    // Fallback for other browsers
-    printWindow.print();
-}
+            printWindow.print();
             printWindow.close();
         };
         
