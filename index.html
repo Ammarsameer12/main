@@ -1319,13 +1319,18 @@
                                 <i class="fas fa-procedures"></i>
                                 Post-Op Monitoring
                             </h3>
-                            <div style="text-align: center; color: var(--neutral-500);">
-                                <i class="fas fa-clock" style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5;"></i>
-                                <p style="margin-bottom: 1rem; font-size: 0.9rem;">Daily vitals and progress notes</p>
-                                <button class="btn btn-secondary" onclick="showNotification('Post-operative logging coming in Part 5! 🚧', 'info')" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
-                                    <i class="fas fa-plus"></i>
-                                    Coming Soon
-                                </button>
+<div id="postOpPreviewSection" style="background: linear-gradient(135deg, var(--neutral-50), white); border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-procedures"></i>
+                        Post-Op Monitoring
+                    </h3>
+                    <div id="postOpPreviewContent">
+                        <div style="text-align: center; color: var(--neutral-500);">
+                            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5;"></i>
+                            <p>Loading post-operative data...</p>
+                        </div>
+                    </div>
+                </div>
                             </div>
                         </div>
                     </div>
@@ -3734,6 +3739,131 @@ function viewPatient(patientId) {
     currentPatient = patient;
     loadPatientDetail(patient);
     showPage('patientDetail');
+}
+
+        // Add this function before your loadPatientDetail function
+async function loadPostOpSummary(patient) {
+    try {
+        // Load latest post-op entries
+        const { data: entries, error } = await supabase
+            .from('post_operative_entries')
+            .select('*')
+            .eq('patient_id', patient.id)
+            .order('entry_date', { ascending: false })
+            .order('entry_time', { ascending: false })
+            .limit(5); // Get last 5 entries
+
+        if (error) {
+            console.error('Error loading post-op summary:', error);
+            return createEmptyPostOpSummary();
+        }
+
+        if (!entries || entries.length === 0) {
+            return createEmptyPostOpSummary();
+        }
+
+        return createPostOpSummaryContent(entries);
+
+    } catch (error) {
+        console.error('Error in loadPostOpSummary:', error);
+        return createEmptyPostOpSummary();
+    }
+}
+
+function createEmptyPostOpSummary() {
+    return `
+        <div style="text-align: center; color: var(--neutral-500);">
+            <i class="fas fa-clipboard-list" style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5;"></i>
+            <p style="margin-bottom: 1rem; font-size: 0.9rem;">No post-operative entries yet</p>
+            <button class="btn" onclick="showPage('addPostOpEntry')" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+                <i class="fas fa-plus"></i>
+                Add First Entry
+            </button>
+        </div>
+    `;
+}
+
+function createPostOpSummaryContent(entries) {
+    const latestEntry = entries[0];
+    const totalEntries = entries.length;
+    
+    // Calculate statistics
+    const avgPain = entries.filter(e => e.pain_score !== null).length > 0 
+        ? entries.filter(e => e.pain_score !== null).reduce((sum, entry) => sum + entry.pain_score, 0) / entries.filter(e => e.pain_score !== null).length
+        : null;
+    
+    const latestVitals = {
+        bp: latestEntry.systolic_bp && latestEntry.diastolic_bp ? `${latestEntry.systolic_bp}/${latestEntry.diastolic_bp}` : null,
+        hr: latestEntry.heart_rate,
+        temp: latestEntry.temperature,
+        pain: latestEntry.pain_score,
+        urine: latestEntry.urine_output
+    };
+
+    return `
+        <div style="display: grid; gap: 1rem;">
+            <!-- Quick Stats -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1rem;">
+                <div style="background: var(--neutral-50); border-radius: 0.5rem; padding: 0.75rem; text-align: center; border: 1px solid var(--neutral-200);">
+                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--primary-blue);">${totalEntries}</div>
+                    <div style="font-size: 0.75rem; color: var(--neutral-600);">Total Entries</div>
+                </div>
+                <div style="background: var(--neutral-50); border-radius: 0.5rem; padding: 0.75rem; text-align: center; border: 1px solid var(--neutral-200);">
+                    <div style="font-size: 1.2rem; font-weight: 700; color: ${getPainColor(avgPain)};">${avgPain !== null ? avgPain.toFixed(1) : 'N/A'}</div>
+                    <div style="font-size: 0.75rem; color: var(--neutral-600);">Avg Pain</div>
+                </div>
+                <div style="background: var(--neutral-50); border-radius: 0.5rem; padding: 0.75rem; text-align: center; border: 1px solid var(--neutral-200);">
+                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--success-green);">POD ${latestEntry.post_op_day}</div>
+                    <div style="font-size: 0.75rem; color: var(--neutral-600);">Current Day</div>
+                </div>
+            </div>
+
+            <!-- Latest Vitals -->
+            <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1rem; border: 1px solid var(--neutral-200);">
+                <h4 style="color: var(--neutral-700); margin-bottom: 0.75rem; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-heartbeat"></i>
+                    Latest Vitals (${formatDate(latestEntry.entry_date)})
+                </h4>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; font-size: 0.85rem;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--neutral-600);">BP:</span>
+                        <span style="color: var(--neutral-800); font-weight: 600;">${latestVitals.bp || 'Not recorded'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--neutral-600);">HR:</span>
+                        <span style="color: var(--neutral-800); font-weight: 600;">${latestVitals.hr ? latestVitals.hr + ' bpm' : 'Not recorded'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--neutral-600);">Temp:</span>
+                        <span style="color: var(--neutral-800); font-weight: 600;">${latestVitals.temp ? latestVitals.temp + '°C' : 'Not recorded'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--neutral-600);">Pain:</span>
+                        <span style="color: ${getPainColor(latestVitals.pain)}; font-weight: 600;">${latestVitals.pain !== null ? latestVitals.pain + '/10' : 'Not recorded'}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+                <button class="btn" onclick="showPage('addPostOpEntry')" style="background: linear-gradient(135deg, var(--success-green), #059669); font-size: 0.85rem; padding: 0.5rem 1rem;">
+                    <i class="fas fa-plus"></i>
+                    Add Entry
+                </button>
+                <button class="btn" onclick="showPage('postOp')" style="background: linear-gradient(135deg, var(--primary-blue-light), var(--primary-blue)); font-size: 0.85rem; padding: 0.5rem 1rem;">
+                    <i class="fas fa-chart-line"></i>
+                    View All
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function getPainColor(painScore) {
+    if (painScore === null || painScore === undefined) return 'var(--neutral-400)';
+    if (painScore >= 7) return 'var(--danger-red)';
+    if (painScore >= 4) return 'var(--warning-amber)';
+    return 'var(--success-green)';
 }
 
         async function loadSurgeryAndOperativeNote(patient) {
