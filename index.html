@@ -1952,12 +1952,46 @@ function showOperativeNoteForm() {
                 const postOpDay = Math.max(1, Math.floor((today - surgeryDate) / (1000 * 60 * 60 * 24)) + 1);
                 document.getElementById('currentPostOpDay').textContent = postOpDay;
                 
-                // Set total entries to 0 for now (we'll load real data later)
-                document.getElementById('totalEntries').textContent = '0';
+// Load post-op entries from database
+await loadPostOpEntries();
                 
             } catch (error) {
                 console.error('Error loading post-op management:', error);
                 showNotification('Error loading post-operative data', 'error');
+            }
+        }
+
+        async function loadPostOpEntries() {
+            try {
+                const { data: entries, error } = await supabase
+                    .from('post_operative_entries')
+                    .select('*')
+                    .eq('patient_id', currentPatient.id)
+                    .order('entry_date', { ascending: false })
+                    .order('entry_time', { ascending: false });
+
+                if (error) throw error;
+
+                // Update stats
+                document.getElementById('totalEntries').textContent = entries.length;
+                
+                if (entries.length > 0) {
+                    const lastEntry = entries[0];
+                    const avgPain = entries.filter(e => e.pain_score !== null).length > 0 
+                        ? entries.filter(e => e.pain_score !== null).reduce((sum, entry) => sum + entry.pain_score, 0) / entries.filter(e => e.pain_score !== null).length
+                        : 0;
+                    document.getElementById('avgPainScore').textContent = avgPain > 0 ? avgPain.toFixed(1) : 'No data';
+                } else {
+                    document.getElementById('avgPainScore').textContent = 'No data';
+                }
+
+                // Display entries
+                displayPostOpEntries(entries);
+
+            } catch (error) {
+                console.error('Error loading post-op entries:', error);
+                showNotification('Error loading entries', 'error');
+                displayPostOpEntries([]);
             }
         }
 
