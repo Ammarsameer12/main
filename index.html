@@ -2424,8 +2424,177 @@ function viewPatient(patientId) {
 }
 
 function viewFullOperativeNote() {
-    // You can implement a modal or full view here
-    showNotification('Full operative note view coming soon!', 'info');
+    if (!currentPatient) {
+        showNotification('No patient selected', 'error');
+        return;
+    }
+    
+    // Store current patient and load operative note data
+    loadFullOperativeNoteView();
+}
+
+async function loadFullOperativeNoteView() {
+    try {
+        const { data: operativeNote, error } = await supabase
+            .from('operative_notes')
+            .select('*')
+            .eq('patient_id', currentPatient.id)
+            .single();
+        
+        if (error) {
+            showNotification('No operative note found', 'error');
+            return;
+        }
+        
+        // Create and show modal
+        const modal = document.createElement('div');
+        modal.id = 'operativeNoteModal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        `;
+        
+        modal.innerHTML = `
+            <div style="background: white; border-radius: 1rem; max-width: 1000px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+                <!-- Header -->
+                <div style="background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark)); color: white; padding: 2rem; border-radius: 1rem 1rem 0 0; position: sticky; top: 0; z-index: 10;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h2 style="margin: 0; font-size: 1.8rem; font-weight: 700;">
+                                <i class="fas fa-file-medical-alt"></i>
+                                Operative Note
+                            </h2>
+                            <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 1.1rem;">${currentPatient.name} - MRN: ${currentPatient.mrn}</p>
+                        </div>
+                        <button onclick="closeOperativeNoteModal()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 0.75rem; border-radius: 0.5rem; cursor: pointer; font-size: 1.2rem; transition: all 0.3s ease;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Content -->
+                <div style="padding: 2rem;">
+                    <!-- Procedure & Personnel -->
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--neutral-200);">
+                            <i class="fas fa-info-circle"></i> Procedure Information
+                        </h3>
+                        <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+                            <div style="margin-bottom: 1rem;">
+                                <strong style="color: var(--neutral-700);">Procedure Performed:</strong>
+                                <p style="margin: 0.5rem 0 0 0; line-height: 1.6;">${operativeNote.procedure_performed}</p>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                                <div>
+                                    <strong style="color: var(--neutral-700);">Primary Surgeon:</strong>
+                                    <p style="margin: 0.25rem 0 0 0;">${operativeNote.primary_surgeon || 'Not specified'}</p>
+                                </div>
+                                <div>
+                                    <strong style="color: var(--neutral-700);">Assistant Surgeon:</strong>
+                                    <p style="margin: 0.25rem 0 0 0;">${operativeNote.assistant_surgeon || 'None'}</p>
+                                </div>
+                                <div>
+                                    <strong style="color: var(--neutral-700);">Anesthesiologist:</strong>
+                                    <p style="margin: 0.25rem 0 0 0;">${operativeNote.anesthesiologist || 'Not specified'}</p>
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                                <div>
+                                    <strong style="color: var(--neutral-700);">Anesthesia Type:</strong>
+                                    <p style="margin: 0.25rem 0 0 0;">${operativeNote.anesthesia_type || 'Not specified'}</p>
+                                </div>
+                                <div>
+                                    <strong style="color: var(--neutral-700);">Patient Position:</strong>
+                                    <p style="margin: 0.25rem 0 0 0;">${operativeNote.patient_position || 'Not specified'}</p>
+                                </div>
+                                <div>
+                                    <strong style="color: var(--neutral-700);">Estimated Blood Loss:</strong>
+                                    <p style="margin: 0.25rem 0 0 0;">${operativeNote.estimated_blood_loss || 'Not recorded'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Operative Findings -->
+                    ${operativeNote.findings ? `
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--neutral-200);">
+                            <i class="fas fa-search"></i> Operative Findings
+                        </h3>
+                        <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+                            <p style="line-height: 1.8; white-space: pre-wrap; margin: 0;">${operativeNote.findings}</p>
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    <!-- Operative Steps -->
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--neutral-200);">
+                            <i class="fas fa-list-ol"></i> Operative Steps
+                        </h3>
+                        <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+                            <p style="line-height: 1.8; white-space: pre-wrap; margin: 0;">${operativeNote.operative_steps}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Complications -->
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--neutral-200);">
+                            <i class="fas fa-exclamation-triangle"></i> Complications
+                        </h3>
+                        <div style="background: ${operativeNote.complications === 'None encountered intraoperatively' ? '#d1fae5' : '#fef2f2'}; border-radius: 0.75rem; padding: 1.5rem; border: 1px solid ${operativeNote.complications === 'None encountered intraoperatively' ? '#10b981' : '#ef4444'};">
+                            <p style="line-height: 1.8; white-space: pre-wrap; margin: 0; color: ${operativeNote.complications === 'None encountered intraoperatively' ? '#065f46' : '#991b1b'};">${operativeNote.complications}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer Actions -->
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end; padding-top: 1rem; border-top: 2px solid var(--neutral-200);">
+                        <button onclick="printOperativeNote()" class="btn btn-secondary">
+                            <i class="fas fa-print"></i>
+                            Print
+                        </button>
+                        <button onclick="closeOperativeNoteModal()" class="btn">
+                            <i class="fas fa-check"></i>
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add click outside to close
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeOperativeNoteModal();
+            }
+        });
+        
+        document.body.appendChild(modal);
+        
+    } catch (error) {
+        console.error('Error loading full operative note:', error);
+        showNotification('Error loading operative note', 'error');
+    }
+}
+
+function closeOperativeNoteModal() {
+    const modal = document.getElementById('operativeNoteModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function printOperativeNote() {
+    window.print();
 }
 
         async function handleSaveOperativeNote(event) {
