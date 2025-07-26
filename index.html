@@ -1983,7 +1983,601 @@
         let allPatients = [];
         let currentPatient = null;
 
-        // Add this function with your other functions
+
+// Add these functions to your existing JavaScript
+
+function showPostOpChart() {
+    if (!currentPatient) {
+        showNotification('No patient selected', 'error');
+        return;
+    }
+    showPage('postOpChart');
+    loadPostOpChart();
+}
+
+async function loadPostOpChart() {
+    try {
+        // Update patient info
+        document.getElementById('chartPatientInfo').innerHTML = `
+            <strong>${currentPatient.name}</strong> (MRN: ${currentPatient.mrn}) - 
+            ${currentPatient.surgery_type || 'Surgery'} ${currentPatient.surgery_date ? 'on ' + formatDate(currentPatient.surgery_date) : ''}
+        `;
+        
+        // Load post-op entries for charts
+        const { data: entries, error } = await supabase
+            .from('post_operative_entries')
+            .select('*')
+            .eq('patient_id', currentPatient.id)
+            .order('entry_date', { ascending: true })
+            .order('entry_time', { ascending: true });
+
+        if (error) throw error;
+
+        if (entries.length === 0) {
+            document.getElementById('chartsContainer').innerHTML = `
+                <div style="text-align: center; padding: 3rem; color: var(--neutral-500);">
+                    <i class="fas fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <h3>No Data Available for Charts</h3>
+                    <p>Add some post-operative entries to view charts</p>
+                    <button class="btn" onclick="showPage('addPostOpEntry')" style="margin-top: 1rem;">
+                        <i class="fas fa-plus"></i>
+                        Add Entry
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        // Create charts
+        createPostOpCharts(entries);
+        
+    } catch (error) {
+        console.error('Error loading post-op chart:', error);
+        showNotification('Error loading chart data', 'error');
+    }
+}
+
+function createPostOpCharts(entries) {
+    // Default to vitals chart
+    showVitalChart('vitals', entries);
+}
+
+function showVitalChart(chartType, entries = null) {
+    // Update active button
+    document.querySelectorAll('.chart-toggle-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`[data-chart="${chartType}"]`).classList.add('active');
+    
+    const container = document.getElementById('chartsContainer');
+    
+    if (!entries) {
+        // If entries not provided, we need to fetch them
+        loadPostOpEntriesForChart(chartType);
+        return;
+    }
+    
+    switch(chartType) {
+        case 'vitals':
+            container.innerHTML = createVitalsChart(entries);
+            break;
+        case 'pain':
+            container.innerHTML = createPainChart(entries);
+            break;
+        case 'urine':
+            container.innerHTML = createUrineChart(entries);
+            break;
+    }
+}
+
+async function loadPostOpEntriesForChart(chartType) {
+    try {
+        const { data: entries, error } = await supabase
+            .from('post_operative_entries')
+            .select('*')
+            .eq('patient_id', currentPatient.id)
+            .order('entry_date', { ascending: true })
+            .order('entry_time', { ascending: true });
+
+        if (error) throw error;
+        showVitalChart(chartType, entries);
+        
+    } catch (error) {
+        console.error('Error loading entries for chart:', error);
+        showNotification('Error loading chart data', 'error');
+    }
+}
+
+function createVitalsChart(entries) {
+    const validEntries = entries.filter(e => 
+        e.systolic_bp || e.diastolic_bp || e.heart_rate || e.temperature
+    );
+    
+    if (validEntries.length === 0) {
+        return createNoDataMessage('No vital signs data available');
+    }
+    
+    return `
+        <div style="background: white; border-radius: 1rem; padding: 2rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+            <h3 style="color: var(--primary-blue); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-heartbeat"></i>
+                Vital Signs Trends
+            </h3>
+            
+            <!-- Chart Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                <!-- Blood Pressure Chart -->
+                <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+                    <h4 style="color: var(--neutral-700); margin-bottom: 1rem; text-align: center;">Blood Pressure (mmHg)</h4>
+                    <div style="height: 200px; position: relative;">
+                        ${createBPChart(validEntries)}
+                    </div>
+                </div>
+                
+                <!-- Heart Rate Chart -->
+                <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+                    <h4 style="color: var(--neutral-700); margin-bottom: 1rem; text-align: center;">Heart Rate (bpm)</h4>
+                    <div style="height: 200px; position: relative;">
+                        ${createHRChart(validEntries)}
+                    </div>
+                </div>
+                
+                <!-- Temperature Chart -->
+                <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+                    <h4 style="color: var(--neutral-700); margin-bottom: 1rem; text-align: center;">Temperature (°C)</h4>
+                    <div style="height: 200px; position: relative;">
+                        ${createTempChart(validEntries)}
+                    </div>
+                </div>
+                
+                <!-- O2 Saturation Chart -->
+                <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+                    <h4 style="color: var(--neutral-700); margin-bottom: 1rem; text-align: center;">O2 Saturation (%)</h4>
+                    <div style="height: 200px; position: relative;">
+                        ${createO2Chart(validEntries)}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Data Table -->
+            <div style="margin-top: 2rem;">
+                <h4 style="color: var(--neutral-700); margin-bottom: 1rem;">Raw Data</h4>
+                <div style="overflow-x: auto;">
+                    ${createVitalsTable(validEntries)}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function createPainChart(entries) {
+    const painEntries = entries.filter(e => e.pain_score !== null);
+    
+    if (painEntries.length === 0) {
+        return createNoDataMessage('No pain score data available');
+    }
+    
+    return `
+        <div style="background: white; border-radius: 1rem; padding: 2rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+            <h3 style="color: var(--primary-blue); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-exclamation-circle"></i>
+                Pain Score Trend
+            </h3>
+            
+            <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 2rem; border: 1px solid var(--neutral-200);">
+                <div style="height: 300px; position: relative;">
+                    ${createPainScoreChart(painEntries)}
+                </div>
+                
+                <!-- Pain Statistics -->
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 2rem;">
+                    ${createPainStats(painEntries)}
+                </div>
+            </div>
+            
+            <!-- Pain Data Table -->
+            <div style="margin-top: 2rem;">
+                <h4 style="color: var(--neutral-700); margin-bottom: 1rem;">Pain Score Data</h4>
+                <div style="overflow-x: auto;">
+                    ${createPainTable(painEntries)}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function createUrineChart(entries) {
+    const urineEntries = entries.filter(e => e.urine_output !== null);
+    
+    if (urineEntries.length === 0) {
+        return createNoDataMessage('No urine output data available');
+    }
+    
+    return `
+        <div style="background: white; border-radius: 1rem; padding: 2rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+            <h3 style="color: var(--primary-blue); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-tint"></i>
+                Urine Output Trend
+            </h3>
+            
+            <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 2rem; border: 1px solid var(--neutral-200);">
+                <div style="height: 300px; position: relative;">
+                    ${createUrineOutputChart(urineEntries)}
+                </div>
+                
+                <!-- Urine Statistics -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem;">
+                    ${createUrineStats(urineEntries)}
+                </div>
+            </div>
+            
+            <!-- Urine Data Table -->
+            <div style="margin-top: 2rem;">
+                <h4 style="color: var(--neutral-700); margin-bottom: 1rem;">Urine Output Data</h4>
+                <div style="overflow-x: auto;">
+                    ${createUrineTable(urineEntries)}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Simple ASCII-style chart creators (since we can't use external charting libraries)
+function createBPChart(entries) {
+    const bpData = entries.filter(e => e.systolic_bp && e.diastolic_bp);
+    if (bpData.length === 0) return '<p style="text-align: center; color: var(--neutral-500);">No BP data</p>';
+    
+    return `
+        <div style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+            ${bpData.map((entry, index) => {
+                const systolic = entry.systolic_bp;
+                const diastolic = entry.diastolic_bp;
+                const date = formatDate(entry.entry_date);
+                const systolicHeight = Math.max(10, Math.min(90, (systolic - 80) * 2));
+                const diastolicHeight = Math.max(10, Math.min(90, (diastolic - 40) * 3));
+                
+                return `
+                    <div style="display: flex; align-items: end; height: 40px; margin-bottom: 5px;">
+                        <div style="width: 30px; font-size: 0.8rem; color: var(--neutral-600);">${date}</div>
+                        <div style="flex: 1; display: flex; align-items: end; gap: 2px; padding-left: 10px;">
+                            <div style="background: var(--danger-red); width: 15px; height: ${systolicHeight}%; border-radius: 2px;" title="Systolic: ${systolic}"></div>
+                            <div style="background: var(--primary-blue); width: 15px; height: ${diastolicHeight}%; border-radius: 2px;" title="Diastolic: ${diastolic}"></div>
+                        </div>
+                        <div style="width: 60px; font-size: 0.8rem; color: var(--neutral-700);">${systolic}/${diastolic}</div>
+                    </div>
+                `;
+            }).join('')}
+            <div style="display: flex; gap: 20px; margin-top: 10px; font-size: 0.8rem;">
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <div style="width: 12px; height: 12px; background: var(--danger-red); border-radius: 2px;"></div>
+                    <span>Systolic</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <div style="width: 12px; height: 12px; background: var(--primary-blue); border-radius: 2px;"></div>
+                    <span>Diastolic</span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function createHRChart(entries) {
+    const hrData = entries.filter(e => e.heart_rate);
+    if (hrData.length === 0) return '<p style="text-align: center; color: var(--neutral-500);">No HR data</p>';
+    
+    return `
+        <div style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+            ${hrData.map((entry, index) => {
+                const hr = entry.heart_rate;
+                const date = formatDate(entry.entry_date);
+                const height = Math.max(10, Math.min(90, (hr - 40) * 1.5));
+                const color = hr > 100 ? 'var(--danger-red)' : hr < 60 ? 'var(--warning-amber)' : 'var(--success-green)';
+                
+                return `
+                    <div style="display: flex; align-items: end; height: 30px; margin-bottom: 3px;">
+                        <div style="width: 40px; font-size: 0.8rem; color: var(--neutral-600);">${date}</div>
+                        <div style="flex: 1; display: flex; align-items: end; padding-left: 10px;">
+                            <div style="background: ${color}; width: 20px; height: ${height}%; border-radius: 2px;" title="HR: ${hr}"></div>
+                        </div>
+                        <div style="width: 40px; font-size: 0.8rem; color: var(--neutral-700);">${hr}</div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
+function createTempChart(entries) {
+    const tempData = entries.filter(e => e.temperature);
+    if (tempData.length === 0) return '<p style="text-align: center; color: var(--neutral-500);">No temperature data</p>';
+    
+    return `
+        <div style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+            ${tempData.map((entry, index) => {
+                const temp = entry.temperature;
+                const date = formatDate(entry.entry_date);
+                const height = Math.max(10, Math.min(90, (temp - 35) * 10));
+                const color = temp > 38.5 ? 'var(--danger-red)' : temp > 37.5 ? 'var(--warning-amber)' : 'var(--success-green)';
+                
+                return `
+                    <div style="display: flex; align-items: end; height: 30px; margin-bottom: 3px;">
+                        <div style="width: 40px; font-size: 0.8rem; color: var(--neutral-600);">${date}</div>
+                        <div style="flex: 1; display: flex; align-items: end; padding-left: 10px;">
+                            <div style="background: ${color}; width: 20px; height: ${height}%; border-radius: 2px;" title="Temp: ${temp}°C"></div>
+                        </div>
+                        <div style="width: 40px; font-size: 0.8rem; color: var(--neutral-700);">${temp}°C</div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
+function createO2Chart(entries) {
+    const o2Data = entries.filter(e => e.oxygen_saturation);
+    if (o2Data.length === 0) return '<p style="text-align: center; color: var(--neutral-500);">No O2 data</p>';
+    
+    return `
+        <div style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+            ${o2Data.map((entry, index) => {
+                const o2 = entry.oxygen_saturation;
+                const date = formatDate(entry.entry_date);
+                const height = Math.max(10, Math.min(90, (o2 - 85) * 4));
+                const color = o2 < 95 ? 'var(--danger-red)' : o2 < 98 ? 'var(--warning-amber)' : 'var(--success-green)';
+                
+                return `
+                    <div style="display: flex; align-items: end; height: 30px; margin-bottom: 3px;">
+                        <div style="width: 40px; font-size: 0.8rem; color: var(--neutral-600);">${date}</div>
+                        <div style="flex: 1; display: flex; align-items: end; padding-left: 10px;">
+                            <div style="background: ${color}; width: 20px; height: ${height}%; border-radius: 2px;" title="O2: ${o2}%"></div>
+                        </div>
+                        <div style="width: 40px; font-size: 0.8rem; color: var(--neutral-700);">${o2}%</div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
+function createPainScoreChart(entries) {
+    return `
+        <div style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+            ${entries.map((entry, index) => {
+                const pain = entry.pain_score;
+                const date = formatDate(entry.entry_date);
+                const height = Math.max(10, pain * 9);
+                const color = pain >= 7 ? 'var(--danger-red)' : pain >= 4 ? 'var(--warning-amber)' : 'var(--success-green)';
+                
+                return `
+                    <div style="display: flex; align-items: end; height: 25px; margin-bottom: 5px;">
+                        <div style="width: 50px; font-size: 0.8rem; color: var(--neutral-600);">${date}</div>
+                        <div style="flex: 1; display: flex; align-items: end; padding-left: 10px;">
+                            <div style="background: ${color}; width: 25px; height: ${height}%; border-radius: 2px;" title="Pain: ${pain}/10"></div>
+                        </div>
+                        <div style="width: 30px; font-size: 0.8rem; color: var(--neutral-700);">${pain}/10</div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
+function createUrineOutputChart(entries) {
+    const maxOutput = Math.max(...entries.map(e => e.urine_output));
+    
+    return `
+        <div style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+            ${entries.map((entry, index) => {
+                const output = entry.urine_output;
+                const date = formatDate(entry.entry_date);
+                const height = Math.max(10, (output / maxOutput) * 80);
+                const color = output < 100 ? 'var(--danger-red)' : output < 200 ? 'var(--warning-amber)' : 'var(--success-green)';
+                
+                return `
+                    <div style="display: flex; align-items: end; height: 25px; margin-bottom: 5px;">
+                        <div style="width: 50px; font-size: 0.8rem; color: var(--neutral-600);">${date}</div>
+                        <div style="flex: 1; display: flex; align-items: end; padding-left: 10px;">
+                            <div style="background: ${color}; width: 25px; height: ${height}%; border-radius: 2px;" title="Output: ${output}mL"></div>
+                        </div>
+                        <div style="width: 50px; font-size: 0.8rem; color: var(--neutral-700);">${output}mL</div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
+// Statistical functions
+function createPainStats(entries) {
+    const scores = entries.map(e => e.pain_score);
+    const avg = (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1);
+    const max = Math.max(...scores);
+    const min = Math.min(...scores);
+    const latest = scores[scores.length - 1];
+    
+    return `
+        <div style="text-align: center; background: white; padding: 1rem; border-radius: 0.5rem;">
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-blue);">${avg}</div>
+            <div style="font-size: 0.8rem; color: var(--neutral-600);">Average</div>
+        </div>
+        <div style="text-align: center; background: white; padding: 1rem; border-radius: 0.5rem;">
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--danger-red);">${max}</div>
+            <div style="font-size: 0.8rem; color: var(--neutral-600);">Maximum</div>
+        </div>
+        <div style="text-align: center; background: white; padding: 1rem; border-radius: 0.5rem;">
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--success-green);">${min}</div>
+            <div style="font-size: 0.8rem; color: var(--neutral-600);">Minimum</div>
+        </div>
+        <div style="text-align: center; background: white; padding: 1rem; border-radius: 0.5rem;">
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--warning-amber);">${latest}</div>
+            <div style="font-size: 0.8rem; color: var(--neutral-600);">Latest</div>
+        </div>
+    `;
+}
+
+function createUrineStats(entries) {
+    const outputs = entries.map(e => e.urine_output);
+    const total = outputs.reduce((a, b) => a + b, 0);
+    const avg = (total / outputs.length).toFixed(0);
+    const max = Math.max(...outputs);
+    
+    return `
+        <div style="text-align: center; background: white; padding: 1rem; border-radius: 0.5rem;">
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-blue);">${total}</div>
+            <div style="font-size: 0.8rem; color: var(--neutral-600);">Total mL</div>
+        </div>
+        <div style="text-align: center; background: white; padding: 1rem; border-radius: 0.5rem;">
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--success-green);">${avg}</div>
+            <div style="font-size: 0.8rem; color: var(--neutral-600);">Average mL</div>
+        </div>
+        <div style="text-align: center; background: white; padding: 1rem; border-radius: 0.5rem;">
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--warning-amber);">${max}</div>
+            <div style="font-size: 0.8rem; color: var(--neutral-600);">Maximum mL</div>
+        </div>
+    `;
+}
+
+// Table creators
+function createVitalsTable(entries) {
+    return `
+        <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 0.5rem; overflow: hidden; box-shadow: var(--shadow-sm);">
+            <thead>
+                <tr style="background: var(--primary-blue); color: white;">
+                    <th style="padding: 1rem; text-align: left;">Date</th>
+                    <th style="padding: 1rem; text-align: center;">BP</th>
+                    <th style="padding: 1rem; text-align: center;">HR</th>
+                    <th style="padding: 1rem; text-align: center;">Temp</th>
+                    <th style="padding: 1rem; text-align: center;">RR</th>
+                    <th style="padding: 1rem; text-align: center;">O2 Sat</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${entries.map((entry, index) => `
+                    <tr style="border-bottom: 1px solid var(--neutral-200); ${index % 2 === 0 ? 'background: var(--neutral-50);' : ''}">
+                        <td style="padding: 1rem;">${formatDate(entry.entry_date)}</td>
+                        <td style="padding: 1rem; text-align: center;">${entry.systolic_bp && entry.diastolic_bp ? `${entry.systolic_bp}/${entry.diastolic_bp}` : '-'}</td>
+                        <td style="padding: 1rem; text-align: center;">${entry.heart_rate || '-'}</td>
+                        <td style="padding: 1rem; text-align: center;">${entry.temperature ? entry.temperature + '°C' : '-'}</td>
+                        <td style="padding: 1rem; text-align: center;">${entry.respiratory_rate || '-'}</td>
+                        <td style="padding: 1rem; text-align: center;">${entry.oxygen_saturation ? entry.oxygen_saturation + '%' : '-'}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+}
+
+function createPainTable(entries) {
+    return `
+        <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 0.5rem; overflow: hidden; box-shadow: var(--shadow-sm);">
+            <thead>
+                <tr style="background: var(--primary-blue); color: white;">
+                    <th style="padding: 1rem; text-align: left;">Date</th>
+                    <th style="padding: 1rem; text-align: left;">Time</th>
+                    <th style="padding: 1rem; text-align: center;">Pain Score</th>
+                    <th style="padding: 1rem; text-align: left;">Post-Op Day</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${entries.map((entry, index) => `
+                    <tr style="border-bottom: 1px solid var(--neutral-200); ${index % 2 === 0 ? 'background: var(--neutral-50);' : ''}">
+                        <td style="padding: 1rem;">${formatDate(entry.entry_date)}</td>
+                        <td style="padding: 1rem;">${formatTime(entry.entry_time)}</td>
+                        <td style="padding: 1rem; text-align: center;">
+                            <span style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 1rem; background: ${entry.pain_score >= 7 ? 'var(--danger-red)' : entry.pain_score >= 4 ? 'var(--warning-amber)' : 'var(--success-green)'}; color: white; font-weight: 600;">
+                                ${entry.pain_score}/10
+                            </span>
+                        </td>
+                        <td style="padding: 1rem;">Day ${entry.post_op_day}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+}
+
+function createUrineTable(entries) {
+    return `
+        <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 0.5rem; overflow: hidden; box-shadow: var(--shadow-sm);">
+            <thead>
+                <tr style="background: var(--primary-blue); color: white;">
+                    <th style="padding: 1rem; text-align: left;">Date</th>
+                    <th style="padding: 1rem; text-align: left;">Time</th>
+                    <th style="padding: 1rem; text-align: center;">Output (mL)</th>
+                    <th style="padding: 1rem; text-align: left;">Color</th>
+                    <th style="padding: 1rem; text-align: left;">Catheter Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${entries.map((entry, index) => `
+                    <tr style="border-bottom: 1px solid var(--neutral-200); ${index % 2 === 0 ? 'background: var(--neutral-50);' : ''}">
+                        <td style="padding: 1rem;">${formatDate(entry.entry_date)}</td>
+                        <td style="padding: 1rem;">${formatTime(entry.entry_time)}</td>
+                        <td style="padding: 1rem; text-align: center;">
+                            <span style="font-weight: 600; color: ${entry.urine_output < 100 ? 'var(--danger-red)' : entry.urine_output < 200 ? 'var(--warning-amber)' : 'var(--success-green)'};">
+                                ${entry.urine_output} mL
+                            </span>
+                        </td>
+                        <td style="padding: 1rem;">${entry.urine_color || '-'}</td>
+                        <td style="padding: 1rem;">${entry.catheter_status || '-'}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+}
+
+function createNoDataMessage(message) {
+    return `
+        <div style="text-align: center; padding: 3rem; color: var(--neutral-500);">
+            <i class="fas fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+            <h3>${message}</h3>
+            <p>Add some post-operative entries to view charts</p>
+            <button class="btn" onclick="showPage('addPostOpEntry')" style="margin-top: 1rem;">
+                <i class="fas fa-plus"></i>
+                Add Entry
+            </button>
+        </div>
+    `;
+}
+
+// Add CSS for chart toggle buttons
+const chartToggleCSS = `
+<style>
+.chart-toggle-btn {
+    background: var(--neutral-200);
+    color: var(--neutral-700);
+    border: 1px solid var(--neutral-300);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-toggle-btn:hover {
+    background: var(--neutral-300);
+    transform: translateY(-1px);
+}
+
+.chart-toggle-btn.active {
+    background: linear-gradient(135deg, var(--primary-blue-light), var(--primary-blue));
+    color: white;
+    border-color: var(--primary-blue);
+    box-shadow: var(--shadow-md);
+}
+
+.chart-toggle-btn.active:hover {
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+}
+</style>
+`;
+
+// Inject the CSS
+document.head.insertAdjacentHTML('beforeend', chartToggleCSS);
+
 function showOperativeNoteForm() {
     if (!currentPatient) {
         showNotification('No patient selected', 'error');
