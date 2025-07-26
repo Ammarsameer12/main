@@ -1482,82 +1482,424 @@
                 </div>
                 
                 <form id="addPostOpEntryForm" onsubmit="handleAddPostOpEntry(event)">
-                    <!-- Entry Information -->
-                    <div style="margin-bottom: 2rem;">
-                        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
-                            <i class="fas fa-calendar-check"></i> Entry Information
-                        </h3>
-                        
-                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
-                            <div class="form-group">
-                                <label for="entryDate">Entry Date *</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-calendar input-icon"></i>
-                                    <input type="date" id="entryDate" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="entryTime">Entry Time *</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-clock input-icon"></i>
-                                    <input type="time" id="entryTime" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="postOpDay">Post-Op Day *</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-hashtag input-icon"></i>
-                                    <input type="number" id="postOpDay" required min="1" placeholder="1">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Vital Signs Section -->
-                    <div style="margin-bottom: 2rem;">
-                        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
-                            <i class="fas fa-heartbeat"></i> Vital Signs
-                        </h3>
-                        
-                        <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
-                                <div class="form-group">
-                                    <label for="systolicBP">Systolic BP (mmHg)</label>
-                                    <input type="number" id="systolicBP" min="50" max="250" placeholder="120"
-                                           style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="diastolicBP">Diastolic BP (mmHg)</label>
-                                    <input type="number" id="diastolicBP" min="30" max="150" placeholder="80"
-                                           style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="heartRate">Heart Rate (bpm)</label>
-                                    <input type="number" id="heartRate" min="40" max="200" placeholder="72"
-                                           style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Submit Button -->
-                    <div style="border-top: 2px solid var(--neutral-200); padding-top: 2rem; margin-top: 2rem;">
-                        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                            <button type="button" onclick="showPage('postOp')" class="btn btn-secondary">
-                                <i class="fas fa-times"></i>
-                                Cancel
-                            </div>
-                            <button type="submit" class="btn" id="addPostOpEntryButton">
-                                <i class="fas fa-save"></i>
-                                Save Entry
-                            </button>
-                        </div>
-                    </div>
-                </form>
+<form id="addPostOpEntryForm" onsubmit="handleAddPostOpEntry(event)">
+    <!-- Entry Information -->
+    <div style="margin-bottom: 2rem;">
+        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+            <i class="fas fa-calendar-check"></i> Entry Information
+        </h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label for="entryDate">Entry Date *</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-calendar input-icon"></i>
+                    <input type="date" id="entryDate" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="entryTime">Entry Time *</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-clock input-icon"></i>
+                    <input type="time" id="entryTime" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="postOpDay">Post-Op Day *</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-hashtag input-icon"></i>
+                    <input type="number" id="postOpDay" required min="1" placeholder="1">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Vital Signs Section -->
+    <div style="margin-bottom: 2rem;">
+        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+            <i class="fas fa-heartbeat"></i> Vital Signs
+        </h3>
+        
+        <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                <div class="form-group">
+                    <label for="systolicBP">Systolic BP (mmHg)</label>
+                    <input type="number" id="systolicBP" min="50" max="250" placeholder="120"
+                           style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                </div>
+                
+                <div class="form-group">
+                    <label for="diastolicBP">Diastolic BP (mmHg)</label>
+                    <input type="number" id="diastolicBP" min="30" max="150" placeholder="80"
+                           style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                </div>
+                
+                <div class="form-group">
+                    <label for="heartRate">Heart Rate (bpm)</label>
+                    <input type="number" id="heartRate" min="40" max="200" placeholder="72"
+                           style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="temperature">Temperature (°C)</label>
+                    <input type="number" id="temperature" step="0.1" min="35" max="42" placeholder="36.5"
+                           style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                </div>
+                
+                <div class="form-group">
+                    <label for="respiratoryRate">Respiratory Rate (/min)</label>
+                    <input type="number" id="respiratoryRate" min="8" max="40" placeholder="16"
+                           style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                </div>
+                
+                <div class="form-group">
+                    <label for="oxygenSaturation">O2 Saturation (%)</label>
+                    <input type="number" id="oxygenSaturation" min="70" max="100" placeholder="98"
+                           style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                <div class="form-group">
+                    <label for="painScore">Pain Score (0-10)</label>
+                    <select id="painScore" style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                        <option value="">Select pain level</option>
+                        <option value="0">0 - No pain</option>
+                        <option value="1">1 - Minimal</option>
+                        <option value="2">2 - Mild</option>
+                        <option value="3">3 - Mild</option>
+                        <option value="4">4 - Moderate</option>
+                        <option value="5">5 - Moderate</option>
+                        <option value="6">6 - Moderate-Severe</option>
+                        <option value="7">7 - Severe</option>
+                        <option value="8">8 - Severe</option>
+                        <option value="9">9 - Very Severe</option>
+                        <option value="10">10 - Worst Possible</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="levelOfConsciousness">Level of Consciousness</label>
+                    <select id="levelOfConsciousness" style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                        <option value="">Select LOC</option>
+                        <option value="Alert and oriented">Alert and oriented</option>
+                        <option value="Alert but confused">Alert but confused</option>
+                        <option value="Drowsy but responsive">Drowsy but responsive</option>
+                        <option value="Responds to verbal stimuli">Responds to verbal stimuli</option>
+                        <option value="Responds to painful stimuli">Responds to painful stimuli</option>
+                        <option value="Unresponsive">Unresponsive</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Urological Assessment -->
+    <div style="margin-bottom: 2rem;">
+        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+            <i class="fas fa-stethoscope"></i> Urological Assessment
+        </h3>
+        
+        <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                <div class="form-group">
+                    <label for="urineOutput">Urine Output (mL)</label>
+                    <input type="number" id="urineOutput" min="0" placeholder="200"
+                           style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                </div>
+                
+                <div class="form-group">
+                    <label for="urineColor">Urine Color/Clarity</label>
+                    <select id="urineColor" style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                        <option value="">Select appearance</option>
+                        <option value="Clear yellow">Clear yellow</option>
+                        <option value="Pale yellow">Pale yellow</option>
+                        <option value="Dark yellow">Dark yellow</option>
+                        <option value="Pink/Light red">Pink/Light red</option>
+                        <option value="Red/Bloody">Red/Bloody</option>
+                        <option value="Dark red/Burgundy">Dark red/Burgundy</option>
+                        <option value="Cloudy">Cloudy</option>
+                        <option value="Tea colored">Tea colored</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="catheterStatus">Catheter Status</label>
+                    <select id="catheterStatus" style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                        <option value="">Select status</option>
+                        <option value="Patent and draining well">Patent and draining well</option>
+                        <option value="Blocked/Not draining">Blocked/Not draining</option>
+                        <option value="Removed">Removed</option>
+                        <option value="Not applicable">Not applicable</option>
+                        <option value="Irrigation required">Irrigation required</option>
+                        <option value="Bypassing">Bypassing</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="drainOutput">Drain Output (mL)</label>
+                    <input type="number" id="drainOutput" min="0" placeholder="50"
+                           style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+<!-- Wound and Surgical Site -->
+    <div style="margin-bottom: 2rem;">
+        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+            <i class="fas fa-band-aid"></i> Wound & Surgical Site
+        </h3>
+        
+        <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                <div class="form-group">
+                    <label for="woundCondition">Wound Condition</label>
+                    <select id="woundCondition" style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                        <option value="">Select condition</option>
+                        <option value="Clean and dry">Clean and dry</option>
+                        <option value="Minimal seepage">Minimal seepage</option>
+                        <option value="Moderate drainage">Moderate drainage</option>
+                        <option value="Heavy drainage">Heavy drainage</option>
+                        <option value="Signs of infection">Signs of infection</option>
+                        <option value="Dehiscence">Dehiscence</option>
+                        <option value="Hematoma">Hematoma</option>
+                        <option value="Not applicable">Not applicable</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="drainCharacteristics">Drain Characteristics</label>
+                    <select id="drainCharacteristics" style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                        <option value="">Select characteristics</option>
+                        <option value="Clear/Serous">Clear/Serous</option>
+                        <option value="Serosanguinous">Serosanguinous</option>
+                        <option value="Bloody">Bloody</option>
+                        <option value="Purulent">Purulent</option>
+                        <option value="No drain">No drain</option>
+                        <option value="Drain removed">Drain removed</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Intake and Output -->
+    <div style="margin-bottom: 2rem;">
+        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+            <i class="fas fa-tint"></i> Intake & Output
+        </h3>
+        
+        <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                <div class="form-group">
+                    <label for="oralIntake">Oral Intake (mL)</label>
+                    <input type="number" id="oralIntake" min="0" placeholder="1500"
+                           style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                </div>
+                
+                <div class="form-group">
+                    <label for="ivFluids">IV Fluids (mL)</label>
+                    <input type="number" id="ivFluids" min="0" placeholder="1000"
+                           style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Clinical Status -->
+    <div style="margin-bottom: 2rem;">
+        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+            <i class="fas fa-user-md"></i> Clinical Status
+        </h3>
+        
+        <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                <div class="form-group">
+                    <label for="ambulationStatus">Ambulation</label>
+                    <select id="ambulationStatus" style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                        <option value="">Select status</option>
+                        <option value="Bedrest">Bedrest</option>
+                        <option value="Chair/Bedside">Chair/Bedside</option>
+                        <option value="Assisted walking">Assisted walking</option>
+                        <option value="Independent walking">Independent walking</option>
+                        <option value="Walking with aid">Walking with aid</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dietTolerance">Diet Tolerance</label>
+                    <select id="dietTolerance" style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                        <option value="">Select tolerance</option>
+                        <option value="NPO">NPO (Nothing by mouth)</option>
+                        <option value="Clear liquids">Clear liquids</option>
+                        <option value="Full liquids">Full liquids</option>
+                        <option value="Soft diet">Soft diet</option>
+                        <option value="Regular diet">Regular diet</option>
+                        <option value="Poor tolerance">Poor tolerance</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="bowelMovements">Bowel Movement</label>
+                    <select id="bowelMovements" style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                        <option value="">Select status</option>
+                        <option value="false">No</option>
+                        <option value="true">Yes - Normal</option>
+                        <option value="true">Yes - Loose</option>
+                        <option value="true">Yes - Constipated</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="nauseaVomiting">Nausea/Vomiting</label>
+                    <select id="nauseaVomiting" style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                        <option value="">Select status</option>
+                        <option value="false">None</option>
+                        <option value="true">Mild nausea</option>
+                        <option value="true">Moderate nausea</option>
+                        <option value="true">Severe nausea</option>
+                        <option value="true">Vomiting</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="sleepPattern">Sleep Pattern</label>
+                    <select id="sleepPattern" style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                        <option value="">Select pattern</option>
+                        <option value="Good sleep">Good sleep</option>
+                        <option value="Restless">Restless</option>
+                        <option value="Frequent awakening">Frequent awakening</option>
+                        <option value="Insomnia">Insomnia</option>
+                        <option value="Pain disturbing sleep">Pain disturbing sleep</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+<!-- Medications Given -->
+    <div style="margin-bottom: 2rem;">
+        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+            <i class="fas fa-pills"></i> Medications Given
+        </h3>
+        
+        <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+            <div class="form-group">
+                <label for="medicationsGiven">Medications & Dosages</label>
+                <textarea id="medicationsGiven" rows="4" 
+                         style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: white; resize: vertical;"
+                         placeholder="List all medications given with doses and times&#10;Example:&#10;- Paracetamol 1g PO at 08:00&#10;- Tramadol 50mg PO at 12:00&#10;- Ciprofloxacin 500mg PO BID"></textarea>
+            </div>
+            
+            <!-- Quick Medication Buttons -->
+            <div style="margin-top: 1rem;">
+                <p style="color: var(--neutral-600); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 600;">Quick Add Common Medications:</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    <button type="button" onclick="addQuickMedication('Paracetamol 1g PO')" 
+                            style="background: var(--neutral-200); border: 1px solid var(--neutral-300); padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                        Paracetamol 1g
+                    </button>
+                    <button type="button" onclick="addQuickMedication('Tramadol 50mg PO')"
+                            style="background: var(--neutral-200); border: 1px solid var(--neutral-300); padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                        Tramadol 50mg
+                    </button>
+                    <button type="button" onclick="addQuickMedication('Morphine 10mg IV')"
+                            style="background: var(--neutral-200); border: 1px solid var(--neutral-300); padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                        Morphine 10mg IV
+                    </button>
+                    <button type="button" onclick="addQuickMedication('Ciprofloxacin 500mg PO BID')"
+                            style="background: var(--neutral-200); border: 1px solid var(--neutral-300); padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                        Ciprofloxacin 500mg
+                    </button>
+                    <button type="button" onclick="addQuickMedication('Omeprazole 20mg PO')"
+                            style="background: var(--neutral-200); border: 1px solid var(--neutral-300); padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                        Omeprazole 20mg
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Progress Note -->
+    <div style="margin-bottom: 2rem;">
+        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+            <i class="fas fa-sticky-note"></i> Progress Note
+        </h3>
+        
+        <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+            <div class="form-group">
+                <label for="progressNote">Subjective & Objective Assessment</label>
+                <textarea id="progressNote" rows="5" 
+                         style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: white; resize: vertical;"
+                         placeholder="Patient reports... On examination... General condition...&#10;&#10;Example:&#10;Patient reports feeling much better, pain reduced from 7/10 to 3/10. Ambulating to bathroom independently. No nausea or vomiting. Good appetite.&#10;&#10;On examination: Alert and comfortable. Wound site clean and dry. Catheter draining clear yellow urine. No signs of infection."></textarea>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Plan -->
+    <div style="margin-bottom: 2rem;">
+        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+            <i class="fas fa-tasks"></i> Plan
+        </h3>
+        
+        <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+            <div class="form-group">
+                <label for="plan">Management Plan</label>
+                <textarea id="plan" rows="4" 
+                         style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: white; resize: vertical;"
+                         placeholder="Treatment plan, monitoring, discharge planning...&#10;&#10;Example:&#10;1. Continue current pain management&#10;2. Monitor urine output and catheter function&#10;3. Encourage early mobilization&#10;4. Consider catheter removal POD #2&#10;5. Plan discharge POD #3 if stable"></textarea>
+            </div>
+            
+            <!-- Quick Plan Templates -->
+            <div style="margin-top: 1rem;">
+                <p style="color: var(--neutral-600); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 600;">Quick Add Common Plans:</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    <button type="button" onclick="addQuickPlan('Continue current medications')"
+                            style="background: var(--neutral-200); border: 1px solid var(--neutral-300); padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                        Continue meds
+                    </button>
+                    <button type="button" onclick="addQuickPlan('Monitor urine output')"
+                            style="background: var(--neutral-200); border: 1px solid var(--neutral-300); padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                        Monitor UO
+                    </button>
+                    <button type="button" onclick="addQuickPlan('Encourage mobilization')"
+                            style="background: var(--neutral-200); border: 1px solid var(--neutral-300); padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                        Mobilization
+                    </button>
+                    <button type="button" onclick="addQuickPlan('Consider catheter removal')"
+                            style="background: var(--neutral-200); border: 1px solid var(--neutral-300); padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                        Catheter removal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Submit Section -->
+    <div id="addPostOpEntryMessage" class="auth-message"></div>
+    
+    <div style="border-top: 2px solid var(--neutral-200); padding-top: 2rem; margin-top: 2rem;">
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <button type="button" onclick="showPage('postOp')" class="btn btn-secondary">
+                <i class="fas fa-times"></i>
+                Cancel
+            </button>
+            <button type="submit" class="btn" id="addPostOpEntryButton">
+                <i class="fas fa-save"></i>
+                Save Complete Entry
+            </button>
+        </div>
+    </div>
+</form>
             </div>
         </div>
     </div>
@@ -2206,6 +2548,10 @@ function createOperativeNoteForm(procedure, anesthesia, position, findings, step
                 // Load patients when showing patients page
                 if (pageId === 'patients' && isLoggedIn) {
                     loadPatients();
+                }
+                                // Initialize post-op form when showing add entry page
+                if (pageId === 'addPostOpEntry' && currentPatient) {
+                    setTimeout(initializePostOpEntryForm, 100);
                 }
             }
         }
@@ -3248,6 +3594,65 @@ loadSurgeryAndOperativeNote(patient);
             // Set admission date to today
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('admissionDate').value = today;
+        }
+
+        // Quick medication and plan helper functions
+        function addQuickMedication(medication) {
+            const medicationsField = document.getElementById('medicationsGiven');
+            const currentTime = new Date().toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+            });
+            const newEntry = `- ${medication} at ${currentTime}\n`;
+            
+            if (medicationsField.value.trim() === '') {
+                medicationsField.value = newEntry;
+            } else {
+                medicationsField.value += newEntry;
+            }
+            medicationsField.focus();
+        }
+
+        function addQuickPlan(planItem) {
+            const planField = document.getElementById('plan');
+            const currentPlans = planField.value.trim();
+            
+            // Count existing plan items to get next number
+            const planCount = currentPlans ? (currentPlans.match(/^\d+\./gm) || []).length + 1 : 1;
+            const newPlan = `${planCount}. ${planItem}\n`;
+            
+            if (currentPlans === '') {
+                planField.value = newPlan;
+            } else {
+                planField.value += newPlan;
+            }
+            planField.focus();
+        }
+
+        // Initialize form defaults
+        function initializePostOpEntryForm() {
+            const today = new Date();
+            const now = new Date();
+            
+            // Set date and time to current
+            document.getElementById('entryDate').value = today.toISOString().split('T')[0];
+            document.getElementById('entryTime').value = now.toTimeString().slice(0,5);
+            
+            // Calculate and set post-op day
+            if (currentPatient && currentPatient.surgery_date) {
+                const surgeryDate = new Date(currentPatient.surgery_date);
+                const postOpDay = Math.max(1, Math.floor((today - surgeryDate) / (1000 * 60 * 60 * 24)) + 1);
+                document.getElementById('postOpDay').value = postOpDay;
+            } else {
+                document.getElementById('postOpDay').value = 1;
+            }
+        }
+
+        // Handle form submission
+        async function handleAddPostOpEntry(event) {
+            event.preventDefault();
+            showNotification('Form submission coming in next step! 🚧', 'info');
         }
 
         // Utility Functions
