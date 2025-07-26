@@ -1158,10 +1158,10 @@
                                 <i class="fas fa-scalpel"></i>
                                 Add Operative Note
                             </button>
-                            <button class="btn" onclick="showNotification('Post-operative logging coming in Part 6! 🚧', 'info')" style="background: linear-gradient(135deg, var(--primary-blue-light), var(--primary-blue));">
-                                <i class="fas fa-plus"></i>
-                                Add Post-Op Entry
-                            </button>
+<button class="btn" onclick="showPostOpPage()" style="background: linear-gradient(135deg, var(--primary-blue-light), var(--primary-blue));">
+    <i class="fas fa-chart-line"></i>
+    Post-Op Management
+</button>
                             <button class="btn" onclick="showNotification('Patient editing coming soon! 📝', 'info')" style="background: linear-gradient(135deg, var(--warning-amber), #d97706);">
                                 <i class="fas fa-edit"></i>
                                 Edit Info
@@ -1415,6 +1415,57 @@
     </div>
 </div>
 
+    <!-- Post-Operative Management Page -->
+    <div id="postOpPage" class="page">
+        <div style="max-width: 1400px; margin: 0 auto;">
+            <!-- Header -->
+            <div style="background: white; border-radius: 1rem; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow-xl); border: 1px solid var(--neutral-200);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h1 style="color: var(--primary-blue); font-size: 2.2rem; font-weight: 700; margin-bottom: 0.5rem;">
+                            <i class="fas fa-chart-line"></i>
+                            Post-Operative Management
+                        </h1>
+                        <p id="postOpPatientInfo" style="color: var(--neutral-600); font-size: 1.1rem; margin: 0;">
+                            Loading patient information...
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button onclick="showPage('patientDetail')" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            Back to Patient
+                        </button>
+                        <button onclick="showNotification('Add entry form coming next!', 'info')" class="btn" style="background: linear-gradient(135deg, var(--success-green), #059669);">
+                            <i class="fas fa-plus"></i>
+                            Add Entry
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                    <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1rem; text-align: center; border: 1px solid var(--neutral-200);">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-blue);" id="currentPostOpDay">-</div>
+                        <div style="font-size: 0.85rem; color: var(--neutral-600);">Post-Op Day</div>
+                    </div>
+                    <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1rem; text-align: center; border: 1px solid var(--neutral-200);">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--success-green);" id="totalEntries">0</div>
+                        <div style="font-size: 0.85rem; color: var(--neutral-600);">Total Entries</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Timeline View -->
+            <div id="postOpTimeline" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div style="text-align: center; padding: 3rem; color: var(--neutral-500);">
+                    <i class="fas fa-clipboard-list" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <h3>No Post-Operative Entries Yet</h3>
+                    <p>Start tracking patient progress by adding the first entry</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Initialize Supabase
         const SUPABASE_URL = 'https://xqsfajxxpcxsguqezcpr.supabase.co';
@@ -1437,6 +1488,40 @@ function showOperativeNoteForm() {
     }
     showPage('operativeNote');
 }
+
+        function showPostOpPage() {
+            if (!currentPatient) {
+                showNotification('No patient selected', 'error');
+                return;
+            }
+            showPage('postOp');
+            loadPostOpManagement();
+        }
+
+        async function loadPostOpManagement() {
+            if (!currentPatient) return;
+            
+            try {
+                // Update patient info
+                document.getElementById('postOpPatientInfo').innerHTML = `
+                    <strong>${currentPatient.name}</strong> (MRN: ${currentPatient.mrn}) - 
+                    ${currentPatient.surgery_type || 'Surgery'} ${currentPatient.surgery_date ? 'on ' + formatDate(currentPatient.surgery_date) : ''}
+                `;
+                
+                // Calculate post-op day
+                const surgeryDate = currentPatient.surgery_date ? new Date(currentPatient.surgery_date) : new Date();
+                const today = new Date();
+                const postOpDay = Math.max(1, Math.floor((today - surgeryDate) / (1000 * 60 * 60 * 24)) + 1);
+                document.getElementById('currentPostOpDay').textContent = postOpDay;
+                
+                // Set total entries to 0 for now (we'll load real data later)
+                document.getElementById('totalEntries').textContent = '0';
+                
+            } catch (error) {
+                console.error('Error loading post-op management:', error);
+                showNotification('Error loading post-operative data', 'error');
+            }
+        }
 
         function loadOperativeTemplate() {
     const templateSelect = document.getElementById('operativeTemplate');
