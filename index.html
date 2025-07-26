@@ -1435,7 +1435,7 @@
                             <i class="fas fa-arrow-left"></i>
                             Back to Patient
                         </button>
-                        <button onclick="showNotification('Add entry form coming next!', 'info')" class="btn" style="background: linear-gradient(135deg, var(--success-green), #059669);">
+                        <button onclick="showPage('addPostOpEntry')" class="btn" style="background: linear-gradient(135deg, var(--success-green), #059669);">
                             <i class="fas fa-plus"></i>
                             Add Entry
                         </button>
@@ -1462,6 +1462,102 @@
                     <h3>No Post-Operative Entries Yet</h3>
                     <p>Start tracking patient progress by adding the first entry</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Post-Op Entry Page -->
+    <div id="addPostOpEntryPage" class="page">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <div style="background: white; border-radius: 1rem; padding: 2rem; box-shadow: var(--shadow-xl); border: 1px solid var(--neutral-200);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2 style="color: var(--primary-blue); font-size: 2rem; font-weight: 700;">
+                        <i class="fas fa-plus-circle"></i>
+                        Add Post-Operative Entry
+                    </h2>
+                    <button onclick="showPage('postOp')" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Post-Op
+                    </button>
+                </div>
+                
+                <form id="addPostOpEntryForm" onsubmit="handleAddPostOpEntry(event)">
+                    <!-- Entry Information -->
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                            <i class="fas fa-calendar-check"></i> Entry Information
+                        </h3>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label for="entryDate">Entry Date *</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-calendar input-icon"></i>
+                                    <input type="date" id="entryDate" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="entryTime">Entry Time *</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-clock input-icon"></i>
+                                    <input type="time" id="entryTime" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="postOpDay">Post-Op Day *</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-hashtag input-icon"></i>
+                                    <input type="number" id="postOpDay" required min="1" placeholder="1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Vital Signs Section -->
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                            <i class="fas fa-heartbeat"></i> Vital Signs
+                        </h3>
+                        
+                        <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label for="systolicBP">Systolic BP (mmHg)</label>
+                                    <input type="number" id="systolicBP" min="50" max="250" placeholder="120"
+                                           style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="diastolicBP">Diastolic BP (mmHg)</label>
+                                    <input type="number" id="diastolicBP" min="30" max="150" placeholder="80"
+                                           style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="heartRate">Heart Rate (bpm)</label>
+                                    <input type="number" id="heartRate" min="40" max="200" placeholder="72"
+                                           style="width: 100%; padding: 0.75rem; border: 2px solid var(--neutral-200); border-radius: 0.5rem; font-size: 1rem; background: white;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div style="border-top: 2px solid var(--neutral-200); padding-top: 2rem; margin-top: 2rem;">
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                            <button type="button" onclick="showPage('postOp')" class="btn btn-secondary">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </div>
+                            <button type="submit" class="btn" id="addPostOpEntryButton">
+                                <i class="fas fa-save"></i>
+                                Save Entry
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
