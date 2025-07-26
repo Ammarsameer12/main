@@ -1576,50 +1576,11 @@
                     loadPatients();
                 }
 
-                // Load post-op entries when showing patient detail
+// Load post-op entries when showing patient detail
 if (pageId === 'patientDetail' && currentPatient) {
-    loadPostOpEntries(currentPatient.id);
+    // Future: loadPostOpEntries(currentPatient.id);
 }
                 // Future: loadPostOpEntries(currentPatient.id);
-async function loadPostOpEntries(patientId) {
-    try {
-        const { data: entries, error } = await supabase
-            .from('post_op_entries')
-            .select('*')
-            .eq('patient_id', patientId)
-            .order('entry_date', { ascending: false });
-
-        if (error) throw error;
-
-        displayPostOpEntries(entries || []);
-        
-    } catch (error) {
-        console.error('Error loading post-op entries:', error);
-    }
-}
-
-function displayPostOpEntries(entries) {
-    // For now, just update the post-op section to show count
-    const postOpSection = document.querySelector('[style*="Post-Op Monitoring"]').parentElement;
-    
-    if (entries.length > 0) {
-        postOpSection.innerHTML = 
-            `<h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                <i class="fas fa-procedures"></i>
-                Post-Op Monitoring
-            </h3>
-            <div style="text-align: center; color: var(--success-green);">
-                <i class="fas fa-check-circle" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
-                <p style="margin-bottom: 1rem; font-size: 0.9rem; font-weight: 600;">${entries.length} Post-Op Entries Recorded</p>
-                <p style="font-size: 0.85rem; color: var(--neutral-600); margin-bottom: 1rem;">Latest: ${formatDate(entries[0].entry_date)} - Day ${entries[0].post_op_day}</p>
-                <button class="btn" onclick="addPostOpEntry()" style="background: linear-gradient(135deg, var(--success-green), #059669); font-size: 0.85rem; padding: 0.5rem 1rem;">
-                    <i class="fas fa-plus"></i>
-                    Add New Entry
-                </button>
-            </div>
-        `;
-    }
-}
 
         // Authentication Functions
         async function handleLogin(event) {
