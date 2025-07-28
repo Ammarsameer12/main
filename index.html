@@ -1256,6 +1256,19 @@
                         </div>
                     </div>
 
+                    <!-- Discharge Summary Section (only shows if patient is discharged) -->
+                        <div id="dischargeSummarySection" style="display: none;">
+                            <div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200); margin-bottom: 2rem;">
+                                <h3 style="color: var(--success-green); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-home"></i>
+                                    Discharge Summary
+                                </h3>
+                                <div id="dischargeSummaryDisplay">
+                                    <!-- Content will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+
                     <!-- Right Column - Quick Info & Labs -->
                     <div style="display: flex; flex-direction: column; gap: 2rem;">
                         <!-- Quick Stats -->
@@ -3953,29 +3966,34 @@ function buildDischargeMedications(patient) {
     
     // Start with existing medications if available
     if (patient.current_medications) {
-        meds += `CONTINUE HOME MEDICATIONS:\n${patient.current_medications}\n\n`;
+        meds += `الأدوية المنزلية - يتم الاستمرار عليها:\n${patient.current_medications}\n\n`;
     }
     
-    // Add procedure-specific medications
-    meds += `NEW MEDICATIONS:\n`;
+    // Add standard medications for ALL surgeries
+    meds += `الأدوية الجديدة:\n\n`;
     
-    // Add common post-surgical medications based on surgery type
-    if (patient.surgery_type) {
-        if (patient.surgery_type.includes('TURP')) {
-            meds += `• Tamsulosin 0.4mg PO daily (continue for 2-4 weeks)\n`;
-            meds += `• Ciprofloxacin 500mg PO twice daily x 7 days\n`;
-        } else if (patient.surgery_type.includes('URS')) {
-            meds += `• Ibuprofen 400mg PO every 8 hours as needed for pain\n`;
-            meds += `• Ciprofloxacin 500mg PO twice daily x 5 days\n`;
-        }
-    }
+    // Standard Antibiotics (same for all surgeries)
+    meds += `المضادات الحيوية:\n`;
+    meds += `• Meropenem Vial 1g 1x2 - يعطى في 100 سيسي نورمال سلاين وريدي بطيء لمدة ثلاثة ايام\n`;
+    meds += `• Levofloxacin tab 500mg 1x1 - لمدة عشر ايام\n\n`;
     
-    // Add common discharge medications
-    meds += `• Paracetamol 1000mg PO every 6 hours as needed for pain\n`;
-    meds += `• Omeprazole 20mg PO daily if taking NSAIDs\n\n`;
+    // Standard Pain medications (same for all surgeries)
+    meds += `مسكنات الألم:\n`;
+    meds += `• Olfen tab 100mg 1x2 - بعد الطعام لمدة ثلاثة ايام\n`;
+    meds += `• Doliprane tab 1g 1x2 - عند الحاجة\n`;
+    meds += `• Voltaren Amp IM - عند الحاجة\n\n`;
     
-    meds += `ALLERGIES: ${patient.allergies || 'No known drug allergies'}\n\n`;
-    meds += `Instructions: Take medications as prescribed. Complete full course of antibiotics.`;
+    // General supportive medications
+    meds += `أدوية مساعدة:\n`;
+    meds += `• Omeprazole 20mg 1x1 - مع مضادات الالتهاب\n`;
+    
+    // Add space for procedure-specific medications that can be edited
+    meds += `\nأدوية خاصة بنوع العملية (قابلة للتعديل):\n`;
+    meds += `• Omnic tab 0.4 mg 1x1 - حسب نوع العملية\n`;
+    meds += `• (أضف الأدوية الخاصة حسب الحاجة)\n\n`;
+    
+    meds += `الحساسية: ${patient.allergies || 'لا توجد حساسية معروفة للأدوية'}\n\n`;
+    meds += `تعليمات: تناول الأدوية حسب الوصفة الطبية. أكمل كورس المضادات الحيوية كاملاً.`;
     
     return meds;
 }
@@ -3983,17 +4001,44 @@ function buildDischargeMedications(patient) {
 function buildFollowUpInstructions(patient) {
     let instructions = '';
     
-    // Procedure-specific instructions
-    if (patient.surgery_type) {
-        if (patient.surgery_type.includes('TURP')) {
-            instructions = `ACTIVITY:\n• No heavy lifting >10 lbs for 6 weeks\n• No straining/constipation\n• Gradually increase activity as tolerated\n• No driving while on narcotic pain medication\n\nDIET:\n• Increase fluid intake (8-10 glasses water daily)\n• High fiber diet to prevent constipation\n• Avoid alcohol while on medications\n\nWOUND CARE:\n• Keep surgical site clean and dry\n• No tub baths for 2 weeks (showers okay)\n\nFOLLOW-UP:\n• Urology clinic in 2-3 weeks\n• Call if unable to urinate, fever >101°F, heavy bleeding\n\nWARNING SIGNS - Call immediately:\n• Inability to urinate\n• Fever >101°F or chills\n• Heavy bleeding or clots\n• Severe abdominal pain`;
-        } else if (patient.surgery_type.includes('URS')) {
-            instructions = `ACTIVITY:\n• Resume normal activities as tolerated\n• No heavy lifting >20 lbs for 1 week\n• Drink plenty of fluids\n\nDIET:\n• Increase water intake (10-12 glasses daily)\n• Limit sodium and oxalate-rich foods\n\nSTENT CARE (if applicable):\n• Stent removal scheduled in 1-2 weeks\n• Some discomfort normal with stent\n\nFOLLOW-UP:\n• Urology clinic in 1-2 weeks for stent removal\n• Imaging study in 6-8 weeks\n\nWARNING SIGNS - Call immediately:\n• Fever >101°F\n• Severe flank pain\n• Blood in urine (more than pink-tinged)\n• Nausea/vomiting`;
-        } else {
-            // Generic post-surgical instructions
-            instructions = `ACTIVITY:\n• Resume normal activities gradually\n• No heavy lifting for 2 weeks\n• Follow up as scheduled\n\nDIET:\n• Regular diet as tolerated\n• Increase fluid intake\n\nWOUND CARE:\n• Keep incision clean and dry\n• Follow dressing change instructions\n\nFOLLOW-UP:\n• As scheduled with urology\n\nWARNING SIGNS - Call immediately:\n• Fever >101°F\n• Increasing pain\n• Signs of infection`;
-        }
-    }
+    // General post-surgical instructions in Arabic for all surgeries
+    instructions = `النشاط والحركة:\n`;
+    instructions += `• العودة للأنشطة العادية تدريجياً حسب التحمل\n`;
+    instructions += `• ممنوع حمل الأثقال أكثر من 10 كيلو لمدة أسبوعين\n`;
+    instructions += `• ممنوع القيادة أثناء تناول المسكنات المخدرة\n`;
+    instructions += `• المشي والحركة مفيدة للشفاء\n\n`;
+    
+    instructions += `النظام الغذائي:\n`;
+    instructions += `• زيادة شرب الماء (8-10 أكواب يومياً)\n`;
+    instructions += `• نظام غذائي غني بالألياف لتجنب الإمساك\n`;
+    instructions += `• تناول الطعام بانتظام\n\n`;
+    
+    instructions += `العناية بالجرح:\n`;
+    instructions += `• إبقاء موضع العملية نظيف وجاف\n`;
+    instructions += `• ممنوع الاستحمام في البانيو لمدة أسبوع (الدش مسموح)\n`;
+    instructions += `• تغيير الضمادات حسب التعليمات\n`;
+    instructions += `• تجنب فرك أو حك موضع الجرح\n\n`;
+    
+    instructions += `المتابعة:\n`;
+    instructions += `• مراجعة عيادة المسالك البولية خلال ثلاثة ايام\n`;
+    instructions += `• الالتزام بمواعيد المراجعة\n\n`;
+    
+    instructions += `علامات الخطر - اتصل فوراً في حالة:\n`;
+    instructions += `• حرارة أكثر من 38.5 درجة مئوية\n`;
+    instructions += `• نزيف شديد أو مستمر\n`;
+    instructions += `• ألم شديد لا يستجيب للمسكنات\n`;
+    instructions += `• صعوبة في التبول أو عدم القدرة على التبول\n`;
+    instructions += `• غثيان وقيء مستمر\n`;
+    instructions += `• علامات التهاب في الجرح (احمرار، تورم، صديد)\n`;
+    instructions += `• أي أعراض غير طبيعية أو مقلقة\n\n`;
+    
+    instructions += `معلومات الاتصال:\n`;
+    instructions += `• عيادة الدكتور أسامة جمهور: 07717507669\n`;
+    instructions += `• في حالات الطوارئ: مراجعة أقرب مستشفى\n\n`;
+    
+    instructions += `ملاحظات إضافية خاصة بنوع العملية (قابلة للتعديل):\n`;
+    instructions += `• (أضف التعليمات الخاصة بنوع العملية حسب الحاجة)\n`;
+    instructions += `• (يمكن تعديل هذا القسم حسب كل حالة)`;
     
     return instructions;
 }
@@ -4037,6 +4082,34 @@ function buildFollowUpInstructions(patient) {
         showPage('patientDetail');
         showNotification(`${currentPatient.name} has been discharged!`, 'success');
     }, 2000);
+}
+
+        async function loadDischargeSummaryDisplay(patient) {
+    if (patient.status !== 'discharged') {
+        document.getElementById('dischargeSummarySection').style.display = 'none';
+        return;
+    }
+    
+    // Show the section for discharged patients
+    document.getElementById('dischargeSummarySection').style.display = 'block';
+    
+    // For now, we'll show a placeholder since we haven't created the database yet
+    // Later this will load from the discharge_summaries table
+    document.getElementById('dischargeSummaryDisplay').innerHTML = `
+        <div style="text-align: center; padding: 2rem; background: var(--neutral-50); border-radius: 0.75rem; border: 1px solid var(--neutral-200);">
+            <i class="fas fa-check-circle" style="color: var(--success-green); font-size: 3rem; margin-bottom: 1rem;"></i>
+            <h4 style="color: var(--success-green); margin-bottom: 0.5rem;">Patient Successfully Discharged</h4>
+            <p style="color: var(--neutral-600); margin-bottom: 1.5rem;">Discharge summary completed and saved</p>
+            <button class="btn" onclick="printDischargeSummary()" style="background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));">
+                <i class="fas fa-print"></i>
+                Print Discharge Summary
+            </button>
+        </div>
+    `;
+}
+
+function printDischargeSummary() {
+    showNotification('Print functionality coming in next step! 🖨️', 'info');
 }
 
         // Enhanced Add Patient Function with Comprehensive Data
@@ -4996,6 +5069,9 @@ loadSurgeryAndOperativeNote(patient);
 
         // Load discharge planning content
 document.getElementById('dischargePlanningContent').innerHTML = createDischargeChecklist();
+
+            // Load discharge summary display
+loadDischargeSummaryDisplay(patient);
         
         // Lab Results
         const labs = [
