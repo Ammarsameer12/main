@@ -4063,70 +4063,16 @@ function buildFollowUpInstructions(patient) {
         created_by: currentUser.id
     };
     
-
 // Validation
 if (!dischargeData.primary_diagnosis) {
     showMessage('dischargeSummaryMessage', 'Please enter the primary diagnosis', 'error');
     return;
 }
 
-const button = document.getElementById('dischargeSummaryButton');
-const originalContent = button.innerHTML;
-button.innerHTML = '<div class="loading"></div> Saving Discharge Summary...';
-button.disabled = true;
+// For now, just show success (database will be added later)
+showMessage('dischargeSummaryMessage', '✅ Discharge summary completed! (Database save coming in later parts)', 'success');
 
-try {
-    // Save discharge summary to database
-    const { data, error } = await supabase
-        .from('discharge_summaries')
-        .insert([{
-            patient_id: dischargeData.patient_id,
-            discharge_date: dischargeData.discharge_date,
-            discharge_time: dischargeData.discharge_time,
-            length_of_stay: Math.floor((new Date(dischargeData.discharge_date) - new Date(currentPatient.admission_date)) / (1000 * 60 * 60 * 24)),
-            attending_physician: document.getElementById('attendingPhysician').value.trim(),
-            admission_diagnosis: document.getElementById('admissionDiagnosis').value.trim(),
-            primary_diagnosis: dischargeData.primary_diagnosis,
-            procedures_performed: document.getElementById('proceduresPerformed').value.trim(),
-            hospital_course: dischargeData.hospital_course,
-            discharge_condition: document.getElementById('dischargeCondition').value.trim(),
-            discharge_medications: dischargeData.discharge_medications,
-            follow_up_instructions: dischargeData.follow_up_instructions,
-            created_by: currentUser.id
-        }])
-        .select();
-
-    if (error) throw error;
-
-    // Update patient status to discharged in database
-    const { error: updateError } = await supabase
-        .from('patients')
-        .update({ status: 'discharged' })
-        .eq('id', currentPatient.id);
-
-    if (updateError) throw updateError;
-
-    showMessage('dischargeSummaryMessage', '✅ Discharge summary saved successfully to database!', 'success');
-    
-    // Update local patient object
-    currentPatient.status = 'discharged';
-    
-    console.log('Discharge Summary saved:', data);
-    
-    // Navigate back after delay
-    setTimeout(() => {
-        showPage('patientDetail');
-        showNotification(`${currentPatient.name} has been discharged!`, 'success');
-    }, 2000);
-    
-} catch (error) {
-    console.error('Error saving discharge summary:', error);
-    showMessage('dischargeSummaryMessage', 'Error saving discharge summary: ' + error.message, 'error');
-    
-    // Reset button
-    button.innerHTML = originalContent;
-    button.disabled = false;
-}
+            
         async function loadDischargeSummaryDisplay(patient) {
     if (patient.status !== 'discharged') {
         document.getElementById('dischargeSummarySection').style.display = 'none';
