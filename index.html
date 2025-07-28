@@ -4609,6 +4609,9 @@ function loadPatientDetail(patient) {
         
 // Load surgery and operative note information
 loadSurgeryAndOperativeNote(patient);
+
+        // Load discharge planning content
+document.getElementById('dischargePlanningContent').innerHTML = createDischargeChecklist();
         
         // Lab Results
         const labs = [
