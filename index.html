@@ -4072,35 +4072,6 @@ if (!dischargeData.primary_diagnosis) {
 // For now, just show success (database will be added later)
 showMessage('dischargeSummaryMessage', '✅ Discharge summary completed! (Database save coming in later parts)', 'success');
 
-            
-        async function loadDischargeSummaryDisplay(patient) {
-    if (patient.status !== 'discharged') {
-        document.getElementById('dischargeSummarySection').style.display = 'none';
-        return;
-    }
-    
-    // Show the section for discharged patients
-    document.getElementById('dischargeSummarySection').style.display = 'block';
-    
-    // For now, we'll show a placeholder since we haven't created the database yet
-    // Later this will load from the discharge_summaries table
-    document.getElementById('dischargeSummaryDisplay').innerHTML = `
-        <div style="text-align: center; padding: 2rem; background: var(--neutral-50); border-radius: 0.75rem; border: 1px solid var(--neutral-200);">
-            <i class="fas fa-check-circle" style="color: var(--success-green); font-size: 3rem; margin-bottom: 1rem;"></i>
-            <h4 style="color: var(--success-green); margin-bottom: 0.5rem;">Patient Successfully Discharged</h4>
-            <p style="color: var(--neutral-600); margin-bottom: 1.5rem;">Discharge summary completed and saved</p>
-            <button class="btn" onclick="printDischargeSummary()" style="background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));">
-                <i class="fas fa-print"></i>
-                Print Discharge Summary
-            </button>
-        </div>
-    `;
-}
-
-function printDischargeSummary() {
-    showNotification('Print functionality coming in next step! 🖨️', 'info');
-}
-
         // Enhanced Add Patient Function with Comprehensive Data
         async function handleAddPatient(event) {
             event.preventDefault();
