@@ -3620,27 +3620,27 @@ function createOperativeNoteForm(procedure, anesthesia, position, findings, step
                 
                 <div style="display: grid; gap: 0.75rem;">
                     <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                        <input type="checkbox" id="painControlled" style="transform: scale(1.2);">
+                        <input type="checkbox" id="painControlled" onchange="handleDischargeCheckboxChange()" style="transform: scale(1.2);">
                         <span>Pain adequately controlled</span>
                     </label>
                     <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                        <input type="checkbox" id="vitalsStable" style="transform: scale(1.2);">
+                        <input type="checkbox" id="vitalsStable" onchange="handleDischargeCheckboxChange()" style="transform: scale(1.2);">
                         <span>Vital signs stable</span>
                     </label>
                     <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                        <input type="checkbox" id="voidingNormal" style="transform: scale(1.2);">
+                        <input type="checkbox" id="voidingNormal" onchange="handleDischargeCheckboxChange()" style="transform: scale(1.2);">
                         <span>Voiding normally (if applicable)</span>
                     </label>
                     <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                        <input type="checkbox" id="ambulating" style="transform: scale(1.2);">
+                        <input type="checkbox" id="ambulating" onchange="handleDischargeCheckboxChange()" style="transform: scale(1.2);">
                         <span>Ambulating independently</span>
                     </label>
                     <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                        <input type="checkbox" id="woundHealing" style="transform: scale(1.2);">
+                        <input type="checkbox" id="woundHealing" onchange="handleDischargeCheckboxChange()" style="transform: scale(1.2);">
                         <span>Wound healing appropriately</span>
                     </label>
                     <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                        <input type="checkbox" id="educationComplete" style="transform: scale(1.2);">
+                        <input type="checkbox" id="educationComplete" onchange="handleDischargeCheckboxChange()" style="transform: scale(1.2);">
                         <span>Patient education completed</span>
                     </label>
                 </div>
@@ -3654,6 +3654,55 @@ function createOperativeNoteForm(procedure, anesthesia, position, findings, step
         </div>
     `;
 }
+
+        function handleDischargeCheckboxChange() {
+            if (!currentPatient) return;
+            
+            // Get all checkbox states
+            const criteria = {
+                painControlled: document.getElementById('painControlled')?.checked || false,
+                vitalsStable: document.getElementById('vitalsStable')?.checked || false,
+                voidingNormal: document.getElementById('voidingNormal')?.checked || false,
+                ambulating: document.getElementById('ambulating')?.checked || false,
+                woundHealing: document.getElementById('woundHealing')?.checked || false,
+                educationComplete: document.getElementById('educationComplete')?.checked || false
+            };
+            
+            // Check if all criteria are met
+            const allCriteriaMet = Object.values(criteria).every(checked => checked === true);
+            
+            // Store in patient object temporarily (since no database yet)
+            currentPatient.dischargeCriteria = criteria;
+            currentPatient.readyForDischarge = allCriteriaMet;
+            
+            // Update the button and status
+            updateDischargeStatus(allCriteriaMet);
+            
+            console.log('Discharge criteria updated:', criteria, 'Ready:', allCriteriaMet);
+        }
+
+        function updateDischargeStatus(isReady) {
+            const button = document.querySelector('[onclick="showDischargeAssessment()"]');
+            if (!button) return;
+            
+            if (isReady) {
+                button.innerHTML = '<i class="fas fa-home"></i> Ready for Discharge - Proceed';
+                button.style.background = 'linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark))';
+                button.onclick = () => showDischargeForm();
+            } else {
+                button.innerHTML = '<i class="fas fa-clipboard-check"></i> Complete Discharge Assessment';
+                button.style.background = 'linear-gradient(135deg, var(--success-green), #059669)';
+                button.onclick = () => showDischargeAssessment();
+            }
+        }
+
+        function showDischargeAssessment() {
+            showNotification('Please complete all discharge criteria first', 'warning');
+        }
+
+        function showDischargeForm() {
+            showNotification('Ready for discharge! Discharge form coming in Part 4...', 'success');
+        }
 
         // Enhanced Add Patient Function with Comprehensive Data
         async function handleAddPatient(event) {
