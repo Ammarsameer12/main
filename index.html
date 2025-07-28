@@ -1928,6 +1928,46 @@
         </div>
     </div>
 
+                <!-- Discharge Summary Page -->
+                <div id="dischargeSummaryPage" class="page">
+                    <div style="max-width: 1200px; margin: 0 auto;">
+                        <div style="background: white; border-radius: 1rem; padding: 2rem; box-shadow: var(--shadow-xl); border: 1px solid var(--neutral-200);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                                <h2 style="color: var(--primary-blue); font-size: 2rem; font-weight: 700;">
+                                    <i class="fas fa-home"></i>
+                                    Discharge Summary
+                                </h2>
+                                <button onclick="showPage('patientDetail')" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i>
+                                    Back to Patient
+                                </button>
+                            </div>
+                            
+                            <form id="dischargeSummaryForm" onsubmit="handleDischargeSummary(event)">
+                                <div id="dischargeSummaryContent">
+                                    <!-- Content will be populated by JavaScript -->
+                                </div>
+                                
+                                <div style="border-top: 2px solid var(--neutral-200); padding-top: 2rem; margin-top: 2rem;">
+                                    <div id="dischargeSummaryMessage" class="auth-message"></div>
+                                    
+                                    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                                        <button type="button" onclick="showPage('patientDetail')" class="btn btn-secondary">
+                                            <i class="fas fa-times"></i>
+                                            Cancel
+                                        </button>
+                                        <button type="submit" class="btn" id="dischargeSummaryButton">
+                                            <i class="fas fa-home"></i>
+                                            Complete Discharge
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
     <!-- Post-Op Chart View Page -->
     <div id="postOpChartPage" class="page">
         <div style="max-width: 1400px; margin: 0 auto;">
@@ -3700,9 +3740,131 @@ function createOperativeNoteForm(procedure, anesthesia, position, findings, step
             showNotification('Please complete all discharge criteria first', 'warning');
         }
 
-        function showDischargeForm() {
-            showNotification('Ready for discharge! Discharge form coming in Part 4...', 'success');
-        }
+function showDischargeForm() {
+    if (!currentPatient) {
+        showNotification('No patient selected', 'error');
+        return;
+    }
+    showPage('dischargeSummary');
+    loadDischargeSummaryForm();
+}
+
+        function loadDischargeSummaryForm() {
+    if (!currentPatient) return;
+    
+    const content = document.getElementById('dischargeSummaryContent');
+    content.innerHTML = `
+        <!-- Patient Info Header -->
+        <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 2rem; border: 1px solid var(--neutral-200);">
+            <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">Patient Information</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                <div><strong>Name:</strong> ${currentPatient.name}</div>
+                <div><strong>MRN:</strong> ${currentPatient.mrn}</div>
+                <div><strong>Age:</strong> ${currentPatient.age} years</div>
+            </div>
+        </div>
+        
+        <!-- Discharge Details -->
+        <div style="display: grid; gap: 2rem;">
+            <div>
+                <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                    <i class="fas fa-calendar"></i> Discharge Information
+                </h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="dischargeDate">Discharge Date *</label>
+                        <input type="date" id="dischargeDate" required value="${new Date().toISOString().split('T')[0]}"
+                               style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50);">
+                    </div>
+                    <div class="form-group">
+                        <label for="dischargeTime">Discharge Time</label>
+                        <input type="time" id="dischargeTime" value="${new Date().toTimeString().slice(0,5)}"
+                               style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50);">
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                    <i class="fas fa-stethoscope"></i> Clinical Summary
+                </h3>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="primaryDiagnosis">Primary Diagnosis *</label>
+                    <input type="text" id="primaryDiagnosis" required placeholder="Primary diagnosis..."
+                           style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50);">
+                </div>
+                <div class="form-group">
+                    <label for="hospitalCourse">Hospital Course Summary</label>
+                    <textarea id="hospitalCourse" rows="4" placeholder="Brief summary of hospital stay and treatment..."
+                             style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"></textarea>
+                </div>
+            </div>
+            
+            <div>
+                <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                    <i class="fas fa-pills"></i> Discharge Medications
+                </h3>
+                <div class="form-group">
+                    <label for="dischargeMedications">Medications & Instructions</label>
+                    <textarea id="dischargeMedications" rows="4" placeholder="List discharge medications with dosing and instructions..."
+                             style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"></textarea>
+                </div>
+            </div>
+            
+            <div>
+                <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                    <i class="fas fa-clipboard-list"></i> Follow-up Care
+                </h3>
+                <div class="form-group">
+                    <label for="followUpInstructions">Follow-up Instructions</label>
+                    <textarea id="followUpInstructions" rows="4" placeholder="Follow-up appointments, activity restrictions, wound care, warning signs..."
+                             style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"></textarea>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+        function handleDischargeSummary(event) {
+    event.preventDefault();
+    
+    if (!currentPatient) {
+        showNotification('No patient selected', 'error');
+        return;
+    }
+    
+    // Get form data
+    const dischargeData = {
+        patient_id: currentPatient.id,
+        discharge_date: document.getElementById('dischargeDate').value,
+        discharge_time: document.getElementById('dischargeTime').value,
+        primary_diagnosis: document.getElementById('primaryDiagnosis').value.trim(),
+        hospital_course: document.getElementById('hospitalCourse').value.trim(),
+        discharge_medications: document.getElementById('dischargeMedications').value.trim(),
+        follow_up_instructions: document.getElementById('followUpInstructions').value.trim(),
+        created_by: currentUser.id
+    };
+    
+    // Validation
+    if (!dischargeData.primary_diagnosis) {
+        showMessage('dischargeSummaryMessage', 'Please enter the primary diagnosis', 'error');
+        return;
+    }
+    
+    // For now, just show success (database will be added later)
+    showMessage('dischargeSummaryMessage', '✅ Discharge summary completed! (Database save coming in later parts)', 'success');
+    
+    // Update patient status to discharged
+    currentPatient.status = 'discharged';
+    
+    console.log('Discharge Summary:', dischargeData);
+    
+    // Navigate back after delay
+    setTimeout(() => {
+        showPage('patientDetail');
+        showNotification(`${currentPatient.name} has been discharged!`, 'success');
+    }, 2000);
+}
 
         // Enhanced Add Patient Function with Comprehensive Data
         async function handleAddPatient(event) {
