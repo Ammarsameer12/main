@@ -4563,6 +4563,18 @@ loadSurgeryAndOperativeNote(patient);
             patient.lab_summary || 'No additional laboratory results recorded';
         document.getElementById('detailImaging').textContent = 
             patient.imaging_summary || 'No imaging studies recorded';
+
+        // Load post-op summary
+        loadPostOpSummary(patient).then(summaryContent => {
+            document.getElementById('postOpPreviewContent').innerHTML = summaryContent;
+        }).catch(error => {
+            console.error('Error loading post-op summary:', error);
+            document.getElementById('postOpPreviewContent').innerHTML = `
+                <div style="text-align: center; color: var(--neutral-500);">
+                    <p>Error loading post-operative data</p>
+                </div>
+            `;
+        });
         
     } catch (error) {
         console.error('Error loading patient detail:', error);
