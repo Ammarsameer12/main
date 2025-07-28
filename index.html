@@ -1327,6 +1327,16 @@
                         </div>
                     </div>
                 </div>
+                            <!-- Discharge Planning Section -->
+<div style="background: linear-gradient(135deg, var(--neutral-50), white); border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+    <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fas fa-home"></i>
+        Discharge Planning
+    </h3>
+    <div id="dischargePlanningContent">
+        <!-- This will be populated by JavaScript -->
+    </div>
+</div>
                             </div>
                         </div>
                     </div>
@@ -3600,6 +3610,50 @@ function createOperativeNoteForm(procedure, anesthesia, position, findings, step
                 </div>
             `;
         }
+
+        function createDischargeChecklist() {
+    return `
+        <div style="display: grid; gap: 1rem;">
+            <!-- Discharge Criteria Checklist -->
+            <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid var(--neutral-200);">
+                <h4 style="color: var(--neutral-700); margin-bottom: 1rem;">Discharge Readiness Criteria</h4>
+                
+                <div style="display: grid; gap: 0.75rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="painControlled" style="transform: scale(1.2);">
+                        <span>Pain adequately controlled</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="vitalsStable" style="transform: scale(1.2);">
+                        <span>Vital signs stable</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="voidingNormal" style="transform: scale(1.2);">
+                        <span>Voiding normally (if applicable)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="ambulating" style="transform: scale(1.2);">
+                        <span>Ambulating independently</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="woundHealing" style="transform: scale(1.2);">
+                        <span>Wound healing appropriately</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="educationComplete" style="transform: scale(1.2);">
+                        <span>Patient education completed</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Action Button -->
+            <button class="btn" onclick="showDischargeAssessment()" style="background: linear-gradient(135deg, var(--success-green), #059669);">
+                <i class="fas fa-clipboard-check"></i>
+                Complete Discharge Assessment
+            </button>
+        </div>
+    `;
+}
 
         // Enhanced Add Patient Function with Comprehensive Data
         async function handleAddPatient(event) {
