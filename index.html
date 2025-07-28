@@ -4063,12 +4063,7 @@ function buildFollowUpInstructions(patient) {
         created_by: currentUser.id
     };
     
-    // Validation
-    if (!dischargeData.primary_diagnosis) {
-        showMessage('dischargeSummaryMessage', 'Please enter the primary diagnosis', 'error');
-        return;
-    }
-    
+
 // Validation
 if (!dischargeData.primary_diagnosis) {
     showMessage('dischargeSummaryMessage', 'Please enter the primary diagnosis', 'error');
