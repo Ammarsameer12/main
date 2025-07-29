@@ -2248,173 +2248,6 @@
         let allPatients = [];
         let currentPatient = null;
 
-// Add these new lines for user roles:
-let currentUserRole = null;
-let userPermissions = {};
-
-// Role permissions configuration
-const ROLE_PERMISSIONS = {
-    'doctor': {
-        createPatients: true,
-        editPatients: true,
-        addOperativeNotes: true,
-        addPostOpEntries: true,
-        dischargePatients: true,
-        viewAllPatients: true,
-        deleteRecords: false,
-        manageUsers: false
-    },
-    'nurse': {
-        createPatients: true,
-        editPatients: false,
-        addOperativeNotes: false,
-        addPostOpEntries: true,
-        dischargePatients: false,
-        viewAllPatients: true,
-        deleteRecords: false,
-        manageUsers: false
-    },
-    'rotator': {
-        createPatients: true,
-        editPatients: false,
-        addOperativeNotes: false,
-        addPostOpEntries: true,
-        dischargePatients: false,
-        viewAllPatients: true,
-        deleteRecords: false,
-        manageUsers: false
-    },
-    'admin': {
-        createPatients: true,
-        editPatients: true,
-        addOperativeNotes: true,
-        addPostOpEntries: true,
-        dischargePatients: true,
-        viewAllPatients: true,
-        deleteRecords: true,
-        manageUsers: true
-    },
-    'resident': {
-        createPatients: false,
-        editPatients: false,
-        addOperativeNotes: false,
-        addPostOpEntries: false,
-        dischargePatients: false,
-        viewAllPatients: true,
-        deleteRecords: false,
-        manageUsers: false
-    },
-    'viewer': {
-        createPatients: false,
-        editPatients: false,
-        addOperativeNotes: false,
-        addPostOpEntries: false,
-        dischargePatients: false,
-        viewAllPatients: true,
-        deleteRecords: false,
-        manageUsers: false
-    }
-};
-
-// Load user profile and permissions
-async function loadUserProfile(user) {
-    try {
-        const { data: profile, error } = await supabase
-            .from('user_profiles')
-            .select('*')
-            .eq('id', user.id)
-            .single();
-        
-        if (error) {
-            // Create profile if doesn't exist
-            const { data: newProfile, error: createError } = await supabase
-                .from('user_profiles')
-                .insert([{
-                    id: user.id,
-                    email: user.email,
-                    role: 'nurse' // default role
-                }])
-                .select()
-                .single();
-            
-            if (createError) throw createError;
-            currentUserRole = newProfile.role;
-        } else {
-            currentUserRole = profile.role;
-        }
-        
-        userPermissions = ROLE_PERMISSIONS[currentUserRole] || ROLE_PERMISSIONS['nurse'];
-        updateUIForRole();
-        
-    } catch (error) {
-        console.error('Error loading user profile:', error);
-        currentUserRole = 'nurse';
-        userPermissions = ROLE_PERMISSIONS['nurse'];
-    }
-}
-
-// Update UI based on user role
-function updateUIForRole() {
-    // Hide/show buttons based on permissions
-    const addPatientBtn = document.querySelector('[onclick="showPage(\'addPatient\')"]');
-    if (addPatientBtn) {
-        addPatientBtn.style.display = userPermissions.createPatients ? 'inline-flex' : 'none';
-    }
-    
-    // Update user info display to show role
-    const userInfo = document.getElementById('userEmailDisplay');
-    if (userInfo && currentUser) {
-        userInfo.innerHTML = `
-            ${currentUser.email}<br>
-            <small style="opacity: 0.8;">${getRoleDisplayName(currentUserRole)}</small>
-        `;
-    }
-}
-
-// Update patient detail buttons based on role
-function updatePatientDetailButtonsForRole() {
-    if (!currentPatient) return;
-    
-    // Operative Note button
-    const operativeBtn = document.querySelector('[onclick="showOperativeNoteForm()"]');
-    if (operativeBtn) {
-        operativeBtn.style.display = userPermissions.addOperativeNotes ? 'inline-flex' : 'none';
-    }
-    
-    // Quick Discharge button
-    const quickDischargeBtn = document.getElementById('quickDischargeBtn');
-    if (quickDischargeBtn && currentPatient.status === 'post-op') {
-        quickDischargeBtn.style.display = userPermissions.dischargePatients ? 'inline-flex' : 'none';
-    }
-    
-    // Full Discharge Summary button
-    const dischargeBtn = document.querySelector('[onclick="showDischargeSummaryForm()"]');
-    if (dischargeBtn) {
-        dischargeBtn.style.display = userPermissions.dischargePatients ? 'inline-flex' : 'none';
-    }
-}
-
-function getRoleDisplayName(role) {
-    const roleNames = {
-        'doctor': '👨‍⚕️ Doctor',
-        'nurse': '👩‍⚕️ Nurse', 
-        'rotator': '🔄 Rotator',
-        'admin': '👨‍💼 Admin',
-        'resident': '📋 Resident',
-        'viewer': '👁️ Viewer'
-    };
-    return roleNames[role] || role;
-}
-
-// Check permission before actions
-function checkPermission(action) {
-    if (!userPermissions[action]) {
-        showNotification(`Access denied: ${getRoleDisplayName(currentUserRole)} role cannot ${action.replace(/([A-Z])/g, ' $1').toLowerCase()}`, 'error');
-        return false;
-    }
-    return true;
-}
-
 
 // Add these functions to your existing JavaScript
 
@@ -4992,7 +4825,6 @@ loadExistingDischargeSummary();
 
 // Add this line at the very end of the loadPatientDetail function
 updateQuickDischargeButton(patient);
-updatePatientDetailButtonsForRole();        
         
         // Lab Results
         const labs = [
@@ -6140,25 +5972,22 @@ async function executeQuickDischarge() {
     }
 }
         
-// Supabase Auth State Listener
-supabase.auth.onAuthStateChange(async (event, session) => {
-    console.log('🔐 Auth state changed:', event, session?.user?.email);
-    
-    if (session?.user) {
-        currentUser = session.user;
-        isLoggedIn = true;
-        await loadUserProfile(session.user); // Add this line
-        updateNavigationForUser(session.user);
-        showPage('patients');
-    } else {
-        currentUser = null;
-        currentUserRole = null;        // Add this line
-        userPermissions = {};          // Add this line
-        isLoggedIn = false;
-        updateNavigationForGuest();
-        showPage('login');
-    }
-});
+        // Supabase Auth State Listener
+        supabase.auth.onAuthStateChange((event, session) => {
+            console.log('🔐 Auth state changed:', event, session?.user?.email);
+            
+            if (session?.user) {
+                currentUser = session.user;
+                isLoggedIn = true;
+                updateNavigationForUser(session.user);
+                showPage('patients');
+            } else {
+                currentUser = null;
+                isLoggedIn = false;
+                updateNavigationForGuest();
+                showPage('login');
+            }
+        });
 
         // App Initialization
         document.addEventListener('DOMContentLoaded', function() {
