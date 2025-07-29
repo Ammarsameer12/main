@@ -1265,39 +1265,7 @@
         <p>Discharge summary will appear here...</p>
     </div>
 </div>
-                        </div>
 
-                    <!-- Right Column - Quick Info & Labs -->
-                    <div style="display: flex; flex-direction: column; gap: 2rem;">
-                        <!-- Quick Stats -->
-                        <div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
-                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fas fa-chart-line"></i>
-                                Quick Stats
-                            </h3>
-                            <div style="display: grid; gap: 1rem;">
-                                <div style="background: var(--neutral-50); padding: 1rem; border-radius: 0.5rem; text-align: center;">
-                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-blue);" id="daysAdmitted">0</div>
-                                    <div style="font-size: 0.9rem; color: var(--neutral-600);">Days Admitted</div>
-                                </div>
-                                <div style="background: var(--neutral-50); padding: 1rem; border-radius: 0.5rem; text-align: center;">
-                                    <div style="font-size: 1.2rem; font-weight: 600;" id="surgeryCountdown">Not scheduled</div>
-                                    <div style="font-size: 0.9rem; color: var(--neutral-600);">Surgery Status</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Surgery Information -->
-                        <!-- Surgery & Operative Note Information -->
-                        <div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
-                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fas fa-scalpel"></i>
-                                Surgery & Operative Note
-                            </h3>
-                            <div id="surgeryInfoContent">
-                                <!-- Content will be populated by JavaScript -->
-                            </div>
-                        </div>
 
                         <!-- Laboratory Results -->
                         <div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
@@ -1324,6 +1292,18 @@
                             <p id="detailImaging" style="color: var(--neutral-600); font-size: 0.9rem; line-height: 1.5;"></p>
                         </div>
 
+                        <!-- Surgery Information -->
+                        <!-- Surgery & Operative Note Information -->
+                        <div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-scalpel"></i>
+                                Surgery & Operative Note
+                            </h3>
+                            <div id="surgeryInfoContent">
+                                <!-- Content will be populated by JavaScript -->
+                            </div>
+                        </div>
+
                         <!-- Post-Op Section (Preview) -->
                         <div style="background: linear-gradient(135deg, var(--neutral-50), white); border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
                             <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
@@ -1337,6 +1317,28 @@
                             <p>Loading post-operative data...</p>
                         </div>
                     </div>
+                        
+                        </div>
+
+                    <!-- Right Column - Quick Info & Labs -->
+                    <div style="display: flex; flex-direction: column; gap: 2rem;">
+                        <!-- Quick Stats -->
+                        <div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+                            <h3 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-chart-line"></i>
+                                Quick Stats
+                            </h3>
+                            <div style="display: grid; gap: 1rem;">
+                                <div style="background: var(--neutral-50); padding: 1rem; border-radius: 0.5rem; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-blue);" id="daysAdmitted">0</div>
+                                    <div style="font-size: 0.9rem; color: var(--neutral-600);">Days Admitted</div>
+                                </div>
+                                <div style="background: var(--neutral-50); padding: 1rem; border-radius: 0.5rem; text-align: center;">
+                                    <div style="font-size: 1.2rem; font-weight: 600;" id="surgeryCountdown">Not scheduled</div>
+                                    <div style="font-size: 0.9rem; color: var(--neutral-600);">Surgery Status</div>
+                                </div>
+                            </div>
+                        </div>
                 </div>
                             </div>
                         </div>
