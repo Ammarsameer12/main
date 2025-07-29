@@ -1162,6 +1162,11 @@
     <i class="fas fa-chart-line"></i>
     Post-Op Management
 </button>
+                            <!-- NEW DISCHARGE BUTTON -->
+                            <button id="dischargePatientBtn" class="btn" onclick="manualDischargePatient()" style="background: linear-gradient(135deg, var(--danger-red), #dc2626); display: none;">
+                                <i class="fas fa-home"></i>
+                                Discharge Patient
+                            </button>
                             <button class="btn" onclick="showNotification('Patient editing coming soon! 📝', 'info')" style="background: linear-gradient(135deg, var(--warning-amber), #d97706);">
                                 <i class="fas fa-edit"></i>
                                 Edit Info
@@ -4816,6 +4821,22 @@ loadSurgeryAndOperativeNote(patient);
 
         // Load discharge summary if exists
 loadExistingDischargeSummary();
+
+        // Load discharge summary if exists
+        loadExistingDischargeSummary();
+        
+        // Show/hide discharge button based on patient status
+        const dischargeBtn = document.getElementById('dischargePatientBtn');
+        if (patient.status === 'post-op') {
+            dischargeBtn.style.display = 'inline-flex';
+        } else {
+            dischargeBtn.style.display = 'none';
+        }
+        
+    } catch (error) {
+        console.error('Error loading patient detail:', error);
+        showNotification('Error loading patient details', 'error');
+    }
         
         // Lab Results
         const labs = [
@@ -5216,6 +5237,50 @@ function showDischargeSummaryForm() {
     }
     showPage('dischargeSummary');
     initializeDischargeSummaryForm();
+}
+
+        // Manual discharge patient function
+async function manualDischargePatient() {
+    if (!currentPatient) {
+        showNotification('No patient selected', 'error');
+        return;
+    }
+    
+    // Confirm before discharging
+    if (!confirm(`Are you sure you want to discharge ${currentPatient.name}?\n\nThis will change their status to DISCHARGED.`)) {
+        return;
+    }
+    
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        
+        const { error: updateError } = await supabase
+            .from('patients')
+            .update({
+                status: 'discharged',
+                discharge_date: today
+            })
+            .eq('id', currentPatient.id);
+        
+        if (updateError) {
+            console.error('Error discharging patient:', updateError);
+            showNotification('Error discharging patient: ' + updateError.message, 'error');
+        } else {
+            console.log('✅ Patient discharged manually');
+            showNotification(`${currentPatient.name} has been discharged successfully!`, 'success');
+            
+            // Update current patient object
+            currentPatient.status = 'discharged';
+            currentPatient.discharge_date = today;
+            
+            // Reload patient detail to reflect changes
+            loadPatientDetail(currentPatient);
+        }
+        
+    } catch (error) {
+        console.error('Error discharging patient:', error);
+        showNotification('Error discharging patient', 'error');
+    }
 }
 
 // Initialize discharge summary form
