@@ -1256,6 +1256,30 @@
                         </div>
                     </div>
 
+                    <!-- Discharge Summary Section -->
+<div id="dischargeSummarySection" style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200); display: none;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="color: var(--primary-blue); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-file-medical"></i>
+            Discharge Summary / ملخص الخروج
+        </h3>
+        <div style="display: flex; gap: 0.5rem;">
+            <button id="editDischargeBtn" onclick="editDischargeSummary()" class="btn" style="background: linear-gradient(135deg, var(--warning-amber), #d97706); padding: 0.5rem 1rem; font-size: 0.9rem;">
+                <i class="fas fa-edit"></i>
+                Edit
+            </button>
+            <button id="printDischargeBtn" onclick="printDischargeSummary()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                <i class="fas fa-print"></i>
+                Print
+            </button>
+        </div>
+    </div>
+    
+    <div id="dischargeContent">
+        <!-- Content will be loaded here -->
+    </div>
+</div>
+
                     <!-- Right Column - Quick Info & Labs -->
                     <div style="display: flex; flex-direction: column; gap: 2rem;">
                         <!-- Quick Stats -->
@@ -4592,6 +4616,53 @@ loadSurgeryAndOperativeNote(patient);
                 </div>
             `;
         });
+
+        // Load and show discharge summary
+        loadDischargeSummary(patient);
+        
+    } catch (error) {
+        console.error('Error loading patient detail:', error);
+        showNotification('Error loading patient details', 'error');
+    }
+}
+
+// Load discharge summary function
+function loadDischargeSummary(patient) {
+    const dischargeSummarySection = document.getElementById('dischargeSummarySection');
+    const dischargeContent = document.getElementById('dischargeContent');
+    
+    // Show the discharge summary section
+    dischargeSummarySection.style.display = 'block';
+    
+    // Load the content (in read-only mode by default)
+    dischargeContent.innerHTML = createDischargeSummaryContent(patient, false);
+}
+
+// Edit discharge summary function
+function editDischargeSummary() {
+    const dischargeContent = document.getElementById('dischargeContent');
+    dischargeContent.innerHTML = createDischargeSummaryContent(currentPatient, true);
+    
+    // Change button to Save
+    document.getElementById('editDischargeBtn').innerHTML = '<i class="fas fa-save"></i> Save';
+    document.getElementById('editDischargeBtn').onclick = saveDischargeSummary;
+}
+
+// Save discharge summary function (placeholder for now)
+function saveDischargeSummary() {
+    showNotification('Discharge summary saved! (Database save coming next)', 'success');
+    
+    // Change back to Edit mode
+    document.getElementById('editDischargeBtn').innerHTML = '<i class="fas fa-edit"></i> Edit';
+    document.getElementById('editDischargeBtn').onclick = editDischargeSummary;
+    
+    // Reload in read-only mode
+    document.getElementById('dischargeContent').innerHTML = createDischargeSummaryContent(currentPatient, false);
+}
+
+// Print discharge summary function (placeholder for now)
+function printDischargeSummary() {
+    showNotification('Print functionality coming next!', 'info');
         
     } catch (error) {
         console.error('Error loading patient detail:', error);
@@ -4943,6 +5014,105 @@ async function handleAddPostOpEntry(event) {
                 case 'warning': return '#92400e';
                 default: return 'var(--neutral-700)';
             }
+        }
+
+        // Discharge Summary Functions
+function createDischargeSummaryContent(patient, isEditable = false) {
+    const surgeryType = patient.surgery_type || '';
+    const medications = getDischargeMedications(surgeryType);
+    const instructions = getDischargeInstructions(surgeryType);
+    
+    return `
+        <div style="display: grid; gap: 1.5rem;">
+            <!-- Patient Info Header -->
+            <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1rem; border: 1px solid var(--neutral-200);">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; font-size: 0.9rem;">
+                    <div><strong>اسم المريض:</strong> ${patient.name}</div>
+                    <div><strong>العمر:</strong> ${patient.age} سنة</div>
+                    <div><strong>رقم الملف:</strong> ${patient.mrn}</div>
+                </div>
+            </div>
+            
+            <!-- Hospital Course -->
+            <div>
+                <h4 style="color: var(--primary-blue); margin-bottom: 0.75rem;">مجرى العلاج في المستشفى / Hospital Course</h4>
+                <textarea ${isEditable ? '' : 'readonly'} style="width: 100%; min-height: 80px; padding: 1rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: ${isEditable ? 'white' : 'var(--neutral-50)'}; resize: vertical;"
+                    placeholder="Patient course during admission...">${getHospitalCourse(patient)}</textarea>
+            </div>
+            
+            <!-- Medications -->
+            <div>
+                <h4 style="color: var(--primary-blue); margin-bottom: 0.75rem;">الأدوية عند الخروج / Discharge Medications</h4>
+                <textarea ${isEditable ? '' : 'readonly'} style="width: 100%; min-height: 120px; padding: 1rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: ${isEditable ? 'white' : 'var(--neutral-50)'}; resize: vertical; direction: rtl;"
+                    placeholder="Discharge medications...">${medications}</textarea>
+            </div>
+            
+            <!-- Instructions -->
+            <div>
+                <h4 style="color: var(--primary-blue); margin-bottom: 0.75rem;">تعليمات للمريض / Patient Instructions</h4>
+                <textarea ${isEditable ? '' : 'readonly'} style="width: 100%; min-height: 200px; padding: 1rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: ${isEditable ? 'white' : 'var(--neutral-50)'}; resize: vertical; direction: rtl;"
+                    placeholder="Patient instructions...">${instructions}</textarea>
+            </div>
+            
+            <!-- Follow-up -->
+            <div>
+                <h4 style="color: var(--primary-blue); margin-bottom: 0.75rem;">مواعيد المراجعة / Follow-up</h4>
+                <textarea ${isEditable ? '' : 'readonly'} style="width: 100%; min-height: 80px; padding: 1rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: ${isEditable ? 'white' : 'var(--neutral-50)'}; resize: vertical; direction: rtl;"
+                    placeholder="Follow-up appointments...">مراجعة بعد أسبوع من الخروج
+مراجعة بعد شهر من الخروج
+إجراء فحص البول بعد أسبوعين
+
+Follow-up after 1 week
+Follow-up after 1 month  
+Urine test after 2 weeks</textarea>
+            </div>
+        </div>
+    `;
+}
+
+        // Helper function to get discharge medications based on surgery type
+        function getDischargeMedications(surgeryType) {
+            let medications = `الأدوية الأساسية / Basic Medications:
+
+- Meropenem Vial 1g 1×2 يعطى في 100 سيسي نورمال سلاين وريدي بطيء لمدة ثلاثة أيام
+- Levofloxacin tab 500mg 1×1 لمدة عشر أيام
+- Olfen tab 100mg 1×2 بعد الطعام لمدة ثلاثة أيام
+- Doliprane tab 1g 1×2 عند الحاجة
+- Voltaren Amp IM عند الحاجة`;
+
+            // Add surgery-specific medications
+            switch(surgeryType.toUpperCase()) {
+                case 'URS':
+                    medications += `
+
+الأدوية الخاصة للمنظار / URS-Specific:
+- Omnic tab 0.4mg 1×1 لحين رفع القسطرة`;
+                    break;
+                    
+                case 'TURP':
+                    medications += `
+
+الأدوية الخاصة للبروستات / TURP-Specific:
+- Omnic tab 0.4mg 1×1 
+- Solifenacin tab 1×1 لمدة شهر`;
+                    break;
+                    
+                case 'PCNL':
+                    medications += `
+
+أدوية إضافية للتفتيت / Additional for PCNL:
+- جرعة مضاعفة من المضاد الحيوي حسب الحالة`;
+                    break;
+                    
+                case 'CIRCUMCISION':
+                    medications += `
+
+أدوية إضافية للختان / Additional for Circumcision:
+- مرهم مضاد حيوي موضعي`;
+                    break;
+            }
+
+            return medications;
         }
 
         // Supabase Auth State Listener
