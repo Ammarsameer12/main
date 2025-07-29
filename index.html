@@ -1254,6 +1254,36 @@
                             </h3>
                             <p id="detailPhysicalExam" style="color: var(--neutral-700); line-height: 1.6; white-space: pre-wrap;"></p>
                         </div>
+
+                        <!-- Add this section in your patient detail page, in the left column after the Physical Examination section -->
+
+<!-- Discharge Summary Section -->
+<div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-200);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="color: var(--primary-blue); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-file-export"></i>
+            Discharge Summary
+        </h3>
+        <div style="display: flex; gap: 0.5rem;">
+            <button id="editDischargeSummaryBtn" onclick="showDischargeSummaryForm()" class="btn" style="background: linear-gradient(135deg, var(--success-green), #059669); padding: 0.5rem 1rem; font-size: 0.9rem;">
+                <i class="fas fa-edit"></i>
+                Create/Edit
+            </button>
+            <button id="printDischargeSummaryBtn" onclick="printDischargeSummary()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;" disabled>
+                <i class="fas fa-print"></i>
+                Print
+            </button>
+        </div>
+    </div>
+    
+    <div id="dischargeSummaryContent">
+        <div style="text-align: center; padding: 2rem; color: var(--neutral-500);">
+            <i class="fas fa-file-export" style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+            <h4 style="margin-bottom: 0.5rem;">No Discharge Summary</h4>
+            <p style="margin: 0; font-size: 0.9rem;">Create a comprehensive discharge summary when the patient is ready for discharge</p>
+        </div>
+    </div>
+</div>
                     </div>
 
                     <!-- Right Column - Quick Info & Labs -->
@@ -1969,6 +1999,234 @@
             </div>
         </div>
     </div>
+
+    <!-- Add this as a new page in your HTML after the existing pages -->
+
+<!-- Discharge Summary Form Page -->
+<div id="dischargeSummaryPage" class="page">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        <div style="background: white; border-radius: 1rem; padding: 2rem; box-shadow: var(--shadow-xl); border: 1px solid var(--neutral-200);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2 style="color: var(--primary-blue); font-size: 2rem; font-weight: 700;">
+                    <i class="fas fa-file-export"></i>
+                    Discharge Summary
+                </h2>
+                <button onclick="showPage('patientDetail')" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Patient
+                </button>
+            </div>
+            
+            <form id="dischargeSummaryForm" onsubmit="handleSaveDischargeSummary(event)">
+                
+                <!-- Patient Info Summary -->
+                <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 2rem; border: 1px solid var(--neutral-200);">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">
+                        <i class="fas fa-user"></i> Patient Information
+                    </h3>
+                    <div id="dischargePatientInfo" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; font-size: 0.9rem;">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Final Diagnosis -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                        <i class="fas fa-stethoscope"></i> Final Diagnosis
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label for="finalDiagnosis">Primary Diagnosis *</label>
+                        <textarea id="finalDiagnosis" rows="2" required
+                                 style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                 placeholder="Primary diagnosis will be auto-filled from clinical assessment"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="secondaryDiagnoses">Secondary Diagnoses</label>
+                        <textarea id="secondaryDiagnoses" rows="2"
+                                 style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                 placeholder="Any additional diagnoses or complications"></textarea>
+                    </div>
+                </div>
+
+                <!-- Procedure Performed -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                        <i class="fas fa-scalpel"></i> Procedure(s) Performed
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label for="proceduresPerformed">Main Procedure *</label>
+                        <textarea id="proceduresPerformed" rows="3" required
+                                 style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                 placeholder="Main procedure will be auto-filled from operative note"></textarea>
+                    </div>
+                </div>
+
+                <!-- Hospital Course -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                        <i class="fas fa-chart-line"></i> Post-Operative Course
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label for="hospitalCourse">Hospital Course Summary *</label>
+                        <textarea id="hospitalCourse" rows="4" required
+                                 style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                 placeholder="The patient tolerated the procedure well. Post-operative course was uncomplicated..."></textarea>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="lengthOfStay">Length of Stay</label>
+                            <input type="text" id="lengthOfStay" 
+                                   style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50);"
+                                   placeholder="3 days" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dischargeDate">Discharge Date *</label>
+                            <input type="date" id="dischargeDate" required
+                                   style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50);">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Discharge Medications -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                        <i class="fas fa-pills"></i> Discharge Medications
+                    </h3>
+                    
+                    <!-- Common Medication Templates -->
+                    <div style="background: var(--neutral-50); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--neutral-200);">
+                        <h4 style="color: var(--neutral-700); margin-bottom: 0.75rem; font-size: 0.95rem;">Quick Add Medications:</h4>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
+                            <!-- Antibiotics -->
+                            <button type="button" onclick="addMedication('antibiotics_meropenem')" style="background: #fef3c7; border: 1px solid #f59e0b; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                                <i class="fas fa-pills"></i> Meropenem IV
+                            </button>
+                            <button type="button" onclick="addMedication('antibiotics_levofloxacin')" style="background: #fef3c7; border: 1px solid #f59e0b; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                                <i class="fas fa-pills"></i> Levofloxacin
+                            </button>
+                            
+                            <!-- Pain Medications -->
+                            <button type="button" onclick="addMedication('pain_olfen')" style="background: #fecaca; border: 1px solid #ef4444; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                                <i class="fas fa-tablets"></i> Olfen
+                            </button>
+                            <button type="button" onclick="addMedication('pain_doliprane')" style="background: #fecaca; border: 1px solid #ef4444; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                                <i class="fas fa-tablets"></i> Doliprane
+                            </button>
+                            <button type="button" onclick="addMedication('pain_voltaren')" style="background: #fecaca; border: 1px solid #ef4444; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                                <i class="fas fa-syringe"></i> Voltaren IM
+                            </button>
+                            
+                            <!-- Specialty Medications -->
+                            <button type="button" onclick="addMedication('omnic')" style="background: #dbeafe; border: 1px solid #3b82f6; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                                <i class="fas fa-capsules"></i> Omnic
+                            </button>
+                            <button type="button" onclick="addMedication('solifenacin')" style="background: #dbeafe; border: 1px solid #3b82f6; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                                <i class="fas fa-capsules"></i> Solifenacin
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dischargeMedications">Medications with Instructions *</label>
+                        <textarea id="dischargeMedications" rows="8" required
+                                 style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                 placeholder="List all discharge medications with dosages and instructions..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Follow-up Instructions -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                        <i class="fas fa-calendar-check"></i> Follow-up Instructions
+                    </h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="followUpPeriod">Follow-up Appointment</label>
+                            <select id="followUpPeriod" style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50);">
+                                <option value="">Select timeframe</option>
+                                <option value="1 week">1 week</option>
+                                <option value="2 weeks">2 weeks</option>
+                                <option value="1 month">1 month</option>
+                                <option value="6 weeks">6 weeks</option>
+                                <option value="3 months">3 months</option>
+                                <option value="as needed">As needed</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="stentRemoval">Stent Removal (if applicable)</label>
+                            <select id="stentRemoval" style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50);">
+                                <option value="">No stent</option>
+                                <option value="2 weeks">2 weeks</option>
+                                <option value="4 weeks">4 weeks</option>
+                                <option value="6 weeks">6 weeks</option>
+                                <option value="3 months">3 months</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="followUpInstructions">Detailed Follow-up Instructions</label>
+                        <textarea id="followUpInstructions" rows="4"
+                                 style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                 placeholder="مراجعة العيادة بعد... / Follow-up in clinic after..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Activity & Restrictions -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                        <i class="fas fa-running"></i> Activity Instructions & Restrictions
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label for="activityInstructions">Activity Level & Restrictions</label>
+                        <textarea id="activityInstructions" rows="5"
+                                 style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                 placeholder="تجنب الأعمال الشاقة لمدة... / Avoid heavy lifting for..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Warning Signs -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 1rem; border-bottom: 2px solid var(--neutral-200); padding-bottom: 0.5rem;">
+                        <i class="fas fa-exclamation-triangle"></i> Warning Signs - When to Return
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label for="warningSigns">Signs that Require Immediate Medical Attention</label>
+                        <textarea id="warningSigns" rows="5"
+                                 style="width: 100%; padding: 0.875rem; border: 2px solid var(--neutral-200); border-radius: 0.75rem; font-size: 1rem; background: var(--neutral-50); resize: vertical;"
+                                 placeholder="راجع الطوارئ فوراً في حالة... / Return to emergency immediately if..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Submit Section -->
+                <div style="border-top: 2px solid var(--neutral-200); padding-top: 2rem;">
+                    <div id="dischargeSummaryMessage" class="auth-message"></div>
+                    
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button type="button" onclick="showPage('patientDetail')" class="btn btn-secondary">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn" id="saveDischargeSummaryButton">
+                            <i class="fas fa-save"></i>
+                            Save Discharge Summary
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
     
     <script>
         // Initialize Supabase
@@ -4555,6 +4813,9 @@ function loadPatientDetail(patient) {
         
 // Load surgery and operative note information
 loadSurgeryAndOperativeNote(patient);
+
+        // Load discharge summary if exists
+loadExistingDischargeSummary();
         
         // Lab Results
         const labs = [
@@ -4944,6 +5205,621 @@ async function handleAddPostOpEntry(event) {
                 default: return 'var(--neutral-700)';
             }
         }
+
+        // Discharge Summary JavaScript Functions
+
+// Show discharge summary form
+function showDischargeSummaryForm() {
+    if (!currentPatient) {
+        showNotification('No patient selected', 'error');
+        return;
+    }
+    showPage('dischargeSummary');
+    initializeDischargeSummaryForm();
+}
+
+// Initialize discharge summary form
+async function initializeDischargeSummaryForm() {
+    if (!currentPatient) return;
+    
+    try {
+        // Populate patient info
+        document.getElementById('dischargePatientInfo').innerHTML = `
+            <div>
+                <strong>Name:</strong><br>
+                ${currentPatient.name}
+            </div>
+            <div>
+                <strong>MRN:</strong><br>
+                ${currentPatient.mrn}
+            </div>
+            <div>
+                <strong>Age:</strong><br>
+                ${currentPatient.age} years
+            </div>
+            <div>
+                <strong>Gender:</strong><br>
+                ${currentPatient.gender}
+            </div>
+        `;
+        
+        // Auto-fill from existing data
+        document.getElementById('finalDiagnosis').value = 
+            currentPatient.clinical_assessment || '';
+        
+        // Auto-fill procedure from operative note if exists
+        await loadOperativeDataForDischarge();
+        
+        // Set discharge date to today
+        document.getElementById('dischargeDate').value = 
+            new Date().toISOString().split('T')[0];
+        
+        // Calculate length of stay
+        if (currentPatient.admission_date) {
+            const admissionDate = new Date(currentPatient.admission_date);
+            const today = new Date();
+            const lengthOfStay = Math.ceil((today - admissionDate) / (1000 * 60 * 60 * 24));
+            document.getElementById('lengthOfStay').value = `${lengthOfStay} days`;
+        }
+        
+        // Pre-fill templates
+        initializeDefaultContent();
+        
+    } catch (error) {
+        console.error('Error initializing discharge summary:', error);
+        showNotification('Error loading discharge summary form', 'error');
+    }
+}
+
+// Load operative data for discharge summary
+async function loadOperativeDataForDischarge() {
+    try {
+        const { data: operativeNote, error } = await supabase
+            .from('operative_notes')
+            .select('procedure_performed')
+            .eq('patient_id', currentPatient.id)
+            .single();
+        
+        if (!error && operativeNote) {
+            document.getElementById('proceduresPerformed').value = 
+                operativeNote.procedure_performed;
+        }
+    } catch (error) {
+        console.log('No operative note found for auto-fill');
+    }
+}
+
+// Initialize default content templates
+function initializeDefaultContent() {
+    // Default hospital course
+    if (!document.getElementById('hospitalCourse').value.trim()) {
+        document.getElementById('hospitalCourse').value = 
+            `المريض تحمل العملية بشكل جيد. المسار بعد العملية كان طبيعي بدون مضاعفات.
+The patient tolerated the procedure well. Post-operative course was uncomplicated without any adverse events. Patient remained stable throughout the hospital stay with appropriate pain control and normal vital signs.`;
+    }
+    
+    // Default follow-up instructions
+    if (!document.getElementById('followUpInstructions').value.trim()) {
+        document.getElementById('followUpInstructions').value = 
+            `مراجعة العيادة بعد أسبوعين من تاريخ الخروج
+راجع طبيب الجراحة البولية للمتابعة
+اجراء فحوصات مخبرية حسب الحاجة
+
+Follow-up in clinic after 2 weeks from discharge
+Return to urology clinic for routine follow-up
+Laboratory tests as needed`;
+    }
+    
+    // Default activity instructions
+    if (!document.getElementById('activityInstructions').value.trim()) {
+        document.getElementById('activityInstructions').value = 
+            `تجنب الأعمال الشاقة ورفع الأثقال (أكثر من 5 كيلو) لمدة أسبوعين
+يمكن المشي والأنشطة الخفيفة
+تجنب القيادة لمدة 48 ساعة بعد التخدير
+العودة للعمل حسب طبيعة العمل (مكتبي بعد أسبوع، يدوي بعد أسبوعين)
+
+Avoid heavy lifting (>5kg) and strenuous activities for 2 weeks
+Light walking and activities are encouraged
+No driving for 48 hours after anesthesia
+Return to work depending on job type (office work after 1 week, manual labor after 2 weeks)`;
+    }
+    
+    // Default warning signs
+    if (!document.getElementById('warningSigns').value.trim()) {
+        document.getElementById('warningSigns').value = 
+            `راجع الطوارئ فوراً في حالة:
+- حمى أكثر من 38.5 درجة مئوية
+- نزيف شديد في البول أو عدم القدرة على التبول
+- ألم شديد لا يتحسن مع المسكنات
+- غثيان وقيء مستمر
+- علامات التهاب في مكان الجرح (احمرار، تورم، صديد)
+
+Return to emergency immediately if:
+- Fever >38.5°C (101.3°F)
+- Heavy bleeding in urine or inability to urinate
+- Severe pain not controlled by medications
+- Persistent nausea and vomiting
+- Signs of wound infection (redness, swelling, pus)`;
+    }
+}
+
+// Medication templates with Arabic instructions
+const medicationTemplates = {
+    antibiotics_meropenem: `Meropenem Vial 1g 1x2 يعطى في 100 سيسي نورمال سلاين وريدي بطيء لمدة ثلاثة ايام`,
+    antibiotics_levofloxacin: `Levofloxacin tab 500mg 1x1 لمدة عشر ايام`,
+    pain_olfen: `Olfen tab 100mg 1x2 بعد الطعام لمدة ثلاثة ايام`,
+    pain_doliprane: `Doliprane tab 1g 1x2 عند الحاجة`,
+    pain_voltaren: `Voltaren Amp IM عند الحاجة`,
+    omnic: `Omnic tab 0.4 ug 1x1 لحين رفع القسطرة`,
+    solifenacin: `Solifenacin tab 1x1 لمدة شهر`
+};
+
+// Add medication to discharge medications field
+function addMedication(medicationType) {
+    const medicationsField = document.getElementById('dischargeMedications');
+    const template = medicationTemplates[medicationType];
+    
+    if (!template) return;
+    
+    const currentValue = medicationsField.value.trim();
+    const newMedication = `${currentValue ? currentValue + '\n' : ''}${template}`;
+    
+    medicationsField.value = newMedication;
+    medicationsField.focus();
+    
+    // Move cursor to end
+    medicationsField.setSelectionRange(medicationsField.value.length, medicationsField.value.length);
+}
+
+// Handle saving discharge summary
+async function handleSaveDischargeSummary(event) {
+    event.preventDefault();
+    
+    if (!currentPatient) {
+        showNotification('No patient selected', 'error');
+        return;
+    }
+    
+    const button = document.getElementById('saveDischargeSummaryButton');
+    const originalContent = button.innerHTML;
+    button.innerHTML = '<div class="loading"></div> Saving...';
+    button.disabled = true;
+    
+    try {
+        const dischargeSummaryData = {
+            patient_id: currentPatient.id,
+            final_diagnosis: document.getElementById('finalDiagnosis').value.trim(),
+            secondary_diagnoses: document.getElementById('secondaryDiagnoses').value.trim() || null,
+            procedures_performed: document.getElementById('proceduresPerformed').value.trim(),
+            hospital_course: document.getElementById('hospitalCourse').value.trim(),
+            length_of_stay: document.getElementById('lengthOfStay').value.trim(),
+            discharge_date: document.getElementById('dischargeDate').value,
+            discharge_medications: document.getElementById('dischargeMedications').value.trim(),
+            follow_up_period: document.getElementById('followUpPeriod').value || null,
+            stent_removal: document.getElementById('stentRemoval').value || null,
+            follow_up_instructions: document.getElementById('followUpInstructions').value.trim(),
+            activity_instructions: document.getElementById('activityInstructions').value.trim(),
+            warning_signs: document.getElementById('warningSigns').value.trim(),
+            created_by: currentUser.id,
+            status: 'completed'
+        };
+        
+        // Validation
+        if (!dischargeSummaryData.final_diagnosis || 
+            !dischargeSummaryData.procedures_performed || 
+            !dischargeSummaryData.hospital_course ||
+            !dischargeSummaryData.discharge_medications ||
+            !dischargeSummaryData.discharge_date) {
+            showMessage('dischargeSummaryMessage', 'Please fill in all required fields (marked with *)', 'error');
+            button.innerHTML = originalContent;
+            button.disabled = false;
+            return;
+        }
+        
+        // Check if discharge summary already exists
+        const { data: existingSummary, error: checkError } = await supabase
+            .from('discharge_summaries')
+            .select('id')
+            .eq('patient_id', currentPatient.id)
+            .single();
+        
+        let result;
+        if (existingSummary) {
+            // Update existing
+            result = await supabase
+                .from('discharge_summaries')
+                .update(dischargeSummaryData)
+                .eq('patient_id', currentPatient.id)
+                .select();
+        } else {
+            // Create new
+            result = await supabase
+                .from('discharge_summaries')
+                .insert([dischargeSummaryData])
+                .select();
+        }
+        
+        if (result.error) throw result.error;
+        
+        showMessage('dischargeSummaryMessage', '✅ Discharge summary saved successfully!', 'success');
+        
+        // Update patient status to discharged
+        const { error: updateError } = await supabase
+            .from('patients')
+            .update({
+                status: 'discharged',
+                discharge_date: dischargeSummaryData.discharge_date
+            })
+            .eq('id', currentPatient.id);
+        
+        if (updateError) console.error('Error updating patient status:', updateError);
+        
+        // Navigate back to patient detail after delay
+        setTimeout(() => {
+            showPage('patientDetail');
+            showNotification(`Discharge summary completed for ${currentPatient.name}!`, 'success');
+            // Reload patient data to reflect status change
+            loadPatientDetail(currentPatient);
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Error saving discharge summary:', error);
+        showMessage('dischargeSummaryMessage', 'Error saving discharge summary: ' + error.message, 'error');
+        
+        // Reset button
+        button.innerHTML = originalContent;
+        button.disabled = false;
+    }
+}
+
+// Load existing discharge summary
+async function loadExistingDischargeSummary() {
+    try {
+        const { data: dischargeSummary, error } = await supabase
+            .from('discharge_summaries')
+            .select('*')
+            .eq('patient_id', currentPatient.id)
+            .single();
+        
+        if (error) throw error;
+        
+        // Display existing discharge summary in patient detail
+        displayDischargeSummaryContent(dischargeSummary);
+        
+        return dischargeSummary;
+        
+    } catch (error) {
+        console.log('No existing discharge summary found');
+        return null;
+    }
+}
+
+// Display discharge summary content in patient detail page
+function displayDischargeSummaryContent(dischargeSummary) {
+    const contentDiv = document.getElementById('dischargeSummaryContent');
+    
+    contentDiv.innerHTML = `
+        <div style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid #10b981; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-check-circle" style="color: #059669; font-size: 1.2rem;"></i>
+                    <span style="color: #065f46; font-weight: 700; font-size: 1.1rem;">Discharge Summary Completed</span>
+                </div>
+                <span style="color: #065f46; font-size: 0.9rem;">
+                    ${formatDate(dischargeSummary.discharge_date)}
+                </span>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem;">
+                <div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <span style="color: #065f46; font-weight: 600; font-size: 0.9rem;">Final Diagnosis:</span>
+                        <p style="color: #064e3b; margin: 0.25rem 0 0 0; font-size: 0.95rem; line-height: 1.4;">${dischargeSummary.final_diagnosis}</p>
+                    </div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <span style="color: #065f46; font-weight: 600; font-size: 0.9rem;">Procedure:</span>
+                        <p style="color: #064e3b; margin: 0.25rem 0 0 0; font-size: 0.95rem; line-height: 1.4;">${dischargeSummary.procedures_performed}</p>
+                    </div>
+                </div>
+                <div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <span style="color: #065f46; font-weight: 600; font-size: 0.9rem;">Length of Stay:</span>
+                        <p style="color: #064e3b; margin: 0.25rem 0 0 0; font-size: 0.95rem;">${dischargeSummary.length_of_stay}</p>
+                    </div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <span style="color: #065f46; font-weight: 600; font-size: 0.9rem;">Follow-up:</span>
+                        <p style="color: #064e3b; margin: 0.25rem 0 0 0; font-size: 0.95rem;">${dischargeSummary.follow_up_period || 'As instructed'}</p>
+                    </div>
+                </div>
+            </div>
+            
+            ${dischargeSummary.stent_removal ? `
+            <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 1rem;">
+                <span style="color: #92400e; font-weight: 600; font-size: 0.9rem;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Stent Removal: ${dischargeSummary.stent_removal}
+                </span>
+            </div>
+            ` : ''}
+        </div>
+        
+        <!-- Quick Summary Sections -->
+        <div style="display: grid; gap: 1rem;">
+            <!-- Medications Summary -->
+            <div style="background: var(--neutral-50); border-radius: 0.5rem; padding: 1rem; border: 1px solid var(--neutral-200);">
+                <h4 style="color: var(--neutral-700); margin-bottom: 0.5rem; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-pills"></i>
+                    Discharge Medications
+                </h4>
+                <div style="max-height: 100px; overflow-y: auto; background: white; padding: 0.75rem; border-radius: 0.25rem; border: 1px solid var(--neutral-200);">
+                    <pre style="font-size: 0.85rem; margin: 0; white-space: pre-wrap; font-family: inherit;">${dischargeSummary.discharge_medications}</pre>
+                </div>
+            </div>
+            
+            <!-- Activity Instructions Summary -->
+            <div style="background: var(--neutral-50); border-radius: 0.5rem; padding: 1rem; border: 1px solid var(--neutral-200);">
+                <h4 style="color: var(--neutral-700); margin-bottom: 0.5rem; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-running"></i>
+                    Activity Instructions
+                </h4>
+                <div style="max-height: 80px; overflow-y: auto; background: white; padding: 0.75rem; border-radius: 0.25rem; border: 1px solid var(--neutral-200);">
+                    <pre style="font-size: 0.85rem; margin: 0; white-space: pre-wrap; font-family: inherit;">${dischargeSummary.activity_instructions}</pre>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Enable print button
+    document.getElementById('printDischargeSummaryBtn').disabled = false;
+}
+
+// Print discharge summary
+function printDischargeSummary() {
+    if (!currentPatient) {
+        showNotification('No patient selected', 'error');
+        return;
+    }
+    
+    // Load and print discharge summary
+    loadDischargeSummaryForPrint();
+}
+
+async function loadDischargeSummaryForPrint() {
+    try {
+        const { data: dischargeSummary, error } = await supabase
+            .from('discharge_summaries')
+            .select('*')
+            .eq('patient_id', currentPatient.id)
+            .single();
+        
+        if (error) {
+            showNotification('No discharge summary found to print', 'error');
+            return;
+        }
+        
+        // Create print window
+        const printWindow = window.open('', '_blank');
+        const currentDate = new Date().toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+        
+        createDischargeSummaryPrintDocument(printWindow, dischargeSummary, currentDate);
+        
+    } catch (error) {
+        console.error('Error loading discharge summary for printing:', error);
+        showNotification('Error preparing discharge summary for printing', 'error');
+    }
+}
+
+function createDischargeSummaryPrintDocument(printWindow, dischargeSummary, currentDate) {
+    const printContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Discharge Summary - ${currentPatient.name}</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            line-height: 1.6;
+            color: #000;
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 1in;
+            background: white;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .patient-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border: 1px solid #000;
+            padding: 10px;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-weight: bold;
+            font-size: 14px;
+            text-decoration: underline;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .field {
+            margin-bottom: 10px;
+        }
+        .field-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 150px;
+        }
+        .text-content {
+            white-space: pre-wrap;
+            text-align: justify;
+            margin-top: 10px;
+            padding: 10px;
+            border-left: 3px solid #ccc;
+        }
+        .signature-section {
+            margin-top: 50px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+        }
+        .signature-line {
+            border-bottom: 1px solid #000;
+            height: 40px;
+            margin-bottom: 5px;
+        }
+        @media print {
+            body {
+                margin: 0;
+                padding: 0.5in;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
+            <img src="https://i.imgur.com/m58wnv0.png" alt="Clinic Logo" style="height: 80px; width: auto;" onerror="this.style.display='none'">
+            <div style="text-align: center; flex-grow: 1;">
+                <div style="font-size: 20px; font-weight: bold; color: #1e40af; margin-bottom: 5px;">
+                    عيادة الدكتور أسامة محمد جمهور للجراحة البولية
+                </div>
+                <div style="font-size: 12px; color: #64748b; line-height: 1.4; margin-top: 10px;">
+                    الأعظمية - شارع الضباط - بجانب ماكسي مول<br>
+                    📞 +964 7717507669
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+                <img src="https://i.imgur.com/eayNCVK.png" alt="QR Code 1" style="height: 35px; width: 35px;" onerror="this.style.display='none'">
+                <img src="https://i.imgur.com/fsIK9WK.png" alt="QR Code 2" style="height: 35px; width: 35px;" onerror="this.style.display='none'">
+            </div>
+        </div>
+        
+        <div style="border-top: 3px solid #1e40af; border-bottom: 1px solid #cbd5e1; padding: 10px 0; margin: 15px 0;">
+            <div style="text-align: center;">
+                <div style="font-size: 18px; font-weight: bold; color: #1e40af;">
+                    ملخص الخروج - DISCHARGE SUMMARY
+                </div>
+                <div style="font-size: 12px; color: #64748b; margin-top: 5px;">
+                    Date Printed: ${currentDate}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="patient-info">
+        <div>
+            <strong>Patient Name:</strong> ${currentPatient.name}<br>
+            <strong>MRN:</strong> ${currentPatient.mrn}<br>
+            <strong>Age:</strong> ${currentPatient.age} years<br>
+            <strong>Gender:</strong> ${currentPatient.gender}
+        </div>
+        <div>
+            <strong>Admission Date:</strong> ${currentPatient.admission_date ? formatDate(currentPatient.admission_date) : 'N/A'}<br>
+            <strong>Discharge Date:</strong> ${formatDate(dischargeSummary.discharge_date)}<br>
+            <strong>Length of Stay:</strong> ${dischargeSummary.length_of_stay}
+        </div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">Final Diagnosis / التشخيص النهائي</div>
+        <div class="text-content">${dischargeSummary.final_diagnosis}</div>
+        ${dischargeSummary.secondary_diagnoses ? `
+        <div style="margin-top: 10px;">
+            <strong>Secondary Diagnoses:</strong>
+            <div class="text-content">${dischargeSummary.secondary_diagnoses}</div>
+        </div>
+        ` : ''}
+    </div>
+    
+    <div class="section">
+        <div class="section-title">Procedure(s) Performed / العمليات المجراة</div>
+        <div class="text-content">${dischargeSummary.procedures_performed}</div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">Hospital Course / مسار العلاج في المستشفى</div>
+        <div class="text-content">${dischargeSummary.hospital_course}</div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">Discharge Medications / أدوية الخروج</div>
+        <div class="text-content">${dischargeSummary.discharge_medications}</div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">Follow-up Instructions / تعليمات المتابعة</div>
+        <div class="text-content">${dischargeSummary.follow_up_instructions}</div>
+        ${dischargeSummary.follow_up_period ? `
+        <div class="field">
+            <span class="field-label">Next Appointment:</span>
+            ${dischargeSummary.follow_up_period}
+        </div>
+        ` : ''}
+        ${dischargeSummary.stent_removal ? `
+        <div class="field">
+            <span class="field-label">Stent Removal:</span>
+            ${dischargeSummary.stent_removal}
+        </div>
+        ` : ''}
+    </div>
+    
+    <div class="section">
+        <div class="section-title">Activity Instructions / تعليمات النشاط</div>
+        <div class="text-content">${dischargeSummary.activity_instructions}</div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">Warning Signs / علامات الخطر</div>
+        <div class="text-content">${dischargeSummary.warning_signs}</div>
+    </div>
+    
+    <div class="signature-section">
+        <div>
+            <div class="signature-line"></div>
+            <div style="text-align: center; font-size: 12px;">
+                <strong>Attending Physician Signature</strong><br>
+                Dr. Osama Mohammed Jamhour<br>
+                Date: _______________
+            </div>
+        </div>
+        <div>
+            <div class="signature-line"></div>
+            <div style="text-align: center; font-size: 12px;">
+                <strong>Patient/Guardian Signature</strong><br>
+                Date: _______________
+            </div>
+        </div>
+    </div>
+    
+    <div style="margin-top: 30px; font-size: 10px; text-align: center; color: #666;">
+        This discharge summary was generated electronically on ${currentDate}
+    </div>
+</body>
+</html>
+    `;
+    
+    // Write content to print window
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    
+    // Wait for content to load then print
+    printWindow.onload = function() {
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+    };
+}
 
         // Supabase Auth State Listener
         supabase.auth.onAuthStateChange((event, session) => {
