@@ -1153,20 +1153,30 @@
                             <i class="fas fa-arrow-left"></i>
                             Back to Patients
                         </button>
-                        <div style="display: flex; gap: 1rem;">
-                            <button class="btn" onclick="showOperativeNoteForm()" style="background: linear-gradient(135deg, var(--success-green), #059669);">
-                                <i class="fas fa-scalpel"></i>
-                                Add Operative Note
-                            </button>
-<button class="btn" onclick="showPostOpPage()" style="background: linear-gradient(135deg, var(--primary-blue-light), var(--primary-blue));">
-    <i class="fas fa-chart-line"></i>
-    Post-Op Management
-</button>
-                            <button class="btn" onclick="showNotification('Patient editing coming soon! 📝', 'info')" style="background: linear-gradient(135deg, var(--warning-amber), #d97706);">
-                                <i class="fas fa-edit"></i>
-                                Edit Info
-                            </button>
-                        </div>
+<div style="display: flex; gap: 1rem;">
+    <button class="btn" onclick="showOperativeNoteForm()" style="background: linear-gradient(135deg, var(--success-green), #059669);">
+        <i class="fas fa-scalpel"></i>
+        Add Operative Note
+    </button>
+    <button class="btn" onclick="showPostOpPage()" style="background: linear-gradient(135deg, var(--primary-blue-light), var(--primary-blue));">
+        <i class="fas fa-chart-line"></i>
+        Post-Op Management
+    </button>
+    
+    <button id="quickDischargeBtn" onclick="showQuickDischargeModal()" style="background: linear-gradient(135deg, #059669, #10b981); display: none;">
+        <i class="fas fa-home"></i>
+        Quick Discharge
+    </button>
+    
+    <button class="btn" onclick="showDischargeSummaryForm()" style="background: linear-gradient(135deg, var(--warning-amber), #d97706);">
+        <i class="fas fa-file-export"></i>
+        Full Discharge Summary
+    </button>
+    <button class="btn" onclick="showNotification('Patient editing coming soon! 📝', 'info')" style="background: linear-gradient(135deg, var(--warning-amber), #d97706);">
+        <i class="fas fa-edit"></i>
+        Edit Info
+    </button>
+</div>
                     </div>
 
                     <div style="display: flex; justify-content: space-between; align-items: start;">
@@ -4816,6 +4826,9 @@ loadSurgeryAndOperativeNote(patient);
 
         // Load discharge summary if exists
 loadExistingDischargeSummary();
+
+// Add this line at the very end of the loadPatientDetail function
+updateQuickDischargeButton(patient);
         
         // Lab Results
         const labs = [
@@ -5438,21 +5451,25 @@ async function handleSaveDischargeSummary(event) {
         
         showMessage('dischargeSummaryMessage', '✅ Discharge summary saved successfully!', 'success');
         
-        // Update patient status to discharged
-        const { error: updateError } = await supabase
-            .from('patients')
-            .update({
-                status: 'discharged',
-                discharge_date: dischargeSummaryData.discharge_date
-            })
-            .eq('id', currentPatient.id);
-        
-        if (updateError) {
-    console.error('Error updating patient status:', updateError);
-    showNotification('Error updating patient status: ' + updateError.message, 'error');
+// Update patient status to discharged
+console.log('🔄 Updating patient status to discharged...');
+
+const { error: updateError } = await supabase
+    .from('patients')
+    .update({
+        status: 'discharged',
+        discharge_date: dischargeSummaryData.discharge_date
+    })
+    .eq('id', currentPatient.id);
+
+if (updateError) {
+    console.error('❌ Error updating patient status:', updateError);
+    throw new Error('Failed to update patient status: ' + updateError.message);
 } else {
     console.log('✅ Patient status updated successfully to discharged');
-    showNotification('Patient status updated to discharged', 'success');
+    // Update the current patient object
+    currentPatient.status = 'discharged';
+    currentPatient.discharge_date = dischargeSummaryData.discharge_date;
 }
         
         // Navigate back to patient detail after delay
@@ -5822,6 +5839,143 @@ function createDischargeSummaryPrintDocument(printWindow, dischargeSummary, curr
     };
 }
 
+// Show/hide quick discharge button based on patient status
+function updateQuickDischargeButton(patient) {
+    const quickDischargeBtn = document.getElementById('quickDischargeBtn');
+    
+    if (patient && patient.status === 'post-op') {
+        quickDischargeBtn.style.display = 'inline-flex';
+    } else {
+        quickDischargeBtn.style.display = 'none';
+    }
+}
+
+// Show quick discharge modal
+function showQuickDischargeModal() {
+    if (!currentPatient) {
+        showNotification('No patient selected', 'error');
+        return;
+    }
+
+    const modal = document.createElement('div');
+    modal.id = 'quickDischargeModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 1rem; max-width: 500px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+            <div style="background: linear-gradient(135deg, #059669, #10b981); color: white; padding: 2rem; border-radius: 1rem 1rem 0 0; text-align: center;">
+                <h2 style="margin: 0; font-size: 1.8rem; font-weight: 700;">
+                    <i class="fas fa-home"></i>
+                    Quick Discharge
+                </h2>
+                <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 1.1rem;">
+                    ${currentPatient.name} - MRN: ${currentPatient.mrn}
+                </p>
+            </div>
+            
+            <div style="padding: 2rem;">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <i class="fas fa-question-circle" style="font-size: 3rem; color: var(--warning-amber); margin-bottom: 1rem;"></i>
+                    <h3 style="color: var(--neutral-700); margin-bottom: 1rem;">Ready to Discharge Patient?</h3>
+                    <p style="color: var(--neutral-600); line-height: 1.6; margin-bottom: 1.5rem;">
+                        This will immediately change the patient status to <strong>Discharged</strong> and set the discharge date to today.
+                    </p>
+                    <div style="background: var(--neutral-50); border: 2px solid var(--warning-amber); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+                        <p style="color: var(--warning-amber); font-weight: 600; margin: 0; font-size: 0.9rem;">
+                            <i class="fas fa-info-circle"></i>
+                            Note: For a complete discharge summary with medications and instructions, use "Full Discharge Summary" instead.
+                        </p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <button onclick="closeQuickDischargeModal()" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <button onclick="executeQuickDischarge()" class="btn" style="background: linear-gradient(135deg, #059669, #10b981);">
+                        <i class="fas fa-check"></i>
+                        Confirm Discharge
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add click outside to close
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeQuickDischargeModal();
+        }
+    });
+    
+    document.body.appendChild(modal);
+}
+
+// Close quick discharge modal
+function closeQuickDischargeModal() {
+    const modal = document.getElementById('quickDischargeModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// Execute quick discharge
+async function executeQuickDischarge() {
+    if (!currentPatient) return;
+
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        
+        console.log('🔄 Discharging patient:', currentPatient.id);
+        
+        // Update patient status to discharged
+        const { error } = await supabase
+            .from('patients')
+            .update({
+                status: 'discharged',
+                discharge_date: today
+            })
+            .eq('id', currentPatient.id);
+
+        if (error) throw error;
+
+        console.log('✅ Patient discharged successfully');
+
+        // Update current patient object
+        currentPatient.status = 'discharged';
+        currentPatient.discharge_date = today;
+
+        // Close modal
+        closeQuickDischargeModal();
+
+        // Update UI
+        loadPatientDetail(currentPatient);
+        showNotification(`${currentPatient.name} has been successfully discharged!`, 'success');
+
+        // Refresh patients list in background
+        if (isLoggedIn) {
+            loadPatients();
+        }
+
+    } catch (error) {
+        console.error('❌ Error executing quick discharge:', error);
+        showNotification('Error discharging patient: ' + error.message, 'error');
+    }
+}
+        
         // Supabase Auth State Listener
         supabase.auth.onAuthStateChange((event, session) => {
             console.log('🔐 Auth state changed:', event, session?.user?.email);
