@@ -5447,7 +5447,13 @@ async function handleSaveDischargeSummary(event) {
             })
             .eq('id', currentPatient.id);
         
-        if (updateError) console.error('Error updating patient status:', updateError);
+        if (updateError) {
+    console.error('Error updating patient status:', updateError);
+    showNotification('Error updating patient status: ' + updateError.message, 'error');
+} else {
+    console.log('✅ Patient status updated successfully to discharged');
+    showNotification('Patient status updated to discharged', 'success');
+}
         
         // Navigate back to patient detail after delay
         setTimeout(() => {
