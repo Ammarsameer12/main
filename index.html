@@ -4822,19 +4822,6 @@ loadSurgeryAndOperativeNote(patient);
         // Load discharge summary if exists
 loadExistingDischargeSummary();
         
-        // Show/hide discharge button based on patient status
-        const dischargeBtn = document.getElementById('dischargePatientBtn');
-        if (patient.status === 'post-op') {
-            dischargeBtn.style.display = 'inline-flex';
-        } else {
-            dischargeBtn.style.display = 'none';
-        }
-        
-    } catch (error) {
-        console.error('Error loading patient detail:', error);
-        showNotification('Error loading patient details', 'error');
-    }
-        
         // Lab Results
         const labs = [
             { name: 'Hemoglobin', value: patient.hemoglobin, unit: 'g/dL', normal: '12-16' },
