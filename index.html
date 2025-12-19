@@ -761,8 +761,8 @@
                     <div id="loginMessage" class="auth-message"></div>
                     
                     <div class="demo-info">
-                        <p><i class="fas fa-info-circle"></i> <span class="highlight">Demo Credentials</span></p>
-                        <p>doctor@clinic.com / doctor123<br>admin@clinic.com / admin123<br>nurse@clinic.com / nurse123</p>
+                        <p><i class="fas fa-rocket"></i> <span class="highlight">Powered by Supabase</span></p>
+                        <p>Real-time database and secure authentication</p>
                     </div>
                 </div>
             </div>
@@ -3709,10 +3709,9 @@ function createOperativeNoteForm(procedure, anesthesia, position, findings, step
                 targetPage.classList.add('active');
                 
                 // Load patients when showing patients page
-// Load patients when showing patients page
-if (pageId === 'patients' && isLoggedIn && currentUser) {
-    loadPatients();
-}
+                if (pageId === 'patients' && isLoggedIn) {
+                    loadPatients();
+                }
                                 // Initialize post-op form when showing add entry page
                 if (pageId === 'addPostOpEntry' && currentPatient) {
                     setTimeout(initializePostOpEntryForm, 100);
@@ -3720,112 +3719,73 @@ if (pageId === 'patients' && isLoggedIn && currentUser) {
             }
         }
 
-        // Simple Client-Side Authentication
-const validCredentials = {
-    'doctor@clinic.com': 'doctor123',
-    'admin@clinic.com': 'admin123',
-    'nurse@clinic.com': 'nurse123'
-};
-
-async function handleLogin(event) {
-    event.preventDefault();
-    
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    const button = document.getElementById('loginButton');
-    
-    // Show loading
-    const originalContent = button.innerHTML;
-    button.innerHTML = '<div class="loading"></div> Signing In...';
-    button.disabled = true;
-    
-    try {
-        // Simple client-side validation
-        if (validCredentials[email] && validCredentials[email] === password) {
-            // Create a mock user object
-            const mockUser = {
-                id: 'user_' + Date.now(),
-                email: email,
-                user_metadata: {
-                    name: email.split('@')[0]
-                }
-            };
+        // Authentication Functions
+        async function handleLogin(event) {
+            event.preventDefault();
             
-            // Store in localStorage
-            localStorage.setItem('currentUser', JSON.stringify(mockUser));
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const button = document.getElementById('loginButton');
             
-            // Set current user
-            currentUser = mockUser;
-            isLoggedIn = true;
+            // Show loading
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<div class="loading"></div> Signing In...';
+            button.disabled = true;
             
-            showMessage('loginMessage', `Welcome back, ${email}!`, 'success');
-            
-            // Navigate to patients page after short delay
-// Load patients when showing patients page
-if (pageId === 'patients' && isLoggedIn) {
-    loadPatients();
-}
-            
-        } else {
-            throw new Error('Invalid email or password');
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                showMessage('loginMessage', `Welcome back, ${data.user.email}!`, 'success');
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showMessage('loginMessage', getErrorMessage(error.message), 'error');
+                
+                // Reset button
+                button.innerHTML = originalContent;
+                button.disabled = false;
+            }
         }
-        
-    } catch (error) {
-        console.error('Login error:', error);
-        showMessage('loginMessage', getErrorMessage(error.message), 'error');
-        
-        // Reset button
-        button.innerHTML = originalContent;
-        button.disabled = false;
-    }
-}
 
-async function handleLogout() {
-    if (!confirm('Are you sure you want to logout?')) return;
-    
-    try {
-        // Clear localStorage
-        localStorage.removeItem('currentUser');
-        
-        // Reset state
-        currentUser = null;
-        isLoggedIn = false;
-        
-        // Update UI
-        updateNavigationForGuest();
-        showPage('login');
-        showNotification('Logged out successfully', 'info');
-    } catch (error) {
-        console.error('Logout error:', error);
-        showNotification('Error logging out', 'error');
-    }
-}
+        async function handleLogout() {
+            if (!confirm('Are you sure you want to logout?')) return;
+            
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+                
+                showNotification('Logged out successfully', 'info');
+            } catch (error) {
+                console.error('Logout error:', error);
+                showNotification('Error logging out', 'error');
+            }
+        }
 
         // Enhanced Patient Functions
         async function loadPatients() {
-    if (!isLoggedIn) {
-        displayEmptyState();
-        return;
-    }
+            try {
+                const { data: patients, error } = await supabase
+                    .from('patients')
+                    .select('*')
+                    .order('created_at', { ascending: false });
 
-    try {
-        const { data: patients, error } = await supabase
-            .from('patients')
-            .select('*')
-            .order('created_at', { ascending: false });
+                if (error) throw error;
 
-        if (error) throw error;
+                allPatients = patients || [];
+                displayPatients(allPatients);
+                updateStatistics(allPatients);
 
-        allPatients = patients || [];
-        displayPatients(allPatients);
-        updateStatistics(allPatients);
-
-    } catch (error) {
-        console.error('Error loading patients:', error);
-        showNotification('Error loading patients: ' + error.message, 'error');
-        displayEmptyState();
-    }
-}
+            } catch (error) {
+                console.error('Error loading patients:', error);
+                showNotification('Error loading patients: ' + error.message, 'error');
+                displayEmptyState();
+            }
+        }
 
         function displayPatients(patients) {
             const grid = document.getElementById('patientsGrid');
@@ -3905,11 +3865,6 @@ async function handleLogout() {
             `;
         }
 
-        if (!currentUser) {
-    showNotification('User not authenticated', 'error');
-    return;
-}
-
         // Enhanced Add Patient Function with Comprehensive Data
         async function handleAddPatient(event) {
             event.preventDefault();
@@ -3959,10 +3914,9 @@ async function handleLogout() {
                 treatment_plan: document.getElementById('treatmentPlan').value.trim() || null,
                 
                 // System fields
-// System fields
-status: 'pre-op',
-created_by: currentUser?.id || 'system',
-created_at: new Date().toISOString()
+                status: 'pre-op',
+                created_by: currentUser.id,
+                created_at: new Date().toISOString()
             };
             
             // Validation - only check required fields
@@ -4752,7 +4706,7 @@ async function fetchOperativeNoteForPrint(printWindow, currentDate) {
             operative_steps: document.getElementById('operativeSteps').value.trim(),
             complications: document.getElementById('complications').value.trim() || 'None encountered intraoperatively',
             estimated_blood_loss: document.getElementById('estimatedBloodLoss').value.trim() || null,
-            created_by: currentUser?.id || 'system',
+            created_by: currentUser.id,
             status: 'completed'
         };
         
@@ -5080,8 +5034,7 @@ async function handleAddPostOpEntry(event) {
                     plan: document.getElementById('plan').value.trim() || null,
                     
                     // System fields
-                    // System fields
-                     created_by: currentUser?.id || 'system'
+                    created_by: currentUser.id
                 };
                 
                 // Validation - require date, time, and post-op day
@@ -5451,7 +5404,7 @@ async function handleSaveDischargeSummary(event) {
             follow_up_instructions: document.getElementById('followUpInstructions').value.trim(),
             activity_instructions: document.getElementById('activityInstructions').value.trim(),
             warning_signs: document.getElementById('warningSigns').value.trim(),
-            created_by: currentUser?.id || 'system',
+            created_by: currentUser.id,
             status: 'completed'
         };
         
@@ -6020,43 +5973,38 @@ async function executeQuickDischarge() {
 }
         
         // Supabase Auth State Listener
-// Check for stored user session
-function checkStoredSession() {
-    try {
-        const storedUser = localStorage.getItem('currentUser');
-        if (storedUser) {
-            currentUser = JSON.parse(storedUser);
-            isLoggedIn = true;
-            updateNavigationForUser(currentUser);
-            showPage('patients');
-            console.log('✅ User session restored:', currentUser.email);
-        } else {
-            currentUser = null;
-            isLoggedIn = false;
-            updateNavigationForGuest();
-            showPage('login');
-        }
-    } catch (error) {
-        console.error('Error checking stored session:', error);
-        localStorage.removeItem('currentUser');
-        currentUser = null;
-        isLoggedIn = false;
-        updateNavigationForGuest();
-        showPage('login');
-    }
-}
+        supabase.auth.onAuthStateChange((event, session) => {
+            console.log('🔐 Auth state changed:', event, session?.user?.email);
+            
+            if (session?.user) {
+                currentUser = session.user;
+                isLoggedIn = true;
+                updateNavigationForUser(session.user);
+                showPage('patients');
+            } else {
+                currentUser = null;
+                isLoggedIn = false;
+                updateNavigationForGuest();
+                showPage('login');
+            }
+        });
 
         // App Initialization
-// App Initialization
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🏥 Urology App (Enhanced Assessment) loaded successfully!');
-    
-    // Initialize page state
-    initializeAddPatientForm();
-    
-    // Check for stored session
-    checkStoredSession();
-});
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🏥 Urology App (Enhanced Assessment) loaded successfully!');
+            
+            // Initialize page state
+            showPage('login');
+            updateNavigationForGuest();
+            initializeAddPatientForm();
+            
+            // Check existing session
+            supabase.auth.getSession().then(({ data: { session } }) => {
+                if (session?.user) {
+                    console.log('✅ User already logged in:', session.user.email);
+                }
+            });
+        });
     </script>
 </body>
 </html>
