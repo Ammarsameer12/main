@@ -2239,7 +2239,14 @@
         const SUPABASE_URL = 'https://xqsfajxxpcxsguqezcpr.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhxc2Zhanh4cGN4c2d1cWV6Y3ByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0ODEzOTQsImV4cCI6MjA2OTA1NzM5NH0.-cd5LQ0CSB9DNenAhjgALhTg8JRBo8gS4MPwEWN4CMI';
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        storage: window.localStorage
+    }
+});
         console.log('🚀 Supabase initialized successfully!');
 
         // Global State
@@ -2269,7 +2276,7 @@ async function loadPostOpChart() {
         `;
         
         // Load post-op entries for charts
-        const { data: entries, error } = await supabase
+        const { data: entries, error } = await supabaseClient
             .from('post_operative_entries')
             .select('*')
             .eq('patient_id', currentPatient.id)
@@ -2335,7 +2342,7 @@ function showVitalChart(chartType, entries = null) {
 
 async function loadPostOpEntriesForChart(chartType) {
     try {
-        const { data: entries, error } = await supabase
+        const { data: entries, error } = await supabaseClient
             .from('post_operative_entries')
             .select('*')
             .eq('patient_id', currentPatient.id)
@@ -2889,7 +2896,7 @@ await loadPostOpEntries();
             try {
                 console.log('Loading post-op entries for patient:', currentPatient.id);
                 
-                const { data: entries, error } = await supabase
+                const { data: entries, error } = await supabaseClient
                     .from('post_operative_entries')
                     .select('*')
                     .eq('patient_id', currentPatient.id)
@@ -3719,44 +3726,46 @@ function createOperativeNoteForm(procedure, anesthesia, position, findings, step
             }
         }
 
-        // Authentication Functions
-        async function handleLogin(event) {
-            event.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const button = document.getElementById('loginButton');
-            
-            // Show loading
-            const originalContent = button.innerHTML;
-            button.innerHTML = '<div class="loading"></div> Signing In...';
-            button.disabled = true;
-            
-            try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-                
-                if (error) throw error;
-                
-                showMessage('loginMessage', `Welcome back, ${data.user.email}!`, 'success');
-                
-            } catch (error) {
-                console.error('Login error:', error);
-                showMessage('loginMessage', getErrorMessage(error.message), 'error');
-                
-                // Reset button
-                button.innerHTML = originalContent;
-                button.disabled = false;
-            }
-        }
+async function handleLogin(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const button = document.getElementById('loginButton');
+    
+    const originalContent = button.innerHTML;
+    button.innerHTML = '<div class="loading"></div> Signing In...';
+    button.disabled = true;
+    
+    try {
+        console.log('🔄 Attempting login for:', email);
+        
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+        
+        console.log('📦 Login response:', { data, error });
+        
+        if (error) throw error;
+        
+        showMessage('loginMessage', `Welcome back, ${data.user.email}!`, 'success');
+        
+    } catch (error) {
+        console.error('❌ Login error:', error);
+        showMessage('loginMessage', getErrorMessage(error.message), 'error');
+        
+        // Reset button - THIS WAS MISSING IN SUCCESS PATH TOO
+        button.innerHTML = originalContent;
+        button.disabled = false;
+    }
+}
 
         async function handleLogout() {
             if (!confirm('Are you sure you want to logout?')) return;
             
             try {
-                const { error } = await supabase.auth.signOut();
+                const { error } = await supabaseClient.auth.signOut();
                 if (error) throw error;
                 
                 showNotification('Logged out successfully', 'info');
@@ -3769,7 +3778,7 @@ function createOperativeNoteForm(procedure, anesthesia, position, findings, step
         // Enhanced Patient Functions
         async function loadPatients() {
             try {
-                const { data: patients, error } = await supabase
+                const { data: patients, error } = await supabaseClient
                     .from('patients')
                     .select('*')
                     .order('created_at', { ascending: false });
@@ -3937,7 +3946,7 @@ function createOperativeNoteForm(procedure, anesthesia, position, findings, step
             button.disabled = true;
             
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('patients')
                     .insert([patientData])
                     .select();
@@ -4005,7 +4014,7 @@ function viewPatient(patientId) {
 async function loadPostOpSummary(patient) {
     try {
         // Load latest post-op entries
-        const { data: entries, error } = await supabase
+        const { data: entries, error } = await supabaseClient
             .from('post_operative_entries')
             .select('*')
             .eq('patient_id', patient.id)
@@ -4131,7 +4140,7 @@ function getPainColor(painScore) {
     
     try {
         // Load operative note from database
-        const { data: operativeNote, error } = await supabase
+        const { data: operativeNote, error } = await supabaseClient
             .from('operative_notes')
             .select('*')
             .eq('patient_id', patient.id)
@@ -4250,7 +4259,7 @@ function viewFullOperativeNote() {
 
 async function loadFullOperativeNoteView() {
     try {
-        const { data: operativeNote, error } = await supabase
+        const { data: operativeNote, error } = await supabaseClient
             .from('operative_notes')
             .select('*')
             .eq('patient_id', currentPatient.id)
@@ -4431,7 +4440,7 @@ function printOperativeNote() {
 
 async function fetchOperativeNoteForPrint(printWindow, currentDate) {
     try {
-        const { data: operativeNote, error } = await supabase
+        const { data: operativeNote, error } = await supabaseClient
             .from('operative_notes')
             .select('*')
             .eq('patient_id', currentPatient.id)
@@ -4718,7 +4727,7 @@ async function fetchOperativeNoteForPrint(printWindow, currentDate) {
             return;
         }
         
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('operative_notes')
             .insert([operativeNoteData])
             .select();
@@ -4728,7 +4737,7 @@ async function fetchOperativeNoteForPrint(printWindow, currentDate) {
         showMessage('operativeNoteMessage', '✅ Operative note saved successfully!', 'success');
         
         // Update patient status to post-op
-        const { error: updateError } = await supabase
+        const { error: updateError } = await supabaseClient
             .from('patients')
             .update({ status: 'post-op' })
             .eq('id', currentPatient.id);
@@ -5046,7 +5055,7 @@ async function handleAddPostOpEntry(event) {
                 }
                 
                 // Save to database
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('post_operative_entries')
                     .insert([postOpData])
                     .select();
@@ -5283,7 +5292,7 @@ async function initializeDischargeSummaryForm() {
 // Load operative data for discharge summary
 async function loadOperativeDataForDischarge() {
     try {
-        const { data: operativeNote, error } = await supabase
+        const { data: operativeNote, error } = await supabaseClient
             .from('operative_notes')
             .select('procedure_performed')
             .eq('patient_id', currentPatient.id)
@@ -5421,7 +5430,7 @@ async function handleSaveDischargeSummary(event) {
         }
         
         // Check if discharge summary already exists
-        const { data: existingSummary, error: checkError } = await supabase
+        const { data: existingSummary, error: checkError } = await supabaseClient
             .from('discharge_summaries')
             .select('id')
             .eq('patient_id', currentPatient.id)
@@ -5430,14 +5439,14 @@ async function handleSaveDischargeSummary(event) {
         let result;
         if (existingSummary) {
             // Update existing
-            result = await supabase
+            result = await supabaseClient
                 .from('discharge_summaries')
                 .update(dischargeSummaryData)
                 .eq('patient_id', currentPatient.id)
                 .select();
         } else {
             // Create new
-            result = await supabase
+            result = await supabaseClient
                 .from('discharge_summaries')
                 .insert([dischargeSummaryData])
                 .select();
@@ -5450,7 +5459,7 @@ async function handleSaveDischargeSummary(event) {
 // Update patient status to discharged
 console.log('🔄 Updating patient status to discharged...');
 
-const { error: updateError } = await supabase
+const { error: updateError } = await supabaseClient
     .from('patients')
     .update({
         status: 'discharged',
@@ -5489,7 +5498,7 @@ if (updateError) {
 // Load existing discharge summary
 async function loadExistingDischargeSummary() {
     try {
-        const { data: dischargeSummary, error } = await supabase
+        const { data: dischargeSummary, error } = await supabaseClient
             .from('discharge_summaries')
             .select('*')
             .eq('patient_id', currentPatient.id)
@@ -5600,7 +5609,7 @@ function printDischargeSummary() {
 
 async function loadDischargeSummaryForPrint() {
     try {
-        const { data: dischargeSummary, error } = await supabase
+        const { data: dischargeSummary, error } = await supabaseClient
             .from('discharge_summaries')
             .select('*')
             .eq('patient_id', currentPatient.id)
@@ -5938,7 +5947,7 @@ async function executeQuickDischarge() {
         console.log('🔄 Discharging patient:', currentPatient.id);
         
         // Update patient status to discharged
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('patients')
             .update({
                 status: 'discharged',
@@ -5973,7 +5982,7 @@ async function executeQuickDischarge() {
 }
         
         // Supabase Auth State Listener
-        supabase.auth.onAuthStateChange((event, session) => {
+        supabaseClient.auth.onAuthStateChange((event, session) => {
             console.log('🔐 Auth state changed:', event, session?.user?.email);
             
             if (session?.user) {
