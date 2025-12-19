@@ -3740,7 +3740,7 @@ async function handleLogin(event) {
     try {
         console.log('🔄 Attempting login for:', email);
         
-        const { data, error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
             email: email,
             password: password
         });
